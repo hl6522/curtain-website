@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <meta name="translate" content="no">
+    <title data-en="Elegant Curtains - Custom Window Treatments" data-zh="优雅窗帘 - 定制窗帘">Elegant Curtains - Custom Window Treatments</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2 data-en="Elegant Curtains" data-zh="优雅窗帘">Elegant Curtains</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" data-en="Home" data-zh="首页">Home</a></li>
+                <li><a href="#about" data-en="About" data-zh="关于我们">About</a></li>
+                <li><a href="#product-series" data-en="Product Series" data-zh="产品系列">Product Series</a></li>
+                <li><a href="#gallery" data-en="Gallery" data-zh="案例展示">Gallery</a></li>
+                <li><a href="#quote-consultation" data-en="Quote Consultation" data-zh="报价咨询">Quote Consultation</a></li>
+                <li><a href="#contact" data-en="Contact" data-zh="联系我们">Contact</a></li>
+                <li id="loginNavItem"><a href="javascript:void(0)" onclick="openLoginModal()" data-en="Login" data-zh="登录">Login</a></li>
+            </ul>
+            <div class="nav-actions">
+                <!-- User Status Display -->
+                <div id="userStatusDisplay" class="user-status-display" style="display: none;">
+                    <div class="user-dropdown">
+                        <button class="dropdown-toggle" onclick="openCustomerDashboard()">
+                            <span id="userName">My Account</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="javascript:void(0)" onclick="showProfile()" class="dropdown-item" data-en="Profile" data-zh="个人资料">Profile</a>
+                            <a href="javascript:void(0)" onclick="showMyAppointments()" class="dropdown-item" data-en="My Appointments" data-zh="我的预约">My Appointments</a>
+                            <a href="javascript:void(0)" onclick="showMyOrders()" class="dropdown-item" data-en="My Orders" data-zh="我的订单">My Orders</a>
+                            <a href="javascript:void(0)" onclick="showMyQuotes()" class="dropdown-item" data-en="My Quotes" data-zh="我的报价">My Quotes</a>
+                            <a href="javascript:void(0)" onclick="showMyFavorites()" class="dropdown-item" data-en="My Favorites" data-zh="我的收藏">My Favorites</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="javascript:void(0)" onclick="logout()" class="dropdown-item" data-en="Logout" data-zh="退出登录">Logout</a>
+                        </div>
+                    </div>
+                    <div class="cart-icon" onclick="showCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                </div>
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <button onclick="updatePageLanguage('en')" class="lang-btn active" data-lang="en" data-en="EN" data-zh="英文">EN</button>
+                    <button onclick="updatePageLanguage('zh')" class="lang-btn" data-lang="zh" data-en="中文" data-zh="中文">中文</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 data-en="Custom Curtains for Your Perfect Home" data-zh="为您的完美家居定制窗帘">Custom Curtains for Your Perfect Home</h1>
+                <p data-en="Transform your space with our elegant, custom-made window treatments" data-zh="用我们优雅的定制窗帘改造您的空间">Transform your space with our elegant, custom-made window treatments</p>
+                <div class="hero-buttons">
+                    <button onclick="scrollToSection('quote-consultation')" class="btn btn-primary" data-en="Get Free Quote" data-zh="免费报价">Get Free Quote</button>
+                    <button onclick="openGallery()" class="btn btn-secondary" data-en="Explore Gallery" data-zh="浏览案例">Explore Gallery</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-palette"></i>
+                    <h3 data-en="Custom Design" data-zh="定制设计">Custom Design</h3>
+                    <p data-en="Personalized curtains that match your style" data-zh="个性化窗帘，匹配您的风格">Personalized curtains that match your style</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-tools"></i>
+                    <h3 data-en="Free Installation" data-zh="免费安装">Free Installation</h3>
+                    <p data-en="Professional installation included" data-zh="包含专业安装服务">Professional installation included</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-award"></i>
+                    <h3 data-en="Quality Guarantee" data-zh="质量保证">Quality Guarantee</h3>
+                    <p data-en="Premium materials and craftsmanship" data-zh="优质材料和工艺">Premium materials and craftsmanship</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-clock"></i>
+                    <h3 data-en="Fast Service" data-zh="快速服务">Fast Service</h3>
+                    <p data-en="Quick turnaround times" data-zh="快速交付">Quick turnaround times</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 data-en="About Elegant Curtains" data-zh="关于优雅窗帘">About Elegant Curtains</h2>
+                    <p data-en="We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region." data-zh="我们是一家家族企业，在创造美丽窗帘方面拥有超过20年的经验。我们对质量和客户满意度的承诺使我们成为整个地区房主的值得信赖的选择。">We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.</p>
+                    <p data-en="Our team of skilled craftsmen and designers work together to bring your vision to life, ensuring every detail meets our high standards." data-zh="我们技艺精湛的工匠和设计师团队共同努力，将您的愿景变为现实，确保每个细节都符合我们的高标准。">Our team of skilled craftsmen and designers work together to bring your vision to life, ensuring every detail meets our high standards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Series Section -->
+    <section id="product-series" class="product-series">
+        <div class="container">
+            <h2 data-en="Our Product Series" data-zh="我们的产品系列">Our Product Series</h2>
+            <p data-en="Professional curtain fabrics and solutions for every space" data-zh="为每个空间提供专业的窗帘面料和解决方案">Professional curtain fabrics and solutions for every space</p>
+            <div class="series-grid">
+                <div class="series-item">
+                    <img src="images/products/blackout-curtains.jpg" alt="Blackout Curtains" data-en="Blackout Curtains" data-zh="遮光窗帘">
+                    <div class="series-content">
+                        <h3 data-en="Blackout Curtains" data-zh="遮光窗帘">Blackout Curtains</h3>
+                        <p data-en="Professional blackout fabrics with excellent light blocking properties" data-zh="专业的遮光面料，具有优异的光线阻挡性能">Professional blackout fabrics with excellent light blocking properties</p>
+                        <button onclick="openProductSeriesModal('blackout')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+                <div class="series-item">
+                    <img src="images/products/roller-blinds.jpg" alt="Roller Blinds" data-en="Roller Blinds" data-zh="卷帘">
+                    <div class="series-content">
+                        <h3 data-en="Roller Blinds" data-zh="卷帘">Roller Blinds</h3>
+                        <p data-en="High-quality roller blind fabrics for modern window treatments" data-zh="现代窗帘处理的高品质卷帘面料">High-quality roller blind fabrics for modern window treatments</p>
+                        <button onclick="openProductSeriesModal('roller')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+                <div class="series-item">
+                    <img src="images/products/sheer-elegance.jpg" alt="Sheer Elegance" data-en="Sheer Elegance" data-zh="优雅薄纱">
+                    <div class="series-content">
+                        <h3 data-en="Sheer Elegance" data-zh="优雅薄纱">Sheer Elegance</h3>
+                        <p data-en="Elegant sheer fabrics combining beauty and functionality" data-zh="优雅的薄纱面料，结合美观与功能性">Elegant sheer fabrics combining beauty and functionality</p>
+                        <button onclick="openProductSeriesModal('sheer')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+                <div class="series-item">
+                    <img src="images/products/roman-shades.jpg" alt="Roman Shades" data-en="Roman Shades" data-zh="罗马帘">
+                    <div class="series-content">
+                        <h3 data-en="Roman Shades" data-zh="罗马帘">Roman Shades</h3>
+                        <p data-en="Classic roman shade fabrics with elegant pleating" data-zh="经典的罗马帘面料，具有优雅的褶皱">Classic roman shade fabrics with elegant pleating</p>
+                        <button onclick="openProductSeriesModal('roman')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+                <div class="series-item">
+                    <img src="images/products/elegant-drapery.jpg" alt="Elegant Drapery" data-en="Elegant Drapery" data-zh="优雅窗帘">
+                    <div class="series-content">
+                        <h3 data-en="Elegant Drapery" data-zh="优雅窗帘">Elegant Drapery</h3>
+                        <p data-en="Premium drapery fabrics for large windows and formal spaces" data-zh="适用于大窗户和正式空间的优质窗帘面料">Premium drapery fabrics for large windows and formal spaces</p>
+                        <button onclick="openProductSeriesModal('drapery')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+                <div class="series-item">
+                    <img src="images/products/layered-treatments.jpg" alt="Layered Treatments" data-en="Layered Treatments" data-zh="分层处理">
+                    <div class="series-content">
+                        <h3 data-en="Layered Treatments" data-zh="分层处理">Layered Treatments</h3>
+                        <p data-en="Multi-layer fabric solutions for sophisticated window treatments" data-zh="用于精致窗帘处理的多层面料解决方案">Multi-layer fabric solutions for sophisticated window treatments</p>
+                        <button onclick="openProductSeriesModal('layered')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+                <div class="series-item">
+                    <img src="images/products/moisture-resistant.jpg" alt="Moisture Resistant" data-en="Moisture Resistant" data-zh="防潮面料">
+                    <div class="series-content">
+                        <h3 data-en="Moisture Resistant" data-zh="防潮面料">Moisture Resistant</h3>
+                        <p data-en="Weather-resistant fabrics for bathrooms and outdoor spaces" data-zh="适用于浴室和户外空间的耐候面料">Weather-resistant fabrics for bathrooms and outdoor spaces</p>
+                        <button onclick="openProductSeriesModal('moisture')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+                <div class="series-item">
+                    <img src="images/products/classic-valances.jpg" alt="Classic Valances" data-en="Classic Valances" data-zh="经典帷幔">
+                    <div class="series-content">
+                        <h3 data-en="Classic Valances" data-zh="经典帷幔">Classic Valances</h3>
+                        <p data-en="Timeless valance fabrics for traditional and elegant interiors" data-zh="适用于传统和优雅内饰的永恒帷幔面料">Timeless valance fabrics for traditional and elegant interiors</p>
+                        <button onclick="openProductSeriesModal('valances')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <h2 data-en="Our Work Gallery" data-zh="我们的作品展示">Our Work Gallery</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item" onclick="openGalleryModal('living-room')">
+                    <img src="images/gallery/elegant-living-room.jpg" alt="Elegant Living Room" data-en="Elegant Living Room" data-zh="优雅客厅">
+                    <div class="gallery-overlay">
+                        <h3 data-en="Elegant Living Room" data-zh="优雅客厅">Elegant Living Room</h3>
+                        <p data-en="Elegant living room curtains" data-zh="优雅的客厅窗帘">Elegant living room curtains</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openGalleryModal('bedroom')">
+                    <img src="images/gallery/master-bedroom.jpg" alt="Master Bedroom" data-en="Master Bedroom" data-zh="主卧室">
+                    <div class="gallery-overlay">
+                        <h3 data-en="Master Bedroom" data-zh="主卧室">Master Bedroom</h3>
+                        <p data-en="Comfortable bedroom treatments" data-zh="舒适的卧室窗帘">Comfortable bedroom treatments</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openGalleryModal('kitchen')">
+                    <img src="images/gallery/kitchen-window.jpg" alt="Kitchen Window" data-en="Kitchen Window" data-zh="厨房窗户">
+                    <div class="gallery-overlay">
+                        <h3 data-en="Kitchen Window" data-zh="厨房窗户">Kitchen Window</h3>
+                        <p data-en="Functional kitchen solutions" data-zh="功能性厨房解决方案">Functional kitchen solutions</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openGalleryModal('bathroom')">
+                    <img src="images/gallery/bathroom-curtains.jpg" alt="Bathroom Curtains" data-en="Bathroom Curtains" data-zh="浴室窗帘">
+                    <div class="gallery-overlay">
+                        <h3 data-en="Bathroom Curtains" data-zh="浴室窗帘">Bathroom Curtains</h3>
+                        <p data-en="Moisture-resistant bathroom solutions" data-zh="防潮浴室解决方案">Moisture-resistant bathroom solutions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Options Section -->
+    <section id="quote-consultation" class="quote-options">
+        <div class="container">
+            <h2 data-en="Get Your Free Quote" data-zh="获取免费报价">Get Your Free Quote</h2>
+            <p data-en="Choose your preferred method for getting a quote" data-zh="选择您偏好的报价方式">Choose your preferred method for getting a quote</p>
+            <div class="quote-grid">
+                <div class="quote-option">
+                    <div class="quote-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 data-en="On-site Measurement" data-zh="上门测量">On-site Measurement</h3>
+                    <p data-en="Our professional team will visit your home to take precise measurements and provide personalized recommendations" data-zh="我们的专业团队将上门为您进行精确测量并提供个性化建议">Our professional team will visit your home to take precise measurements and provide personalized recommendations</p>
+                    <ul class="quote-features">
+                        <li data-en="Professional measurement service" data-zh="专业测量服务">Professional measurement service</li>
+                        <li data-en="Personal consultation" data-zh="个人咨询">Personal consultation</li>
+                        <li data-en="Accurate quotes" data-zh="准确报价">Accurate quotes</li>
+                        <li data-en="Free consultation" data-zh="免费咨询">Free consultation</li>
+                    </ul>
+
+                    <button onclick="openOnsiteQuote()" class="btn btn-primary" data-en="Book Appointment" data-zh="预约上门">Book Appointment</button>
+                </div>
+                <div class="quote-option">
+                    <div class="quote-icon">
+                        <i class="fas fa-ruler"></i>
+                    </div>
+                    <h3 data-en="Self Measurement" data-zh="自助量尺">Self Measurement</h3>
+                    <p data-en="Measure your windows yourself and get an instant quote through our online system" data-zh="自己量尺并通过我们的在线系统获得即时报价">Measure your windows yourself and get an instant quote through our online system</p>
+                    <ul class="quote-features">
+                        <li data-en="Instant online quotes" data-zh="即时在线报价">Instant online quotes</li>
+                        <li data-en="Step-by-step guidance" data-zh="逐步指导">Step-by-step guidance</li>
+                        <li data-en="Save time and money" data-zh="节省时间和金钱">Save time and money</li>
+                        <li data-en="24/7 availability" data-zh="24/7可用">24/7 availability</li>
+                    </ul>
+
+                    <button onclick="openSelfQuote()" class="btn btn-primary" data-en="Start Self Measurement" data-zh="开始自助量尺">Start Self Measurement</button>
+                </div>
+            </div>
+            <div class="quote-info">
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <h4 data-en="Response Time" data-zh="响应时间">Response Time</h4>
+                        <p data-en="On-site: Within 24 hours, Self: Instant" data-zh="上门：24小时内，自助：即时">On-site: Within 24 hours, Self: Instant</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <h4 data-en="Guarantee" data-zh="保证">Guarantee</h4>
+                        <p data-en="100% satisfaction guarantee on all quotes" data-zh="所有报价100%满意保证">100% satisfaction guarantee on all quotes</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h4 data-en="Support" data-zh="支持">Support</h4>
+                        <p data-en="24/7 customer support available" data-zh="24/7客户支持可用">24/7 customer support available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 data-en="Contact Us" data-zh="联系我们">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3 data-en="Address" data-zh="地址">Address</h3>
+                            <p>123 Curtain Street<br>Design District<br>New York, NY 10001</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3 data-en="Phone" data-zh="电话">Phone</h3>
+                            <p>(555) 123-4567</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3 data-en="Email" data-zh="邮箱">Email</h3>
+                            <p>info@elegantcurtains.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm" onsubmit="handleContactSubmission(event)">
+                        <div class="form-group">
+                            <input type="text" id="contactName" required>
+                            <label data-en="Your Name" data-zh="您的姓名">Your Name</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="contactEmail" required>
+                            <label data-en="Your Email" data-zh="您的邮箱">Your Email</label>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="contactMessage" rows="5" required></textarea>
+                            <label data-en="Your Message" data-zh="您的留言">Your Message</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" data-en="Send Message" data-zh="发送留言">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-en="Elegant Curtains" data-zh="优雅窗帘">Elegant Curtains</h3>
+                    <p data-en="Creating beautiful spaces with custom window treatments" data-zh="用定制窗帘创造美丽空间">Creating beautiful spaces with custom window treatments</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Quick Links" data-zh="快速链接">Quick Links</h3>
+                    <ul>
+                        <li><a href="#home" data-en="Home" data-zh="首页">Home</a></li>
+                        <li><a href="#about" data-en="About" data-zh="关于我们">About</a></li>
+                        <li><a href="#product-series" data-en="Product Series" data-zh="产品系列">Product Series</a></li>
+                        <li><a href="#gallery" data-en="Gallery" data-zh="案例展示">Gallery</a></li>
+                        <li><a href="#quote-consultation" data-en="Quote Consultation" data-zh="报价咨询">Quote Consultation</a></li>
+                        <li><a href="#contact" data-en="Contact" data-zh="联系我们">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Follow Us" data-zh="关注我们">Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#" data-en="Facebook" data-zh="脸书">Facebook</a>
+                        <a href="#" data-en="Instagram" data-zh="Instagram">Instagram</a>
+                        <a href="#" data-en="Twitter" data-zh="推特">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-en="© 2024 Elegant Curtains. All rights reserved." data-zh="© 2024 优雅窗帘。保留所有权利。">© 2024 Elegant Curtains. All rights reserved.</p>
+                <p><a href="admin-login.html" style="color: #666; text-decoration: none; font-size: 0.9rem;" data-en="Admin Access" data-zh="管理员入口">Admin Access</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <div class="modal-header">
+                <h2 data-en="Welcome Back" data-zh="欢迎回来">Welcome Back</h2>
+                <p data-en="Please sign in to your account or create a new one" data-zh="请登录您的账户或创建新账户">Please sign in to your account or create a new one</p>
+            </div>
+            
+            <div class="modal-tabs">
+                <button class="tab-btn active" onclick="switchTab('login', event)" data-en="Login" data-zh="登录">Login</button>
+                <button class="tab-btn" onclick="switchTab('register', event)" data-en="Register" data-zh="注册">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="tab-content active" onsubmit="handleLoginSubmission(event)">
+                <div class="form-group">
+                    <label data-en="Email" data-zh="邮箱">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Password" data-zh="密码">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" data-en="Login" data-zh="登录">Login</button>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="registerForm" class="tab-content" onsubmit="handleRegisterSubmission(event)">
+                <div class="form-group">
+                    <label data-en="Full Name" data-zh="姓名">Full Name</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Email" data-zh="邮箱">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Phone" data-zh="电话">Phone</label>
+                    <input type="tel" id="registerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label data-en="Address" data-zh="地址">Address</label>
+                    <input type="text" id="registerAddress" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-en="City" data-zh="城市">City</label>
+                        <input type="text" id="registerCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="State" data-zh="州/省">State</label>
+                        <input type="text" id="registerState" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-en="ZIP Code" data-zh="邮编">ZIP Code</label>
+                    <input type="text" id="registerZIP" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-en="Password" data-zh="密码">Password</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Confirm Password" data-zh="确认密码">Confirm Password</label>
+                        <input type="password" id="registerConfirmPassword" required>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label for="agreeTerms">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <span data-en="I agree to the terms and conditions" data-zh="我同意条款和条件">I agree to the terms and conditions</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary" data-en="Register" data-zh="注册">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- On-site Quote Modal -->
+    <div id="onsiteQuoteModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('onsiteQuoteModal')">&times;</span>
+            <div class="modal-header">
+                <h2 data-en="On-site Measurement Appointment" data-zh="上门测量预约">On-site Measurement Appointment</h2>
+                <div class="service-info">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span data-en="Service Area: Within 20 miles of our store" data-zh="服务范围：门店20英里以内">Service Area: Within 20 miles of our store</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span data-en="Service Fee: $100 (waived after order placement)" data-zh="服务费：100美元（下单后减免）">Service Fee: $100 (waived after order placement)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="onsiteQuoteForm" onsubmit="handleOnsiteQuoteSubmission(event)">
+                <div class="form-section">
+                    <h3 data-en="Contact Information" data-zh="联系信息">Contact Information</h3>
+                    <div class="form-group">
+                        <label data-en="Full Name" data-zh="姓名">Full Name</label>
+                        <input type="text" id="onsiteName" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Phone Number" data-zh="电话号码">Phone Number</label>
+                        <input type="tel" id="onsitePhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Email Address" data-zh="邮箱地址">Email Address</label>
+                        <input type="email" id="onsiteEmail" required>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 data-en="Address Information" data-zh="地址信息">Address Information</h3>
+                    <div class="form-group">
+                        <label data-en="Street Address" data-zh="街道地址">Street Address</label>
+                        <input type="text" id="onsiteAddress" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-en="City" data-zh="城市">City</label>
+                            <input type="text" id="onsiteCity" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="ZIP Code" data-zh="邮编">ZIP Code</label>
+                            <input type="text" id="onsiteZIP" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 data-en="Property Information" data-zh="房产信息">Property Information</h3>
+                    <div class="form-group">
+                        <label data-en="Property Type" data-zh="房产类型">Property Type</label>
+                        <select id="onsitePropertyType" required>
+                            <option value="" data-en="Select Property Type" data-zh="选择房产类型">Select Property Type</option>
+                            <option value="single-family" data-en="Single Family Home" data-zh="单户住宅">Single Family Home</option>
+                            <option value="townhouse" data-en="Townhouse" data-zh="联排别墅">Townhouse</option>
+                            <option value="apartment" data-en="Apartment" data-zh="公寓">Apartment</option>
+                            <option value="custom" data-en="Custom" data-zh="自定义">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Number of Rooms" data-zh="房间数量">Number of Rooms</label>
+                        <input type="number" id="onsiteRooms" min="1" max="20" value="1" required>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 data-en="Select Available Date & Time" data-zh="选择可用日期和时间">Select Available Date & Time</h3>
+                    <p class="calendar-note" style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
+                        <span data-en="Note: Only dates within the next 14 days are available for booking." data-zh="注意：只能预约未来14天内的日期。">Note: Only dates within the next 14 days are available for booking.</span>
+                    </p>
+                    <div class="form-group">
+                        <div id="appointmentCalendar" class="appointment-calendar">
+                            <div class="calendar-header">
+                                <button type="button" class="calendar-nav" onclick="previousMonth()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <h3 id="calendarMonthTitle">January 2024</h3>
+                                <button type="button" class="calendar-nav" onclick="nextMonth()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div id="calendarGrid" class="calendar-grid">
+                                <!-- Calendar will be populated here -->
+                            </div>
+                            <div class="selected-slot-info" id="selectedSlotInfo" style="display: none;">
+                                <h4 data-en="Selected Time Slot" data-zh="已选择时间段">Selected Time Slot</h4>
+                                <p id="selectedSlotDetails"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 data-en="Additional Information" data-zh="附加信息">Additional Information</h3>
+                    <div class="form-group">
+                        <label data-en="Special Requirements or Notes" data-zh="特殊要求或备注">Special Requirements or Notes</label>
+                        <textarea id="onsiteNotes" rows="3" data-en="Any specific requirements or questions you have..." data-zh="您有任何特殊要求或问题..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('onsiteQuoteModal')" data-en="Cancel" data-zh="取消">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-en="Book Appointment" data-zh="预约上门">Book Appointment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Self Quote Modal -->
+    <div id="selfQuoteModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('selfQuoteModal')">&times;</span>
+            <div class="modal-header">
+                <h2 data-en="Self Measurement Quote" data-zh="自助量尺报价">Self Measurement Quote</h2>
+                <p data-en="Please add rooms and windows to get an accurate quote" data-zh="请添加房间和窗户以获得准确报价">Please add rooms and windows to get an accurate quote</p>
+            </div>
+            
+            <div class="quote-form">
+                <div class="form-section">
+                    <h3 data-en="Property Information" data-zh="房产信息">Property Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-en="Property Type" data-zh="房产类型">Property Type</label>
+                            <select id="selfPropertyType" class="property-type-selector" required>
+                                <option value="" data-en="Select Property Type" data-zh="选择房产类型">Select Property Type</option>
+                                <option value="single-family" data-en="Single Family Home" data-zh="单户住宅">Single Family Home</option>
+                                <option value="townhouse" data-en="Townhouse" data-zh="联排别墅">Townhouse</option>
+                                <option value="apartment" data-en="Apartment" data-zh="公寓">Apartment</option>
+                                <option value="custom" data-en="Custom" data-zh="自定义">Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Budget Range" data-zh="预算范围">Budget Range</label>
+                            <select id="selfBudget" class="budget-selector" required>
+                                <option value="" data-en="Select Budget Range" data-zh="选择预算范围">Select Budget Range</option>
+                                <option value="under-1000" data-en="Under $1,000" data-zh="$1,000以下">Under $1,000</option>
+                                <option value="1000-2500" data-en="$1,000 - $2,500" data-zh="$1,000 - $2,500">$1,000 - $2,500</option>
+                                <option value="2500-5000" data-en="$2,500 - $5,000" data-zh="$2,500 - $5,000">$2,500 - $5,000</option>
+                                <option value="5000-10000" data-en="$5,000 - $10,000" data-zh="$5,000 - $10,000">$5,000 - $10,000</option>
+                                <option value="over-10000" data-en="Over $10,000" data-zh="$10,000以上">Over $10,000</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Special Requirements or Notes" data-zh="特殊要求或备注">Special Requirements or Notes</label>
+                        <textarea id="selfNotes" rows="3" data-en="Any special requirements or notes..." data-zh="任何特殊要求或备注..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="rooms-section">
+                    <div class="section-header">
+                        <h3 data-en="Rooms & Windows" data-zh="房间和窗户">Rooms & Windows</h3>
+                        <button type="button" onclick="addRoom()" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> <span data-en="Add Room" data-zh="添加房间">Add Room</span>
+                        </button>
+                    </div>
+                    <div id="roomsContainer">
+                        <!-- Rooms will be added here -->
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="saveSelfQuote()" class="btn btn-secondary">
+                        <i class="fas fa-save"></i> <span data-en="Save Draft" data-zh="保存草稿">Save Draft</span>
+                    </button>
+                    <button type="button" onclick="previewSelfQuote()" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> <span data-en="Preview Inquiry" data-zh="预览询价">Preview Inquiry</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote Preview Modal -->
+    <div id="quotePreviewModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('quotePreviewModal')">&times;</span>
+            <div class="modal-header">
+                <h2 data-en="Inquiry Preview" data-zh="询价预览">Inquiry Preview</h2>
+                <p data-en="Please review your inquiry details before submission" data-zh="请在提交前检查您的询价详情">Please review your inquiry details before submission</p>
+            </div>
+            
+            <div class="quote-preview-content">
+                <div class="preview-section">
+                    <h3 data-en="Property Information" data-zh="房产信息">Property Information</h3>
+                    <div class="preview-details">
+                        <div class="preview-item">
+                            <span class="label" data-en="Property Type:" data-zh="房产类型：">Property Type:</span>
+                            <span id="previewPropertyType">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="label" data-en="Budget Range:" data-zh="预算范围：">Budget Range:</span>
+                            <span id="previewBudget">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="label" data-en="Notes:" data-zh="备注：">Notes:</span>
+                            <span id="previewNotes">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h3 data-en="Rooms & Windows Summary" data-zh="房间和窗户摘要">Rooms & Windows Summary</h3>
+                    <div id="previewRoomsSummary">
+                        <!-- Rooms summary will be generated here -->
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h3 data-en="Inquiry Summary" data-zh="询价摘要">Inquiry Summary</h3>
+                    <div class="quote-summary-final">
+                        <div class="summary-item">
+                            <span data-en="Total Rooms:" data-zh="总房间数：">Total Rooms:</span>
+                            <span id="previewTotalRooms">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span data-en="Total Windows:" data-zh="总窗户数：">Total Windows:</span>
+                            <span id="previewTotalWindows">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-actions">
+                    <button type="button" onclick="closeModal('quotePreviewModal')" class="btn btn-secondary">
+                        <span data-en="Back to Edit" data-zh="返回编辑">Back to Edit</span>
+                    </button>
+                    <button type="button" onclick="submitSelfQuote()" class="btn btn-success">
+                        <i class="fas fa-check"></i> <span data-en="Confirm & Submit" data-zh="确认并提交">Confirm & Submit</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('cartModal')">&times;</span>
+            <h2 data-en="Shopping Cart" data-zh="购物车">Shopping Cart</h2>
+            
+            <div id="cartContent">
+                <!-- Cart content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Dashboard Modal -->
+    <div id="customerDashboardModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('customerDashboardModal')">&times;</span>
+            <h2 data-en="Customer Dashboard" data-zh="客户仪表板">Customer Dashboard</h2>
+            
+                            <div class="dashboard-tabs">
+                    <button class="tab-btn active" onclick="switchDashboardTab('profile')" data-en="Profile" data-zh="个人资料">Profile</button>
+                    <button class="tab-btn" onclick="switchDashboardTab('orders')" data-en="My Orders" data-zh="我的订单">My Orders</button>
+                    <button class="tab-btn" onclick="switchDashboardTab('quotes')" data-en="My Quotes" data-zh="我的报价">My Quotes</button>
+                    <button class="tab-btn" onclick="switchDashboardTab('appointments')" data-en="My Appointments" data-zh="我的预约">My Appointments</button>
+                    <button class="tab-btn" onclick="switchDashboardTab('onsiteMeasurement')" data-en="On-site Measurement" data-zh="上门测量">On-site Measurement</button>
+                    <button class="tab-btn" onclick="switchDashboardTab('favorites')" data-en="My Favorites" data-zh="我的收藏">My Favorites</button>
+                </div>
+            
+            <div id="dashboardContent">
+                <!-- Dashboard content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote Table Modal -->
+    <div id="quoteTableModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('quoteTableModal')">&times;</span>
+            <div class="quote-table">
+                <div class="quote-header">
+                    <h2 data-en="Quote Details" data-zh="报价详情">Quote Details</h2>
+                    <div class="quote-info">
+                        <div class="info-item">
+                            <span data-en="Quote ID:" data-zh="报价编号：">Quote ID:</span>
+                            <span id="quoteId">Q12345</span>
+                        </div>
+                        <div class="info-item">
+                            <span data-en="Date:" data-zh="日期：">Date:</span>
+                            <span id="quoteDate">01/01/2024</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="customer-info">
+                    <h3 data-en="Customer Information" data-zh="客户信息">Customer Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span data-en="Name:" data-zh="姓名：">Name:</span>
+                            <span id="customerName">John Doe</span>
+                        </div>
+                        <div class="info-item">
+                            <span data-en="Email:" data-zh="邮箱：">Email:</span>
+                            <span id="customerEmail">john@example.com</span>
+                        </div>
+                        <div class="info-item">
+                            <span data-en="Phone:" data-zh="电话：">Phone:</span>
+                            <span id="customerPhone">(555) 123-4567</span>
+                        </div>
+                        <div class="info-item">
+                            <span data-en="Address:" data-zh="地址：">Address:</span>
+                            <span id="customerAddress">123 Main St, City, State 12345</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quote-items">
+                    <h3 data-en="Quote Items" data-zh="报价项目">Quote Items</h3>
+                    <div id="quoteItemsList">
+                        <!-- Quote items will be generated here -->
+                    </div>
+                </div>
+                
+                <div class="quote-summary">
+                    <div class="summary-item">
+                        <span data-en="Subtotal:" data-zh="小计：">Subtotal:</span>
+                        <span id="quoteSubtotal">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span data-en="Tax:" data-zh="税费：">Tax:</span>
+                        <span id="quoteTax">$0.00</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span data-en="Total:" data-zh="总计：">Total:</span>
+                        <span id="quoteTotal">$0.00</span>
+                    </div>
+                </div>
+                
+                <div class="quote-notes">
+                    <h3 data-en="Notes" data-zh="备注">Notes</h3>
+                    <p id="quoteNotes">No additional notes.</p>
+                </div>
+                
+                <div class="quote-actions">
+                    <button onclick="printQuote()" class="btn btn-secondary" data-en="Print Quote" data-zh="打印报价">Print Quote</button>
+                    <button onclick="acceptQuote()" class="btn btn-primary" data-en="Accept Quote" data-zh="接受报价">Accept Quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('successModal')">&times;</span>
+            <div class="success-content">
+                <i class="fas fa-check-circle"></i>
+                <h3 id="successTitle" data-en="Success!" data-zh="成功！">Success!</h3>
+                <p id="successMessage" data-en="Your request has been submitted successfully." data-zh="您的请求已成功提交。">Your request has been submitted successfully.</p>
+                <button onclick="closeModal('successModal')" class="btn btn-primary" data-en="Close" data-zh="关闭">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

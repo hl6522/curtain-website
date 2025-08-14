@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Elegant Curtains</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i class="fas fa-home"></i>
+                <span data-en="Elegant Curtains Admin" data-zh="优雅窗帘管理">Elegant Curtains Admin</span>
+            </div>
+            <div class="header-controls">
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                </div>
+                <div class="user-menu">
+                    <span class="user-name" data-en="Admin User" data-zh="管理员">Admin User</span>
+                    <a href="content-login.html" class="content-login-link" data-en="Content Management" data-zh="内容管理">Content Management</a>
+                    <button class="logout-btn" onclick="logout()" data-en="Logout" data-zh="退出">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Navigation -->
+    <nav class="admin-nav">
+        <ul class="nav-menu">
+            <li class="nav-item active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span data-en="Dashboard" data-zh="仪表板">Dashboard</span>
+            </li>
+            <li class="nav-item" data-tab="quotes">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span data-en="Quote Requests" data-zh="报价请求">Quote Requests</span>
+            </li>
+            <li class="nav-item" data-tab="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span data-en="Orders" data-zh="订单">Orders</span>
+            </li>
+            <li class="nav-item" data-tab="customers">
+                <i class="fas fa-users"></i>
+                <span data-en="Customers" data-zh="客户">Customers</span>
+            </li>
+            <li class="nav-item" data-tab="appointments">
+                <i class="fas fa-calendar-alt"></i>
+                <span data-en="Appointments" data-zh="预约">Appointments</span>
+            </li>
+            <li class="nav-item" data-tab="inventory">
+                <i class="fas fa-boxes"></i>
+                <span data-en="Inventory" data-zh="库存">Inventory</span>
+            </li>
+            <li class="nav-item" data-tab="reports">
+                <i class="fas fa-chart-bar"></i>
+                <span data-en="Reports" data-zh="报告">Reports</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-header">
+                <h1 data-en="Dashboard Overview" data-zh="仪表板概览">Dashboard Overview</h1>
+                <p data-en="Welcome back! Here's what's happening with your business today." data-zh="欢迎回来！以下是您今天的业务概况。">Welcome back! Here's what's happening with your business today.</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="pendingQuotes">0</h3>
+                        <p data-en="Pending Quotes" data-zh="待处理报价">Pending Quotes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="activeOrders">0</h3>
+                        <p data-en="Active Orders" data-zh="活跃订单">Active Orders</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="todayAppointments">0</h3>
+                        <p data-en="Today's Appointments" data-zh="今日预约">Today's Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="confirmedAppointments">0</h3>
+                        <p data-en="Confirmed Appointments" data-zh="已确认预约">Confirmed Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="monthlyRevenue">$0</h3>
+                        <p data-en="Monthly Revenue" data-zh="月收入">Monthly Revenue</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="dashboard-sections">
+                <div class="section">
+                    <h2 data-en="Recent Quote Requests" data-zh="最近的报价请求">Recent Quote Requests</h2>
+                    <div class="recent-quotes" id="recentQuotes">
+                        <!-- Recent quotes will be populated here -->
+                    </div>
+                </div>
+                <div class="section">
+                    <h2 data-en="Upcoming Appointments" data-zh="即将到来的预约">Upcoming Appointments</h2>
+                    <div class="upcoming-appointments" id="upcomingAppointments">
+                        <!-- Appointments will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Appointment Status Overview -->
+            <div class="dashboard-sections">
+                <div class="section">
+                    <h2 data-en="Appointment Status Overview" data-zh="预约状态概览">Appointment Status Overview</h2>
+                    <div class="appointment-status-overview" id="appointmentStatusOverview">
+                        <!-- Appointment status overview will be populated here -->
+                    </div>
+                </div>
+                <div class="section">
+                    <h2 data-en="Recent Confirmed Appointments" data-zh="最近确认的预约">Recent Confirmed Appointments</h2>
+                    <div class="recent-confirmed-appointments" id="recentConfirmedAppointments">
+                        <!-- Recent confirmed appointments will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quotes Tab -->
+        <div id="quotes" class="tab-content">
+            <div class="tab-header">
+                <h1 data-en="Quote Requests" data-zh="报价请求">Quote Requests</h1>
+                <div class="tab-actions">
+                    <select id="quoteStatusFilter" class="status-filter">
+                        <option value="all" data-en="All Statuses" data-zh="所有状态">All Statuses</option>
+                        <option value="pending" data-en="Pending" data-zh="待处理">Pending</option>
+                        <option value="reviewed" data-en="Reviewed" data-zh="已审核">Reviewed</option>
+                        <option value="quoted" data-en="Quoted" data-zh="已报价">Quoted</option>
+                        <option value="accepted" data-en="Accepted" data-zh="已接受">Accepted</option>
+                        <option value="rejected" data-en="Rejected" data-zh="已拒绝">Rejected</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="exportQuotes()" data-en="Export" data-zh="导出">Export</button>
+                </div>
+            </div>
+
+            <div class="quotes-table-container">
+                <table class="quotes-table">
+                    <thead>
+                        <tr>
+                            <th data-en="Date" data-zh="日期">Date</th>
+                            <th data-en="Customer" data-zh="客户">Customer</th>
+                            <th data-en="Room Type" data-zh="房间类型">Room Type</th>
+                            <th data-en="Windows" data-zh="窗户">Windows</th>
+                            <th data-en="Budget" data-zh="预算">Budget</th>
+                            <th data-en="Status" data-zh="状态">Status</th>
+                            <th data-en="Actions" data-zh="操作">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotesTableBody">
+                        <!-- Quotes will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="orders" class="tab-content">
+            <div class="tab-header">
+                <h1 data-en="Orders" data-zh="订单">Orders</h1>
+                <div class="tab-actions">
+                    <select id="orderStatusFilter" class="status-filter">
+                        <option value="all" data-en="All Orders" data-zh="所有订单">All Orders</option>
+                        <option value="pending" data-en="Pending" data-zh="待处理">Pending</option>
+                        <option value="confirmed" data-en="Confirmed" data-zh="已确认">Confirmed</option>
+                        <option value="in-production" data-en="In Production" data-zh="生产中">In Production</option>
+                        <option value="ready" data-en="Ready" data-zh="准备就绪">Ready</option>
+                        <option value="installed" data-en="Installed" data-zh="已安装">Installed</option>
+                        <option value="completed" data-en="Completed" data-zh="已完成">Completed</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="createOrder()" data-en="Create Order" data-zh="创建订单">Create Order</button>
+                </div>
+            </div>
+
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th data-en="Order ID" data-zh="订单号">Order ID</th>
+                            <th data-en="Customer" data-zh="客户">Customer</th>
+                            <th data-en="Items" data-zh="项目">Items</th>
+                            <th data-en="Total" data-zh="总计">Total</th>
+                            <th data-en="Status" data-zh="状态">Status</th>
+                            <th data-en="Order Date" data-zh="订单日期">Order Date</th>
+                            <th data-en="Actions" data-zh="操作">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Orders will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Customers Tab -->
+        <div id="customers" class="tab-content">
+            <div class="tab-header">
+                <h1 data-en="Customers & Users" data-zh="客户和用户">Customers & Users</h1>
+                <div class="tab-actions">
+                    <select id="userTypeFilter" class="filter-select">
+                        <option value="all" data-en="All Users" data-zh="所有用户">All Users</option>
+                    </select>
+                    <input type="text" id="customerSearch" placeholder="Search customers..." class="search-input">
+                    <button class="btn btn-primary" onclick="addCustomer()" data-en="Add Customer" data-zh="添加客户">Add Customer</button>
+                </div>
+            </div>
+
+            <!-- Customer Statistics -->
+            <div class="customer-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalCustomers">0</span>
+                    <span class="stat-label" data-en="Total Customers" data-zh="总客户数">Total Customers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="activeCustomers">0</span>
+                    <span class="stat-label" data-en="Active Customers" data-zh="活跃客户">Active Customers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="newCustomers">0</span>
+                    <span class="stat-label" data-en="New Customers" data-zh="新客户">New Customers</span>
+                </div>
+            </div>
+
+            <div class="customers-grid" id="customersGrid">
+                <!-- Customer cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Appointments Tab -->
+        <div id="appointments" class="tab-content">
+            <div class="tab-header">
+                <h1 data-en="Appointments & Time Management" data-zh="预约和时间管理">Appointments & Time Management</h1>
+                <div class="tab-actions">
+                    <button class="btn btn-secondary" onclick="scheduleAppointment()" data-en="Schedule Appointment" data-zh="安排预约">Schedule Appointment</button>
+                </div>
+            </div>
+
+            <!-- Appointments Overview -->
+            <div class="appointments-overview">
+                <div class="overview-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalAppointments">0</span>
+                        <span class="stat-label" data-en="Total Appointments" data-zh="总预约数">Total Appointments</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="pendingAppointments">0</span>
+                        <span class="stat-label" data-en="Pending" data-zh="待确认">Pending</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="confirmedAppointments">0</span>
+                        <span class="stat-label" data-en="Confirmed" data-zh="已确认">Confirmed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments List -->
+            <div class="appointments-section">
+                <h3 data-en="All Appointments" data-zh="所有预约">All Appointments</h3>
+                <div class="appointments-filters">
+                    <select id="appointmentStatusFilter" class="filter-select">
+                        <option value="all" data-en="All Status" data-zh="所有状态">All Status</option>
+                        <option value="pending" data-en="Pending" data-zh="待确认">Pending</option>
+                        <option value="confirmed" data-zh="Confirmed" data-zh="已确认">Confirmed</option>
+                        <option value="cancelled" data-en="Cancelled" data-zh="已取消">Cancelled</option>
+                    </select>
+                    <input type="text" id="appointmentSearch" placeholder="Search appointments..." class="search-input">
+                </div>
+                <div id="appointmentsList" class="appointments-list">
+                    <!-- Appointments will be populated here -->
+                </div>
+            </div>
+
+            <!-- Time Slot Status Legend -->
+            <div class="calendar-legend">
+                <h4 data-en="Time Slot Status Legend" data-zh="时间段状态图例">Time Slot Status Legend</h4>
+                <div class="legend-grid">
+                    <div class="legend-item">
+                        <div class="legend-color available"></div>
+                        <span data-en="Available" data-zh="可预约">Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color unavailable"></div>
+                        <span data-en="Unavailable" data-zh="不可预约">Unavailable</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color no-slot"></div>
+                        <span data-en="No Slot" data-zh="无时间段">No Slot</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color onsite-measurement"></div>
+                        <span data-en="On-site Measurement" data-zh="上门测量">On-site Measurement</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color installation"></div>
+                        <span data-en="Installation" data-zh="上门安装">Installation</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color maintenance"></div>
+                        <span data-en="Maintenance" data-zh="维护">Maintenance</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color confirmed-measurement"></div>
+                        <span data-en="Confirmed On-site Measurement" data-zh="已确认上门测量">Confirmed On-site Measurement</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color confirmed-installation"></div>
+                        <span data-en="Confirmed Installation" data-zh="已确认上门安装">Confirmed Installation</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color confirmed-maintenance"></div>
+                        <span data-en="Confirmed Maintenance" data-zh="已确认维护">Confirmed Maintenance</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Calendar with Time Slot Management -->
+            <div class="appointments-calendar">
+                <div class="calendar-header">
+                    <div class="calendar-title">
+                        <h3 data-en="Appointments Calendar" data-zh="预约日历">Appointments Calendar</h3>
+                        <p data-en="Click on a date to manage time slots" data-zh="点击日期管理时间段">Click on a date to manage time slots</p>
+                    </div>
+                    <div class="calendar-controls">
+                        <button class="calendar-nav" onclick="previousMonth()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h2 id="currentMonth" data-en="January 2024" data-zh="2024年1月">January 2024</h2>
+                        <button class="calendar-nav" onclick="nextMonth()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Calendar Grid -->
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be populated here -->
+                </div>
+                
+                <!-- Time Slot Management Panel -->
+                <div class="time-slot-panel" id="timeSlotPanel" style="display: none;">
+                    <h4 id="selectedDateTitle" data-en="Time Slots for" data-zh="时间段设置：">Time Slots for</h4>
+                    
+                    <!-- Add New Time Slot -->
+                    <div class="add-time-slot">
+                        <h5 data-en="Add New Time Slot" data-zh="添加新时间段">Add New Time Slot</h5>
+                        <div class="time-slot-form">
+                            <select id="newSlotTime" class="time-select">
+                                <option value="morning" data-en="Morning (9 AM - 12 PM)" data-zh="上午 (9:00 - 12:00)">Morning (9 AM - 12 PM)</option>
+                                <option value="afternoon" data-en="Afternoon (1 PM - 4 PM)" data-zh="下午 (1:00 - 4:00)">Afternoon (1 PM - 4 PM)</option>
+                            </select>
+                            <button type="button" class="btn btn-primary" onclick="addTimeSlotForDate()" data-en="Add" data-zh="添加">Add</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Time Slots for Selected Date -->
+                    <div class="current-date-slots">
+                        <h5 data-en="Current Time Slots" data-zh="当前时间段">Current Time Slots</h5>
+                        <div id="currentDateSlots" class="date-slots-list">
+                            <!-- Time slots for selected date will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Batch Edit Controls -->
+                <div class="batch-edit-controls">
+                    <h5 data-en="Batch Edit Time Slots" data-zh="批量编辑时间段">Batch Edit Time Slots</h5>
+                    <p data-en="Click on dates to select them, then use batch edit to set time slot status for multiple dates" data-zh="点击日期选择，然后使用批量编辑为多个日期设置时间段状态">Click on dates to select them, then use batch edit to set time slot status for multiple dates</p>
+                    <button type="button" class="btn btn-warning" onclick="batchEditTimeSlots()" data-en="Batch Edit Selected Dates" data-zh="批量编辑选中日期">Batch Edit Selected Dates</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearSelectedDates()" data-en="Clear Selection" data-zh="清除选择">Clear Selection</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <div class="tab-header">
+                <h1 data-en="Inventory Management" data-zh="库存管理">Inventory Management</h1>
+                <div class="tab-actions">
+                    <button class="btn btn-primary" onclick="addInventoryItem()" data-en="Add Item" data-zh="添加项目">Add Item</button>
+                </div>
+            </div>
+
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- Inventory items will be populated here -->
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="tab-header">
+                <h1 data-en="Reports & Analytics" data-zh="报告和分析">Reports & Analytics</h1>
+                <div class="tab-actions">
+                    <select id="reportPeriod" class="period-selector">
+                        <option value="7" data-en="Last 7 Days" data-zh="最近7天">Last 7 Days</option>
+                        <option value="30" data-en="Last 30 Days" data-zh="最近30天">Last 30 Days</option>
+                        <option value="90" data-en="Last 90 Days" data-zh="最近90天">Last 90 Days</option>
+                        <option value="365" data-en="Last Year" data-zh="去年">Last Year</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="generateReport()" data-en="Generate Report" data-zh="生成报告">Generate Report</button>
+                </div>
+            </div>
+
+            <div class="reports-content">
+                <div class="report-charts">
+                    <div class="chart-container">
+                        <h3 data-en="Revenue Trend" data-zh="收入趋势">Revenue Trend</h3>
+                        <div class="chart-placeholder" id="revenueChart">
+                            <p data-en="Chart will be displayed here" data-zh="图表将在此显示">Chart will be displayed here</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3 data-en="Order Status Distribution" data-zh="订单状态分布">Order Status Distribution</h3>
+                        <div class="chart-placeholder" id="orderStatusChart">
+                            <p data-en="Chart will be displayed here" data-zh="图表将在此显示">Chart will be displayed here</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-summary">
+                    <h3 data-en="Summary" data-zh="摘要">Summary</h3>
+                    <div class="summary-stats" id="summaryStats">
+                        <!-- Summary stats will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Quote Detail Modal -->
+    <div id="quoteDetailModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('quoteDetailModal')">&times;</span>
+            <div class="quote-detail-content">
+                <h2 data-en="Quote Request Details" data-zh="报价请求详情">Quote Request Details</h2>
+                <div class="quote-info" id="quoteDetailInfo">
+                    <!-- Quote details will be populated here -->
+                </div>
+                <div class="quote-actions">
+                    <div class="form-group">
+                        <label for="quoteAmount" data-en="Quote Amount ($)" data-zh="报价金额（$）">Quote Amount ($)</label>
+                        <input type="number" id="quoteAmount" min="0" step="0.01" placeholder="Enter amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="quoteNotes" data-en="Notes & Recommendations" data-zh="备注和建议">Notes & Recommendations</label>
+                        <textarea id="quoteNotes" rows="4" placeholder="Enter your notes and recommendations..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="quoteStatus" data-en="Status" data-zh="状态">Status</label>
+                        <select id="quoteStatus">
+                            <option value="pending" data-en="Pending" data-zh="待处理">Pending</option>
+                            <option value="reviewed" data-en="Reviewed" data-zh="已审核">Reviewed</option>
+                            <option value="quoted" data-en="Quoted" data-zh="已报价">Quoted</option>
+                            <option value="accepted" data-en="Accepted" data-zh="已接受">Accepted</option>
+                            <option value="rejected" data-en="Rejected" data-zh="已拒绝">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="modal-buttons">
+                        <button class="btn btn-secondary" onclick="closeModal('quoteDetailModal')" data-en="Cancel" data-zh="取消">Cancel</button>
+                        <button class="btn btn-primary" onclick="updateQuote()" data-en="Update Quote" data-zh="更新报价">Update Quote</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('appointmentModal')">&times;</span>
+            <div class="appointment-form">
+                <h2 data-en="Schedule Appointment" data-zh="安排预约">Schedule Appointment</h2>
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label for="appointmentCustomer" data-en="Customer" data-zh="客户">Customer</label>
+                        <select id="appointmentCustomer" required>
+                            <option value="" data-en="Select Customer" data-zh="选择客户">Select Customer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentDate" data-en="Date" data-zh="日期">Date</label>
+                        <input type="date" id="appointmentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime" data-en="Time" data-zh="时间">Time</label>
+                        <input type="time" id="appointmentTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentType" data-en="Type" data-zh="类型">Type</label>
+                        <select id="appointmentType" required>
+                            <option value="" data-en="Select Type" data-zh="选择类型">Select Type</option>
+                            <option value="measurement" data-en="Measurement" data-zh="测量">Measurement</option>
+                            <option value="consultation" data-en="Consultation" data-zh="咨询">Consultation</option>
+                            <option value="installation" data-en="Installation" data-zh="安装">Installation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentNotes" data-en="Notes" data-zh="备注">Notes</label>
+                        <textarea id="appointmentNotes" rows="3" placeholder="Any additional notes..."></textarea>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('appointmentModal')" data-en="Cancel" data-zh="取消">Cancel</button>
+                        <button type="submit" class="btn btn-primary" data-en="Schedule" data-zh="安排">Schedule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Customer Detail Modal -->
+    <div id="customerDetailModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('customerDetailModal')">&times;</span>
+            <div class="modal-header">
+                <h2 data-en="Customer Details" data-zh="客户详情">Customer Details</h2>
+            </div>
+            <div class="customer-detail-content" id="customerDetailContent">
+                <!-- Customer details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check admin access before loading the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                // Redirect to admin login page
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            try {
+                const userInfo = JSON.parse(currentUser);
+                if (userInfo.userType !== 'admin') {
+                    alert('Access denied. Admin privileges required.');
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+                
+                // Update user name in header
+                const userNameElement = document.querySelector('.user-name');
+                if (userNameElement) {
+                    userNameElement.textContent = userInfo.name || 'Admin User';
+                }
+            } catch (e) {
+                alert('Invalid user session');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+        });
+    </script>
+    <script src="admin-script.js"></script>
+</body>
+</html>

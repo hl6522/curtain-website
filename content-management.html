@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Content Management - Elegant Curtains</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .content-management-container {
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+        
+        .content-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .content-header .brand-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-header .brand-logo .logo-icon {
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .content-header .brand-logo .brand-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .content-header .brand-logo .brand-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            line-height: 1;
+        }
+        
+        .content-header .brand-logo .brand-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+            margin: 0;
+            font-weight: 400;
+        }
+        
+        .content-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        
+        .content-header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content-nav {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        
+        .content-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .content-nav .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .content-nav .logout-btn {
+            padding: 0.5rem 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .content-nav .admin-login-link {
+            padding: 0.5rem 1rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+        
+        .content-nav .admin-login-link:hover {
+            background: #2980b9;
+        }
+        
+        .language-switcher {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .form-group input + input,
+        .form-group textarea + textarea {
+            margin-top: 0.5rem;
+        }
+        
+        .form-group input[placeholder*="中文"],
+        .form-group textarea[placeholder*="中文"] {
+            border-left: 3px solid #667eea;
+        }
+        
+        .content-main {
+            padding: 2rem 0;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .content-section-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .content-section-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+        }
+        
+        .content-section-body {
+            padding: 1.5rem;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .content-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .content-item .item-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .content-item .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .content-item .btn-edit {
+            background: #007bff;
+            color: white;
+        }
+        
+        .content-item .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .content-item .btn-add {
+            background: #28a745;
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .btn-save {
+            background: #28a745;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            margin-right: 1rem;
+        }
+        
+        .background-slideshow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .background-item {
+            position: relative;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .background-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .background-item .item-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .background-item:hover .item-overlay {
+            opacity: 1;
+        }
+        
+        .background-item .item-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .background-item .btn {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+        }
+        
+        .about-content-editor {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .about-text-editor {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .about-image-editor {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .about-image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .about-content-editor {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content-management-container">
+        <!-- Header -->
+        <div class="content-header">
+            <div class="container">
+                <div class="brand-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h2 class="brand-name">Elegant Curtains</h2>
+                        <p class="brand-subtitle">Content Management</p>
+                    </div>
+                </div>
+                <h1>Content Management Dashboard</h1>
+                <p>Manage website content, images, and media</p>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="content-nav">
+            <div class="container">
+                <div class="user-info">
+                    <span id="userName">Content Manager</span>
+                    <a href="admin-login.html" class="admin-login-link">Admin Login</a>
+                    <a href="javascript:void(0)" onclick="logout()" class="logout-btn">Logout</a>
+                </div>
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">English</button>
+                    <button class="lang-btn" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content-main">
+            <div class="container">
+                <!-- Product Series Management -->
+                <div class="content-section">
+                    <div class="content-section-header">
+                        <h2>Product Series Management</h2>
+                    </div>
+                    <div class="content-section-body">
+                        <div class="content-grid" id="productSeriesGrid">
+                            <!-- Product series items will be loaded here -->
+                        </div>
+                        <button class="btn btn-add" onclick="openProductSeriesModal()">
+                            <i class="fas fa-plus"></i> Add New Product Series
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Gallery Management -->
+                <div class="content-section">
+                    <div class="content-section-header">
+                        <h2>Gallery Management</h2>
+                    </div>
+                    <div class="content-section-body">
+                        <div class="content-grid" id="galleryGrid">
+                            <!-- Gallery items will be loaded here -->
+                        </div>
+                        <button class="btn btn-add" onclick="openGalleryModal()">
+                            <i class="fas fa-plus"></i> Add New Gallery Item
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Homepage Background Management -->
+                <div class="content-section">
+                    <div class="content-section-header">
+                        <h2>Homepage Background Images</h2>
+                    </div>
+                    <div class="content-section-body">
+                        <div class="background-slideshow" id="backgroundSlideshow">
+                            <!-- Background images will be loaded here -->
+                        </div>
+                        <button class="btn btn-add" onclick="openBackgroundModal()">
+                            <i class="fas fa-plus"></i> Add New Background Image
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- About Us Management -->
+                <div class="content-section">
+                    <div class="content-section-header">
+                        <h2>About Us Page Management</h2>
+                    </div>
+                    <div class="content-section-body">
+                        <div class="about-content-editor">
+                            <div class="about-text-editor">
+                                <h3 id="textContentTitle">Text Content</h3>
+                                <div class="form-group">
+                                    <label id="titleLabel">Title</label>
+                                    <div id="titleInputs">
+                                        <input type="text" id="aboutTitle" value="About Elegant Curtains" placeholder="English title" class="lang-input" data-lang="en">
+                                        <input type="text" id="aboutTitleZh" value="关于优雅窗帘" placeholder="中文标题" class="lang-input" data-lang="zh" style="display: none;">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label id="descriptionLabel">Description</label>
+                                    <div id="descriptionInputs">
+                                        <textarea id="aboutDescription" placeholder="English description" class="lang-input" data-lang="en">We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.</textarea>
+                                        <textarea id="aboutDescriptionZh" placeholder="中文描述" class="lang-input" data-lang="zh" style="display: none;">我们是一家家族企业，拥有超过20年制作精美窗帘的经验。我们对质量和客户满意度的承诺使我们成为整个地区房主的值得信赖的选择。</textarea>
+                                    </div>
+                                </div>
+                                <button class="btn btn-save" id="saveButton" onclick="saveAboutText()">Save Text Changes</button>
+                            </div>
+                            <div class="about-image-editor">
+                                <h3>Right Side Image</h3>
+                                <img id="aboutImagePreview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFib3V0IFVzPC90ZXh0Pjwvc3ZnPg==" alt="About Us" class="about-image-preview">
+                                <div class="form-group">
+                                    <label for="aboutImageFile">Upload New Image</label>
+                                    <input type="file" id="aboutImageFile" accept="image/*">
+                                </div>
+                                <button class="btn btn-save" onclick="saveAboutImage()">Save Image</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Series Modal -->
+    <div id="productSeriesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="productSeriesModalTitle">Add New Product Series</h3>
+                <span class="close" onclick="closeProductSeriesModal()">&times;</span>
+            </div>
+            <form id="productSeriesForm">
+                <div class="form-group">
+                    <label id="seriesNameLabel">Series Name</label>
+                    <div id="seriesNameInputs">
+                        <input type="text" id="productSeriesName" placeholder="English name" required class="lang-input" data-lang="en">
+                        <input type="text" id="productSeriesNameZh" placeholder="中文名称" required class="lang-input" data-lang="zh" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="seriesDescriptionLabel">Description</label>
+                    <div id="seriesDescriptionInputs">
+                        <textarea id="productSeriesDescription" placeholder="English description" required class="lang-input" data-lang="en"></textarea>
+                        <textarea id="productSeriesDescriptionZh" placeholder="中文描述" required class="lang-input" data-lang="zh" style="display: none;"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="productSeriesImage">Image</label>
+                    <input type="file" id="productSeriesImage" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="productSeriesCategory">Category</label>
+                    <select id="productSeriesCategory" required>
+                        <option value="blackout">Blackout Curtains</option>
+                        <option value="roller">Roller Blinds</option>
+                        <option value="sheer">Sheer Elegance</option>
+                        <option value="roman">Roman Shades</option>
+                        <option value="drapery">Elegant Drapery</option>
+                        <option value="layered">Layered Treatments</option>
+                        <option value="moisture">Moisture Resistant</option>
+                        <option value="valances">Classic Valances</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-save">Save Product Series</button>
+                <button type="button" class="btn btn-cancel" onclick="closeProductSeriesModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Gallery Modal -->
+    <div id="galleryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="galleryModalTitle">Add New Gallery Item</h3>
+                <span class="close" onclick="closeGalleryModal()">&times;</span>
+            </div>
+            <form id="galleryForm">
+                <div class="form-group">
+                    <label id="galleryTitleLabel">Title</label>
+                    <div id="galleryTitleInputs">
+                        <input type="text" id="galleryTitle" placeholder="English title" required class="lang-input" data-lang="en">
+                        <input type="text" id="galleryTitleZh" placeholder="中文标题" required class="lang-input" data-lang="zh" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="galleryDescriptionLabel">Description</label>
+                    <div id="galleryDescriptionInputs">
+                        <textarea id="galleryDescription" placeholder="English description" required class="lang-input" data-lang="en"></textarea>
+                        <textarea id="galleryDescriptionZh" placeholder="中文描述" required class="lang-input" data-lang="zh" style="display: none;"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="galleryImage">Image</label>
+                    <input type="file" id="galleryImage" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-save">Save Gallery Item</button>
+                <button type="button" class="btn btn-cancel" onclick="closeGalleryModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Background Modal -->
+    <div id="backgroundModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Background Image</h3>
+                <span class="close" onclick="closeBackgroundModal()">&times;</span>
+            </div>
+            <form id="backgroundForm">
+                <div class="form-group">
+                    <label for="backgroundImage">Background Image</label>
+                    <input type="file" id="backgroundImage" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="backgroundOrder">Display Order</label>
+                    <input type="number" id="backgroundOrder" min="1" value="1">
+                </div>
+                <button type="submit" class="btn btn-save">Save Background Image</button>
+                <button type="button" class="btn btn-cancel" onclick="closeBackgroundModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="content-management.js"></script>
+</body>
+</html>

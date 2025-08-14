@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <meta name="translate" content="no">
+    <title data-en="Shopping Cart - Elegant Curtains" data-zh="购物车 - 优雅窗帘">Shopping Cart - Elegant Curtains</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2 data-en="Elegant Curtains" data-zh="优雅窗帘">Elegant Curtains</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" data-en="Home" data-zh="首页">Home</a></li>
+                <li><a href="index.html#about" data-en="About" data-zh="关于我们">About</a></li>
+                <li><a href="index.html#gallery" data-en="Gallery" data-zh="案例展示">Gallery</a></li>
+                <li><a href="index.html#contact" data-en="Contact" data-zh="联系我们">Contact</a></li>
+            </ul>
+            <div class="cart-nav-actions">
+                <a href="index.html" class="btn btn-secondary" data-en="Continue Shopping" data-zh="继续购物">Continue Shopping</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Header Section -->
+    <section class="cart-header-section">
+        <div class="container">
+            <h1 data-en="Shopping Cart" data-zh="购物车">Shopping Cart</h1>
+            <p data-en="Review your selected items and proceed to checkout" data-zh="查看您选择的商品并继续结算">Review your selected items and proceed to checkout</p>
+        </div>
+    </section>
+
+    <!-- Cart Content -->
+    <section class="cart-content">
+        <div class="container">
+            <div class="cart-layout">
+                <!-- Cart Items Section -->
+                <div class="cart-items-section">
+                    <div class="cart-header">
+                        <h2 data-en="Cart Items" data-zh="购物车商品">Cart Items</h2>
+                        <button onclick="clearCart()" class="btn btn-danger" data-en="Clear Cart" data-zh="清空购物车">Clear Cart</button>
+                    </div>
+                    
+                    <div class="cart-items-list" id="cartItemsList">
+                        <!-- Cart items will be loaded here -->
+                    </div>
+                    
+                    <div class="cart-empty" id="cartEmpty" style="display: none;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3 data-en="Your cart is empty" data-zh="您的购物车是空的">Your cart is empty</h3>
+                        <p data-en="Add some beautiful curtains to get started!" data-zh="添加一些美丽的窗帘开始吧！">Add some beautiful curtains to get started!</p>
+                        <a href="index.html" class="btn btn-primary" data-en="Browse Products" data-zh="浏览产品">Browse Products</a>
+                    </div>
+                </div>
+
+                <!-- Cart Summary Section -->
+                <div class="cart-summary-section">
+                    <div class="cart-summary-card">
+                        <h3 data-en="Order Summary" data-zh="订单摘要">Order Summary</h3>
+                        
+                        <div class="summary-items">
+                            <div class="summary-item">
+                                <span data-en="Subtotal:" data-zh="小计：">Subtotal:</span>
+                                <span id="cartSubtotal">$0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span data-en="Tax (8.875%):" data-zh="税费 (8.875%)：">Tax (8.875%):</span>
+                                <span id="cartTax">$0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span data-en="Shipping:" data-zh="运费：">Shipping:</span>
+                                <span id="cartShipping">$0.00</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span data-en="Total:" data-zh="总计：">Total:</span>
+                                <span id="cartTotal">$0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="cart-actions">
+                            <button onclick="proceedToCheckout()" class="btn btn-primary" data-en="Proceed to Checkout" data-zh="继续结算">Proceed to Checkout</button>
+                            <a href="index.html" class="btn btn-secondary" data-en="Continue Shopping" data-zh="继续购物">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-en="Elegant Curtains" data-zh="优雅窗帘">Elegant Curtains</h3>
+                    <p data-en="Creating beautiful spaces with custom window treatments" data-zh="用定制窗帘创造美丽空间">Creating beautiful spaces with custom window treatments</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Quick Links" data-zh="快速链接">Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html" data-en="Home" data-zh="首页">Home</a></li>
+                        <li><a href="index.html#about" data-en="About" data-zh="关于我们">About</a></li>
+                        <li><a href="index.html#gallery" data-en="Gallery" data-zh="案例展示">Gallery</a></li>
+                        <li><a href="index.html#contact" data-en="Contact" data-zh="联系我们">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Follow Us" data-zh="关注我们">Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#" data-en="Facebook" data-zh="脸书">Facebook</a>
+                        <a href="#" data-en="Instagram" data-zh="Instagram">Instagram</a>
+                        <a href="#" data-en="Twitter" data-zh="推特">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-en="© 2024 Elegant Curtains. All rights reserved." data-zh="© 2024 优雅窗帘。保留所有权利。">© 2024 Elegant Curtains. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+                        <button class="lang-btn active" onclick="updatePageLanguage('en')" data-lang="en" data-en="EN" data-zh="英文">EN</button>
+                <button class="lang-btn" onclick="updatePageLanguage('zh')" data-lang="zh" data-en="中文" data-zh="中文">中文</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Cart-specific functions
+        function proceedToCheckout() {
+            // For now, just show a notification
+            showNotification(
+                currentLanguage === 'zh' ? '结算功能即将推出！' : 'Checkout feature coming soon!',
+                'info'
+            );
+        }
+
+        // Override global functions for cart page
+        function updateCartItemQuantity(index, change) {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            
+            if (cartItems[index]) {
+                cartItems[index].quantity += change;
+                
+                if (cartItems[index].quantity <= 0) {
+                    cartItems.splice(index, 1);
+                }
+                
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                
+                // Reload cart display
+                loadCartItems();
+            }
+        }
+
+        function removeFromCart(index) {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            
+            if (cartItems[index]) {
+                cartItems.splice(index, 1);
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                
+                // Reload cart display
+                loadCartItems();
+                
+                showNotification(
+                    currentLanguage === 'zh' ? '商品已从购物车中移除' : 'Item removed from cart',
+                    'success'
+                );
+            }
+        }
+
+        function clearCart() {
+            if (confirm(currentLanguage === 'zh' ? '确定要清空购物车吗？' : 'Are you sure you want to clear the cart?')) {
+                localStorage.removeItem('cartItems');
+                loadCartItems();
+                
+                showNotification(
+                    currentLanguage === 'zh' ? '购物车已清空' : 'Cart cleared',
+                    'success'
+                );
+            }
+        }
+
+        // Initialize cart page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartItems();
+            updatePageLanguage(currentLanguage);
+        });
+    </script>
+</body>
+</html>
