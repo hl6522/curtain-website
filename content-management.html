@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
-    <title>Content Management - Elegant Curtains</title>
+    <title>Content Management - WHL Elegant Curtains</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -180,6 +180,11 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
             margin-bottom: 1.5rem;
+            /* 确保网格布局稳定 */
+            grid-auto-rows: minmax(350px, auto);
+            align-items: start;
+            min-height: 200px;
+            contain: layout style paint;
         }
         
         .content-item {
@@ -187,6 +192,16 @@
             border-radius: 8px;
             padding: 1rem;
             background: #f8f9fa;
+            /* 确保内容项高度一致 */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .content-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .content-item img {
@@ -195,12 +210,41 @@
             object-fit: cover;
             border-radius: 5px;
             margin-bottom: 1rem;
+            /* 确保图片尺寸一致 */
+            flex-shrink: 0;
+            aspect-ratio: 3/2;
+            background: #f0f0f0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .content-item h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: #333;
+            /* 确保标题不换行 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .content-item p {
+            margin: 0 0 1rem 0;
+            color: #666;
+            line-height: 1.4;
+            /* 确保描述文本有固定高度 */
+            height: 2.8em;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
         
         .content-item .item-controls {
             display: flex;
             gap: 0.5rem;
-            margin-top: 1rem;
+            margin-top: auto;
+            /* 确保按钮在底部 */
+            justify-content: flex-end;
         }
         
         .content-item .btn {
@@ -355,11 +399,133 @@
             flex: 1;
         }
         
+        .upload-requirements {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .upload-requirements h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .upload-requirements ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #6c757d;
+        }
+        
+        .upload-requirements li {
+            margin-bottom: 5px;
+        }
+        
+        .upload-requirements .warning {
+            color: #dc3545;
+            font-weight: 500;
+        }
+        
+        .upload-requirements .info {
+            color: #17a2b8;
+            font-weight: 500;
+        }
+        
+        .upload-guidelines {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .guidelines-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .guidelines-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .guidelines-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .guidelines-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .guidelines-content {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .guidelines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .guideline-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .guideline-item h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .guideline-item ul {
+            margin: 0;
+            padding-left: 20px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .guideline-item li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .guideline-item strong {
+            color: #fff;
+            font-weight: 600;
+        }
+        
         .background-slideshow {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
+            /* 确保背景图网格布局稳定 */
+            grid-auto-rows: minmax(200px, auto);
+            align-items: start;
+            min-height: 200px;
+            contain: layout style paint;
         }
         
         .background-item {
@@ -367,12 +533,25 @@
             border: 1px solid #e9ecef;
             border-radius: 8px;
             overflow: hidden;
+            /* 确保背景图项高度一致 */
+            height: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .background-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .background-item img {
             width: 100%;
             height: 150px;
             object-fit: cover;
+            /* 确保图片尺寸一致 */
+            flex-shrink: 0;
+            aspect-ratio: 3/2;
+            background: #f0f0f0;
+            transition: opacity 0.3s ease;
         }
         
         .background-item .item-overlay {
@@ -428,14 +607,126 @@
             margin-bottom: 1rem;
         }
         
+        /* 防止布局偏移和闪烁 */
+        .content-grid,
+        .background-slideshow {
+            min-height: 200px;
+            contain: layout style paint;
+        }
+        
+        /* 确保图片加载时不会改变布局 */
+        .content-item img,
+        .background-item img {
+            aspect-ratio: 3/2;
+            background: #f0f0f0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 加载状态样式 */
+        .content-grid.loading,
+        .background-slideshow.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        /* 响应式布局优化 */
         @media (max-width: 768px) {
-            .about-content-editor {
-                grid-template-columns: 1fr;
-            }
-            
             .content-grid {
                 grid-template-columns: 1fr;
+                grid-auto-rows: minmax(300px, auto);
             }
+            
+            .background-slideshow {
+                grid-template-columns: 1fr;
+                grid-auto-rows: minmax(180px, auto);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .content-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+            
+            .background-slideshow {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-add {
+            background: #28a745;
+            color: white;
+            margin-top: 1rem;
+        }
+        
+        .btn-save {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-upload {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .custom-file-upload {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .file-name {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .upload-requirements {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .upload-requirements h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .upload-requirements ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .upload-requirements li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .warning {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .info {
+            color: #007bff;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -449,14 +740,53 @@
                         <i class="fas fa-edit"></i>
                     </div>
                     <div class="brand-text">
-                        <h2 class="brand-name">Elegant Curtains</h2>
+                        <h2 class="brand-name">WHL Elegant Curtains</h2>
                         <p class="brand-subtitle">Content Management</p>
                     </div>
                 </div>
-                <h1>Content Management Dashboard</h1>
+                <h1>内容管理系统</h1>
                 <p>Manage website content, images, and media</p>
             </div>
         </div>
+        
+        <div class="upload-guidelines">
+            <div class="guidelines-header">
+                <h3>📸 图片上传指南</h3>
+                <button class="guidelines-toggle" onclick="toggleGuidelines()">显示/隐藏</button>
+            </div>
+            <div class="guidelines-content" id="guidelinesContent">
+                <div class="guidelines-grid">
+                    <div class="guideline-item">
+                        <h4>📏 尺寸要求</h4>
+                        <ul>
+                            <li><strong>背景图片：</strong>推荐 1920x1080 像素或更大</li>
+                            <li><strong>产品图片：</strong>推荐 1200x800 像素或更大</li>
+                            <li><strong>画廊图片：</strong>推荐 1200x800 像素或更大</li>
+                            <li><strong>关于我们：</strong>推荐 1200x800 像素或更大</li>
+                        </ul>
+                    </div>
+                    <div class="guideline-item">
+                        <h4>💾 文件限制</h4>
+                        <ul>
+                            <li><strong>文件大小：</strong>最大 10MB</li>
+                            <li><strong>支持格式：</strong>JPEG、PNG、GIF、WebP</li>
+                            <li><strong>图片质量：</strong>系统自动压缩优化</li>
+                        </ul>
+                    </div>
+                    <div class="guideline-item">
+                        <h4>⚠️ 注意事项</h4>
+                        <ul>
+                            <li>图片会被自动调整到合适尺寸</li>
+                            <li>系统会自动压缩以节省存储空间</li>
+                            <li>建议使用高质量原始图片</li>
+                            <li>避免上传过大的文件</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-sections">
         
         <!-- Navigation -->
         <div class="content-nav">
@@ -533,8 +863,8 @@
                                 <div class="form-group">
                                     <label id="titleLabel">Title</label>
                                     <div id="titleInputs">
-                                        <input type="text" id="aboutTitle" value="About Elegant Curtains" placeholder="English title" class="lang-input" data-lang="en">
-                                        <input type="text" id="aboutTitleZh" value="关于优雅窗帘" placeholder="中文标题" class="lang-input" data-lang="zh" style="display: none;">
+                                        <input type="text" id="aboutTitle" value="About WHL Elegant Curtains" placeholder="English title" class="lang-input" data-lang="en">
+                                        <input type="text" id="aboutTitleZh" value="关于WHL优雅窗帘" placeholder="中文标题" class="lang-input" data-lang="zh" style="display: none;">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -547,13 +877,33 @@
                                 <button class="btn btn-save" id="saveButton" onclick="saveAboutText()">Save Text Changes</button>
                             </div>
                             <div class="about-image-editor">
-                                <h3>Right Side Image</h3>
-                                <img id="aboutImagePreview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFib3V0IFVzPC90ZXh0Pjwvc3ZnPg==" alt="About Us" class="about-image-preview">
-                                <div class="form-group">
-                                    <label for="aboutImageFile">Upload New Image</label>
-                                    <input type="file" id="aboutImageFile" accept="image/*">
+                                <h3>右侧图片</h3>
+                                <img id="aboutImagePreview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIjk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFib3V0IFVzPC90ZXh0Pjwvc3ZnPg==" alt="About Us" class="about-image-preview">
+                                
+                                <div class="upload-requirements">
+                                    <h4>📋 图片上传要求</h4>
+                                    <ul>
+                                        <li><span class="warning">文件大小：</span>最大 10MB</li>
+                                        <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
+                                        <li><span class="info">推荐尺寸：</span>600x400 像素或更大</li>
+                                        <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
+                                        <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
+                                    </ul>
                                 </div>
-                                <button class="btn btn-save" onclick="saveAboutImage()">Save Image</button>
+                                
+                                <div class="form-group">
+                                    <label for="aboutImageFile">上传新图片</label>
+                                    <div class="custom-file-upload">
+                                        <input type="file" id="aboutImageFile" accept="image/*" style="display: none;">
+                                        <button type="button" class="btn btn-upload" onclick="document.getElementById('aboutImageFile').click()">
+                                            选择文件
+                                        </button>
+                                        <span class="file-name" id="aboutImageFileName">
+                                            未选择任何文件
+                                        </span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-save" onclick="saveAboutImage()">保存图片</button>
                             </div>
                         </div>
                     </div>
@@ -585,8 +935,27 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="productSeriesImage">Image</label>
-                    <input type="file" id="productSeriesImage" accept="image/*" required>
+                    <label for="productSeriesImage">图片</label>
+                    <div class="custom-file-upload">
+                        <input type="file" id="productSeriesImage" accept="image/*" required style="display: none;">
+                        <button type="button" class="btn btn-upload" onclick="document.getElementById('productSeriesImage').click()">
+                            选择文件
+                        </button>
+                        <span class="file-name" id="productSeriesImageName">
+                            未选择任何文件
+                        </span>
+                    </div>
+                    
+                    <div class="upload-requirements">
+                        <h4>📋 图片上传要求</h4>
+                        <ul>
+                            <li><span class="warning">文件大小：</span>最大 10MB</li>
+                            <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
+                            <li><span class="info">推荐尺寸：</span>1200x800 像素或更大</li>
+                            <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
+                            <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="productSeriesCategory">Category</label>
@@ -630,8 +999,27 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="galleryImage">Image</label>
-                    <input type="file" id="galleryImage" accept="image/*" required>
+                    <label for="galleryImage">图片</label>
+                    <div class="custom-file-upload">
+                        <input type="file" id="galleryImage" accept="image/*" required style="display: none;">
+                        <button type="button" class="btn btn-upload" onclick="document.getElementById('galleryImage').click()">
+                            选择文件
+                        </button>
+                        <span class="file-name" id="galleryImageName">
+                            未选择任何文件
+                        </span>
+                    </div>
+                    
+                    <div class="upload-requirements">
+                        <h4>📋 图片上传要求</h4>
+                        <ul>
+                            <li><span class="warning">文件大小：</span>最大 10MB</li>
+                            <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
+                            <li><span class="info">推荐尺寸：</span>1200x800 像素或更大</li>
+                            <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
+                            <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
+                        </ul>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-save">Save Gallery Item</button>
                 <button type="button" class="btn btn-cancel" onclick="closeGalleryModal()">Cancel</button>
@@ -648,14 +1036,22 @@
             </div>
             <form id="backgroundForm">
                 <div class="form-group">
-                    <label for="backgroundImage">Background Image</label>
-                    <input type="file" id="backgroundImage" accept="image/*" required>
+                    <label for="backgroundImageFile">上传背景图片</label>
+                    <input type="file" id="backgroundImageFile" accept="image/*" required>
                 </div>
-                <div class="form-group">
-                    <label for="backgroundOrder">Display Order</label>
-                    <input type="number" id="backgroundOrder" min="1" value="1">
+                
+                <div class="upload-requirements">
+                    <h4>📋 图片上传要求</h4>
+                    <ul>
+                        <li><span class="warning">文件大小：</span>最大 10MB</li>
+                        <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
+                        <li><span class="info">推荐尺寸：</span>1920x1080 像素或更大</li>
+                        <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
+                        <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
+                    </ul>
                 </div>
-                <button type="submit" class="btn btn-save">Save Background Image</button>
+                
+                <button type="submit" class="btn btn-save">保存背景图片</button>
                 <button type="button" class="btn btn-cancel" onclick="closeBackgroundModal()">Cancel</button>
             </form>
         </div>

@@ -1,37 +1,248 @@
 // Content Management System JavaScript
 
-// Global language state
-let currentLanguage = 'en';
+// 防抖函数，用于优化频繁的重新加载
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
-// Check authentication on page load
+// 防抖版本的加载函数
+const debouncedLoadGallery = debounce(loadGallery, 300);
+const debouncedLoadBackgroundImages = debounce(loadBackgroundImages, 300);
+const debouncedLoadProductSeries = debounce(loadProductSeries, 300);
+
+// Global variables
+let currentLanguage = 'en';
+let currentUser = null;
+
+// Initialize content management system
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded event fired');
+    console.log('Content Management System initializing...');
     
-    checkAuth();
-    loadContent();
+    // Initialize language switcher
     initializeLanguageSwitcher();
     
-    // Wait for DOM to be fully loaded before checking About Us elements
-    setTimeout(() => {
-        console.log('Checking About Us elements after DOM load');
-        ensureAboutUsElementsExist();
-        updateAboutFormDisplay();
-    }, 100);
+    // Wait for the page to be completely ready before attempting to load content
+    function waitForPageReady() {
+        // Check if the page is fully loaded and rendered
+        if (document.readyState === 'complete') {
+            console.log('Page is completely loaded, starting content initialization...');
+            startContentInitialization();
+        } else {
+            console.log('Page not fully loaded yet, waiting...');
+            setTimeout(waitForPageReady, 100);
+        }
+    }
     
-    // Additional retry with longer delay
-    setTimeout(() => {
-        console.log('Second attempt to load About Us form');
-        ensureAboutUsElementsExist();
-        updateAboutFormDisplay();
-    }, 500);
+    function startContentInitialization() {
+        // Use a more reliable method to wait for DOM to be fully ready
+        function waitForElements(maxRetries = 3) {
+            const requiredElements = [
+                'productSeriesGrid',
+                'galleryGrid', 
+                'backgroundSlideshow'
+            ];
+            
+            let missingElements = [];
+            requiredElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) {
+                    missingElements.push(id);
+                    console.error(`Required element not found: ${id}`);
+                } else {
+                    console.log(`Found element: ${id}`);
+                }
+            });
+            
+            if (missingElements.length === 0) {
+                console.log('All required elements found, loading content...');
+                loadContent();
+                
+                // Ensure About Us elements exist (single attempt)
+                setTimeout(() => {
+                    ensureAboutUsElementsExist();
+                }, 100);
+                
+                // Ensure add buttons are visible
+                setTimeout(() => {
+                    ensureAddButtonsVisible();
+                }, 200);
+            } else {
+                console.error('Missing required elements:', missingElements);
+                
+                // Check if we've exceeded max retries
+                if (maxRetries <= 0) {
+                    console.error('Max retries exceeded. Attempting to recreate elements...');
+                    if (attemptElementRecreation()) {
+                        console.log('Elements recreated successfully, now loading content...');
+                        setTimeout(() => {
+                            loadContent();
+                            setTimeout(() => {
+                                ensureAboutUsElementsExist();
+                            }, 100);
+                        }, 200);
+                    } else {
+                        console.error('Failed to recreate elements, attempting to load content anyway...');
+                        loadContent();
+                    }
+                    return;
+                }
+                
+                console.log(`Retrying in 500ms... (${maxRetries} retries left)`);
+                
+                // Retry with longer delay and decrement counter
+                setTimeout(() => waitForElements(maxRetries - 1), 500);
+            }
+        }
+        
+        // Start waiting for elements with longer initial delay
+        setTimeout(waitForElements, 300);
+    }
     
-    // Final retry with even longer delay
-    setTimeout(() => {
-        console.log('Third attempt to load About Us form');
-        ensureAboutUsElementsExist();
-        updateAboutFormDisplay();
-    }, 1000);
+    // Start waiting for page to be ready with longer initial delay
+    setTimeout(waitForPageReady, 200);
 });
+
+// Backup initialization using window.onload
+window.addEventListener('load', function() {
+    console.log('Window load event fired - checking if content was loaded...');
+    
+    // Check if content was already loaded
+    const productSeriesGrid = document.getElementById('productSeriesGrid');
+    const galleryGrid = document.getElementById('galleryGrid');
+    const backgroundSlideshow = document.getElementById('backgroundSlideshow');
+    
+    if (productSeriesGrid && productSeriesGrid.children.length === 0) {
+        console.log('Content not loaded yet, attempting to load now...');
+        // Ensure grids are ready first
+        if (ensureGridsReady()) {
+            loadContent();
+        } else {
+            console.log('Grids not ready, attempting to recreate...');
+            if (attemptElementRecreation()) {
+                setTimeout(() => loadContent(), 200);
+            }
+        }
+    } else if (galleryGrid && galleryGrid.children.length === 0) {
+        console.log('Gallery content not loaded, loading now...');
+        loadGallery();
+    } else if (backgroundSlideshow && backgroundSlideshow.children.length === 0) {
+        console.log('Background content not loaded, loading now...');
+        loadBackgroundImages();
+    } else {
+        console.log('Content already loaded or grids have children');
+        
+        // Ensure add buttons are visible even if content is already loaded
+        ensureAddButtonsVisible();
+    }
+});
+
+// Function to attempt element recreation when elements are missing
+function attemptElementRecreation() {
+    console.log('Attempting to recreate missing elements...');
+    
+    try {
+        // Try to find the main content sections using more specific selectors
+        const productSection = document.querySelector('.content-section:nth-child(1)');
+        const gallerySection = document.querySelector('.content-section:nth-child(2)');
+        const backgroundSection = document.querySelector('.content-section:nth-child(3)');
+        
+        console.log('Container search results:');
+        console.log('- Product section:', productSection);
+        console.log('- Gallery section:', gallerySection);
+        console.log('- Background section:', backgroundSection);
+        
+        let elementsRecreated = 0;
+        
+        if (productSection && !document.getElementById('productSeriesGrid')) {
+            console.log('Found product section, attempting to recreate grid...');
+            const newGrid = document.createElement('div');
+            newGrid.id = 'productSeriesGrid';
+            newGrid.className = 'content-grid';
+            newGrid.innerHTML = '<!-- Product series items will be loaded here -->';
+            
+            // Find the content-section-body within the product section
+            const productBody = productSection.querySelector('.content-section-body');
+            if (productBody) {
+                // Remove any existing grid first
+                const existingGrid = productBody.querySelector('#productSeriesGrid');
+                if (existingGrid) {
+                    existingGrid.remove();
+                }
+                productBody.appendChild(newGrid);
+                console.log('Recreated productSeriesGrid');
+                elementsRecreated++;
+            } else {
+                console.error('Could not find product section body');
+            }
+        }
+        
+        if (gallerySection && !document.getElementById('galleryGrid')) {
+            console.log('Found gallery section, attempting to recreate grid...');
+            const newGrid = document.createElement('div');
+            newGrid.id = 'galleryGrid';
+            newGrid.className = 'content-grid';
+            newGrid.innerHTML = '<!-- Gallery items will be loaded here -->';
+            
+            // Find the content-section-body within the gallery section
+            const galleryBody = gallerySection.querySelector('.content-section-body');
+            if (galleryBody) {
+                // Remove any existing grid first
+                const existingGrid = galleryBody.querySelector('#galleryGrid');
+                if (existingGrid) {
+                    existingGrid.remove();
+                }
+                galleryBody.appendChild(newGrid);
+                console.log('Recreated galleryGrid');
+                elementsRecreated++;
+            } else {
+                console.error('Could not find gallery section body');
+            }
+        }
+        
+        if (backgroundSection && !document.getElementById('backgroundSlideshow')) {
+            console.log('Found background section, attempting to recreate slideshow...');
+            const newSlideshow = document.createElement('div');
+            newSlideshow.id = 'backgroundSlideshow';
+            newSlideshow.className = 'background-slideshow';
+            newSlideshow.innerHTML = '<!-- Background images will be loaded here -->';
+            
+            // Find the content-section-body within the background section
+            const backgroundBody = backgroundSection.querySelector('.content-section-body');
+            if (backgroundBody) {
+                // Remove any existing slideshow first
+                const existingSlideshow = backgroundBody.querySelector('#backgroundSlideshow');
+                if (existingSlideshow) {
+                    existingSlideshow.remove();
+                }
+                backgroundBody.appendChild(newSlideshow);
+                console.log('Recreated backgroundSlideshow');
+                elementsRecreated++;
+            } else {
+                console.error('Could not find background section body');
+            }
+        }
+        
+        if (elementsRecreated > 0) {
+            console.log(`Successfully recreated ${elementsRecreated} elements`);
+            return true;
+        } else {
+            console.error('Failed to recreate any elements');
+            return false;
+        }
+        
+    } catch (error) {
+        console.error('Error during element recreation:', error);
+        return false;
+    }
+}
 
 // Function to ensure About Us elements exist
 function ensureAboutUsElementsExist() {
@@ -54,9 +265,24 @@ function ensureAboutUsElementsExist() {
     // If any elements are missing, completely rebuild the section
     if (!titleInput || !titleInputZh || !descInput || !descInputZh || !imageFileInput) {
         console.log('Some About Us elements are missing, completely rebuilding section...');
+        
+        // Check if we're already rebuilding to avoid infinite loops
+        if (window.isRebuildingAboutUs) {
+            console.log('Already rebuilding About Us section, skipping...');
+            return;
+        }
+        
+        window.isRebuildingAboutUs = true;
         rebuildAboutUsSection();
+        
+        // Reset flag after a delay
+        setTimeout(() => {
+            window.isRebuildingAboutUs = false;
+        }, 1000);
     } else {
         console.log('All About Us elements found successfully');
+        // Load content into existing elements
+        loadAboutContent();
     }
 }
 
@@ -79,8 +305,10 @@ function switchLanguage(lang) {
     // Update page language
     updatePageLanguage(lang);
     
-    // Refresh all content
-    refreshAllContent();
+    // Only refresh content if this is not the initial load
+    if (document.readyState === 'complete') {
+        refreshAllContent();
+    }
     
     // Update modal form visibility if any modals are open
     updateModalFormVisibility();
@@ -88,32 +316,62 @@ function switchLanguage(lang) {
 
 // Force refresh all dynamic content to reflect language changes
 function refreshAllContent() {
+    console.log('Refreshing all content for language change...');
+    
     // Refresh product series display
     const productSeriesGrid = document.getElementById('productSeriesGrid');
     if (productSeriesGrid) {
-        loadProductSeries();
+        if (typeof loadProductSeries === 'function') {
+            loadProductSeries();
+        } else {
+            console.error('loadProductSeries function not found');
+        }
     }
     
     // Refresh gallery display
     const galleryGrid = document.getElementById('galleryGrid');
     if (galleryGrid) {
-        loadGallery();
+        if (typeof loadGallery === 'function') {
+            loadGallery();
+        } else {
+            console.error('loadGallery function not found');
+        }
     }
     
     // Refresh background images display
     const backgroundSlideshow = document.getElementById('backgroundSlideshow');
     if (backgroundSlideshow) {
-        loadBackgroundImages();
+        if (typeof loadBackgroundImages === 'function') {
+            loadBackgroundImages();
+        } else {
+            console.error('loadBackgroundImages function not found');
+        }
     }
     
-    // Update About Us form display based on current language
-    updateAboutFormDisplay();
+    // Refresh About Us content
+    if (typeof loadAboutContent === 'function') {
+        loadAboutContent();
+    } else {
+        console.error('loadAboutContent function not found');
+    }
 }
 
 // Initialize language switcher
 function initializeLanguageSwitcher() {
-    // Set default language
-    switchLanguage('en');
+    // Set default language without triggering content refresh
+    currentLanguage = 'en';
+    console.log('Language switcher initialized with default language:', currentLanguage);
+    
+    // Update active button state
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.lang === 'en') {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Update static text elements without refreshing content
+    updatePageLanguage('en');
 }
 
 // Update page content based on language
@@ -400,50 +658,175 @@ function logout() {
 
 // Load all content
 function loadContent() {
-    loadProductSeries();
-    loadGallery();
-    loadBackgroundImages();
-    loadAboutContent();
+    console.log('loadContent: Starting to load all content...');
+    
+    try {
+        // Check if all required elements exist
+        const productSeriesGrid = document.getElementById('productSeriesGrid');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const backgroundSlideshow = document.getElementById('backgroundSlideshow');
+        
+        console.log('Element status check:');
+        console.log('- productSeriesGrid:', productSeriesGrid ? 'Found' : 'Not found');
+        console.log('- galleryGrid:', galleryGrid ? 'Found' : 'Not found');
+        console.log('- backgroundSlideshow:', backgroundSlideshow ? 'Found' : 'Not found');
+        
+        // If elements are missing, try to find their containers and recreate them
+        let shouldProceed = true;
+        
+        if (!productSeriesGrid) {
+            console.error('Product series grid element not found');
+            shouldProceed = false;
+        }
+        
+        if (!galleryGrid) {
+            console.error('Gallery grid element not found');
+            shouldProceed = false;
+        }
+        
+        if (!backgroundSlideshow) {
+            console.error('Background slideshow element not found');
+            shouldProceed = false;
+        }
+        
+        if (!shouldProceed) {
+            console.log('Some elements are missing. Attempting to recreate them...');
+            attemptElementRecreation();
+            return;
+        }
+        
+        if (shouldProceed) {
+            console.log('All required elements found, proceeding with content loading...');
+            
+            // Load product series
+            console.log('Loading product series...');
+            if (typeof loadProductSeries === 'function') {
+                loadProductSeries();
+            } else {
+                console.error('loadProductSeries function not found');
+            }
+            
+            // Load gallery
+            console.log('Loading gallery...');
+            if (typeof loadGallery === 'function') {
+                loadGallery();
+            } else {
+                console.error('loadGallery function not found');
+            }
+            
+            // Load background images
+            console.log('Loading background images...');
+            if (typeof loadBackgroundImages === 'function') {
+                loadBackgroundImages();
+            } else {
+                console.error('loadBackgroundImages function not found');
+            }
+            
+            console.log('loadContent: All content loaded successfully');
+        }
+        
+    } catch (error) {
+        console.error('Error in loadContent:', error);
+    }
+    
+    // 确保新增按钮可见
+    setTimeout(() => {
+        ensureAddButtonsVisible();
+    }, 100);
 }
 
 // Product Series Management
 function loadProductSeries() {
     const grid = document.getElementById('productSeriesGrid');
-    const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
     
-    grid.innerHTML = '';
+    if (!grid) {
+        console.log('Product series grid element not found');
+        return;
+    }
     
-    productSeries.forEach((series, index) => {
-        const item = document.createElement('div');
-        item.className = 'content-item';
+    // 添加加载状态
+    grid.classList.add('loading');
+    
+    try {
+        const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
         
-        // Display content based on current language
-        const displayName = currentLanguage === 'zh' ? (series.nameZh || series.name) : series.name;
-        const displayDescription = currentLanguage === 'zh' ? (series.descriptionZh || series.description) : series.description;
+        // 使用DocumentFragment来批量添加元素，减少重排
+        const fragment = document.createDocumentFragment();
         
-        item.innerHTML = `
-            <img src="${series.image}" alt="${displayName}">
-            <h4>${displayName}</h4>
-            <p>${displayDescription}</p>
-            <div class="item-controls">
-                <button class="btn btn-edit" data-index="${index}">${currentLanguage === 'zh' ? '编辑' : 'Edit'}</button>
-                <button class="btn btn-delete" data-index="${index}">${currentLanguage === 'zh' ? '删除' : 'Delete'}</button>
-            </div>
-        `;
-        
-        // Add event listeners to the buttons
-        const editBtn = item.querySelector('.btn-edit');
-        const deleteBtn = item.querySelector('.btn-delete');
-        
-        editBtn.addEventListener('click', function() {
-            editProductSeries(index);
+        productSeries.forEach((series, index) => {
+            // 安全检查：确保series存在且具有必要的属性
+            if (!series || typeof series !== 'object') {
+                console.warn(`Product series at index ${index} is invalid:`, series);
+                return; // 跳过无效的项目
+            }
+            
+            // 检查必要的属性是否存在
+            if (!series.name || !series.description) {
+                console.warn(`Product series at index ${index} is missing required properties:`, series);
+                return; // 跳过缺少必要属性的项目
+            }
+            
+            // Ensure image source is valid
+            const imageSrc = series.image || getDefaultProductImage();
+            
+            if (!imageSrc || imageSrc === 'undefined') {
+                console.warn(`Invalid image source for product series ${index + 1}, using default`);
+                return; // Skip this item if no valid image source
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'content-item';
+            
+            // Display content based on current language
+            const displayName = currentLanguage === 'zh' ? (series.nameZh || series.name) : series.name;
+            const displayDescription = currentLanguage === 'zh' ? (series.descriptionZh || series.description) : series.description;
+            
+            item.innerHTML = `
+                <img src="${imageSrc}" alt="${displayName}" loading="lazy" onerror="this.src='${getDefaultProductImage()}'">
+                <h4>${displayName}</h4>
+                <p>${displayDescription}</p>
+                <div class="item-controls">
+                    <button class="btn btn-edit" data-index="${index}">${currentLanguage === 'zh' ? '编辑' : 'Edit'}</button>
+                    <button class="btn btn-delete" data-index="${index}">${currentLanguage === 'zh' ? '删除' : 'Delete'}</button>
+                </div>
+            `;
+            
+            // Add event listeners to the buttons
+            const editBtn = item.querySelector('.btn-edit');
+            const deleteBtn = item.querySelector('.btn-delete');
+            
+            editBtn.addEventListener('click', function() {
+                editProductSeries(index);
+            });
+            
+            deleteBtn.addEventListener('click', function() {
+                deleteProductSeries(index);
+            });
+            
+            fragment.appendChild(item);
         });
         
-        deleteBtn.addEventListener('click', function() {
-            deleteProductSeries(index);
-        });
-        grid.appendChild(item);
-    });
+        // 清空网格并添加所有项目
+        grid.innerHTML = '';
+        grid.appendChild(fragment);
+        
+        console.log(`Product series loaded successfully: ${productSeries.length} items`);
+        
+    } catch (error) {
+        console.error('Error loading product series:', error);
+        // 显示错误状态
+        grid.innerHTML = '<div class="content-item"><p>Error loading product series content</p></div>';
+    } finally {
+        // 恢复网格状态
+        setTimeout(() => {
+            grid.classList.remove('loading');
+        }, 100);
+    }
+}
+
+// Function to get default product image
+function getDefaultProductImage() {
+    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIjk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3QgSW1hZ2U8L3RleHQ+PC9zdmc+';
 }
 
 function getDefaultProductSeries() {
@@ -509,8 +892,24 @@ function getDefaultProductSeries() {
             nameZh: '经典帷幔',
             description: 'Timeless valance fabrics for traditional and elegant interiors',
             descriptionZh: '永恒的帷幔面料，适用于传统和优雅的室内装饰',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNsYXNzaWMgVmFsYW5jZXM8L3N2Zz4=',
+            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNsYXNzaWMgVmFsYW5jZXM8L3RleHQ+PC9zdmc+',
             category: 'valances'
+        },
+        {
+            name: 'Smart Home Integration',
+            nameZh: '智能家居集成',
+            description: 'Advanced fabrics with smart home technology integration',
+            descriptionZh: '集成智能家居技术的高级面料',
+            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlNtYXJ0IEhvbWUgSW50ZWdyYXRpb248L3RleHQ+PC9zdmc+',
+            category: 'smart'
+        },
+        {
+            name: 'Eco-Friendly Materials',
+            nameZh: '环保材料',
+            description: 'Sustainable and environmentally friendly curtain materials',
+            descriptionZh: '可持续和环保的窗帘材料',
+            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVjby1GcmllbmRseSBNYXRlcmlhbHM8L3RleHQ+PC9zdmc+',
+            category: 'eco'
         }
     ];
 }
@@ -529,57 +928,73 @@ function openProductSeriesModal(editIndex = null) {
     // Check and recreate missing elements if necessary
     checkAndRecreateModalElements('productSeriesModal');
     
-    if (editIndex !== null) {
-        title.textContent = currentLanguage === 'zh' ? '编辑产品系列' : 'Edit Product Series';
-        const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
-        const series = productSeries[editIndex];
-        
-        // Check if form elements exist before setting values
-        const nameInput = document.getElementById('productSeriesName');
-        const nameZhInput = document.getElementById('productSeriesNameZh');
-        const descInput = document.getElementById('productSeriesDescription');
-        const descZhInput = document.getElementById('productSeriesDescriptionZh');
-        const categoryInput = document.getElementById('productSeriesCategory');
-        
-        if (nameInput && nameZhInput && descInput && descZhInput && categoryInput) {
-            nameInput.value = series.name;
-            nameZhInput.value = series.nameZh || '';
-            descInput.value = series.description;
-            descZhInput.value = series.descriptionZh || '';
-            categoryInput.value = series.category;
+    // Wait for form elements to be ready
+    setTimeout(() => {
+        if (editIndex !== null) {
+            title.textContent = currentLanguage === 'zh' ? '编辑产品系列' : 'Edit Product Series';
+            const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
+            const series = productSeries[editIndex];
+            
+            if (series) {
+                // Check if form elements exist before setting values
+                const nameInput = document.getElementById('productSeriesName');
+                const nameZhInput = document.getElementById('productSeriesNameZh');
+                const descInput = document.getElementById('productSeriesDescription');
+                const descZhInput = document.getElementById('productSeriesDescriptionZh');
+                const categoryInput = document.getElementById('productSeriesCategory');
+                
+                if (nameInput && nameZhInput && descInput && descZhInput && categoryInput) {
+                    nameInput.value = series.name || '';
+                    nameZhInput.value = series.nameZh || '';
+                    descInput.value = series.description || '';
+                    descZhInput.value = series.descriptionZh || '';
+                    categoryInput.value = series.category || 'blackout';
+                    console.log('Product series data loaded for editing:', series);
+                } else {
+                    console.error('Product series form elements not found');
+                    showNotification('产品系列表单元素缺失', 'error');
+                    return;
+                }
+                
+                form.dataset.editIndex = editIndex;
+            } else {
+                console.error('Product series not found at index:', editIndex);
+                showNotification('产品系列数据无效', 'error');
+                return;
+            }
+        } else {
+            title.textContent = currentLanguage === 'zh' ? '添加新产品系列' : 'Add New Product Series';
+            form.reset();
+            delete form.dataset.editIndex;
         }
         
-        form.dataset.editIndex = editIndex;
-    } else {
-        title.textContent = currentLanguage === 'zh' ? '添加新产品系列' : 'Add New Product Series';
-        form.reset();
-        delete form.dataset.editIndex;
-    }
-    
-    modal.style.display = 'block';
-    
-    // Immediately ensure all inputs are visible
-    ensureModalInputsVisible('productSeriesModal');
-    
-    // Then update the language-specific visibility
-    updateModalFormVisibility();
-    
-    // Finally, ensure the current language inputs are visible
-    setTimeout(() => {
-        const langInputs = modal.querySelectorAll('.lang-input');
-        langInputs.forEach(input => {
-            const lang = input.dataset.lang;
-            if (lang === currentLanguage) {
-                input.style.display = 'block';
-                input.required = true;
-                console.log('Final visibility check - showing:', input.id, 'for language:', lang);
-            } else {
-                input.style.display = 'none';
-                input.required = false;
-                console.log('Final visibility check - hiding:', input.id, 'for language:', lang);
-            }
-        });
-    }, 100);
+        // Ensure all inputs are visible
+        ensureModalInputsVisible('productSeriesModal');
+        
+        // Update the language-specific visibility
+        updateModalFormVisibility();
+        
+        // Finally, ensure the current language inputs are visible
+        setTimeout(() => {
+            const langInputs = modal.querySelectorAll('.lang-input');
+            langInputs.forEach(input => {
+                const lang = input.dataset.lang;
+                if (lang === currentLanguage) {
+                    input.style.display = 'block';
+                    input.required = true;
+                    console.log('Final visibility check - showing:', input.id, 'for language:', lang);
+                } else {
+                    input.style.display = 'none';
+                    input.required = false;
+                    console.log('Final visibility check - hiding:', input.id, 'for language:', lang);
+                }
+            });
+        }, 50);
+        
+        // Show the modal
+        modal.style.display = 'block';
+        
+    }, 100); // Wait for form recreation to complete
 }
 
 function closeProductSeriesModal() {
@@ -593,50 +1008,108 @@ function editProductSeries(index) {
 function deleteProductSeries(index) {
     const message = currentLanguage === 'zh' ? '你确定要删除这个产品系列吗？' : 'Are you sure you want to delete this product series?';
     if (confirm(message)) {
-        const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
-        productSeries.splice(index, 1);
-        localStorage.setItem('productSeries', JSON.stringify(productSeries));
-        loadProductSeries();
+        try {
+            const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
+            productSeries.splice(index, 1);
+            localStorage.setItem('productSeries', JSON.stringify(productSeries));
+            
+            // 确保网格容器存在
+            const grid = document.getElementById('productSeriesGrid');
+            if (!grid) {
+                console.error('Product series grid not found after deletion, attempting to recreate...');
+                attemptElementRecreation();
+                setTimeout(() => loadProductSeries(), 200);
+            } else {
+                loadProductSeries();
+            }
+            
+            console.log('Product series deleted successfully, remaining items:', productSeries.length);
+        } catch (error) {
+            console.error('Error deleting product series:', error);
+            alert(currentLanguage === 'zh' ? '删除失败，请重试' : 'Deletion failed, please try again');
+        }
     }
 }
 
 // Gallery Management
 function loadGallery() {
     const grid = document.getElementById('galleryGrid');
-    const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
     
-    grid.innerHTML = '';
+    if (!grid) {
+        console.log('Gallery grid element not found');
+        return;
+    }
     
-    gallery.forEach((item, index) => {
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'content-item';
-        // Display content based on current language
-        const displayTitle = currentLanguage === 'zh' ? (item.titleZh || item.title) : item.title;
-        const displayDescription = currentLanguage === 'zh' ? (item.descriptionZh || item.description) : item.description;
+    // 添加加载状态
+    grid.classList.add('loading');
+    
+    try {
+        const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
         
-        galleryItem.innerHTML = `
-            <img src="${item.image}" alt="${displayTitle}">
-            <h4>${displayTitle}</h4>
-            <p>${displayDescription}</p>
-            <div class="item-controls">
-                <button class="btn btn-edit" data-index="${index}">${currentLanguage === 'zh' ? '编辑' : 'Edit'}</button>
-                <button class="btn btn-delete" data-index="${index}">${currentLanguage === 'zh' ? '删除' : 'Delete'}</button>
-            </div>
-        `;
+        // 使用DocumentFragment来批量添加元素，减少重排
+        const fragment = document.createDocumentFragment();
         
-        // Add event listeners to the buttons
-        const editBtn = galleryItem.querySelector('.btn-edit');
-        const deleteBtn = galleryItem.querySelector('.btn-delete');
-        
-        editBtn.addEventListener('click', function() {
-            editGalleryItem(index);
+        gallery.forEach((item, index) => {
+            // 安全检查：确保item存在且具有必要的属性
+            if (!item || typeof item !== 'object') {
+                console.warn(`Gallery item at index ${index} is invalid:`, item);
+                return; // 跳过无效的项目
+            }
+            
+            // 检查必要的属性是否存在
+            if (!item.title || !item.description || !item.image) {
+                console.warn(`Gallery item at index ${index} is missing required properties:`, item);
+                return; // 跳过缺少必要属性的项目
+            }
+            
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'content-item';
+            
+            // Display content based on current language
+            const displayTitle = currentLanguage === 'zh' ? (item.titleZh || item.title) : item.title;
+            const displayDescription = currentLanguage === 'zh' ? (item.descriptionZh || item.description) : item.description;
+            
+            galleryItem.innerHTML = `
+                <img src="${item.image}" alt="${displayTitle}" loading="lazy">
+                <h4>${displayTitle}</h4>
+                <p>${displayDescription}</p>
+                <div class="item-controls">
+                    <button class="btn btn-edit" data-index="${index}">${currentLanguage === 'zh' ? '编辑' : 'Edit'}</button>
+                    <button class="btn btn-delete" data-index="${index}">${currentLanguage === 'zh' ? '删除' : 'Delete'}</button>
+                </div>
+            `;
+            
+            // Add event listeners to the buttons
+            const editBtn = galleryItem.querySelector('.btn-edit');
+            const deleteBtn = galleryItem.querySelector('.btn-delete');
+            
+            editBtn.addEventListener('click', function() {
+                editGalleryItem(index);
+            });
+            
+            deleteBtn.addEventListener('click', function() {
+                deleteGalleryItem(index);
+            });
+            
+            fragment.appendChild(galleryItem);
         });
         
-        deleteBtn.addEventListener('click', function() {
-            deleteGalleryItem(index);
-        });
-        grid.appendChild(galleryItem);
-    });
+        // 清空网格并添加所有项目
+        grid.innerHTML = '';
+        grid.appendChild(fragment);
+        
+        console.log(`Gallery loaded successfully: ${gallery.length} items`);
+        
+    } catch (error) {
+        console.error('Error loading gallery:', error);
+        // 显示错误状态
+        grid.innerHTML = '<div class="content-item"><p>Error loading gallery content</p></div>';
+    } finally {
+        // 恢复网格状态
+        setTimeout(() => {
+            grid.classList.remove('loading');
+        }, 100);
+    }
 }
 
 function getDefaultGallery() {
@@ -677,56 +1150,73 @@ function openGalleryModal(editIndex = null) {
     const title = document.getElementById('galleryModalTitle');
     const form = document.getElementById('galleryForm');
     
-    if (editIndex !== null) {
-        title.textContent = currentLanguage === 'zh' ? '编辑画廊项目' : 'Edit Gallery Item';
-        const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
-        const item = gallery[editIndex];
-        
-        // Check if elements exist before setting values
-        const titleInput = document.getElementById('galleryTitle');
-        const titleZhInput = document.getElementById('galleryTitleZh');
-        const descInput = document.getElementById('galleryDescription');
-        const descZhInput = document.getElementById('galleryDescriptionZh');
-        
-        if (titleInput) titleInput.value = item.title;
-        if (titleZhInput) titleZhInput.value = item.titleZh || '';
-        if (descInput) descInput.value = item.description;
-        if (descZhInput) descZhInput.value = item.descriptionZh || '';
-        
-        form.dataset.editIndex = editIndex;
-    } else {
-        title.textContent = currentLanguage === 'zh' ? '添加新画廊项目' : 'Add New Gallery Item';
-        form.reset();
-        delete form.dataset.editIndex;
+    if (!modal || !title || !form) {
+        console.error('Gallery modal elements not found');
+        return;
     }
     
     // Check and recreate missing elements if necessary
     checkAndRecreateModalElements('galleryModal');
     
-    modal.style.display = 'block';
-    
-    // Immediately ensure all inputs are visible
-    ensureModalInputsVisible('galleryModal');
-    
-    // Then update the language-specific visibility
-    updateModalFormVisibility();
-    
-    // Finally, ensure the current language inputs are visible
+    // Wait for form elements to be ready
     setTimeout(() => {
-        const langInputs = modal.querySelectorAll('.lang-input');
-        langInputs.forEach(input => {
-            const lang = input.dataset.lang;
-            if (lang === currentLanguage) {
-                input.style.display = 'block';
-                input.required = true;
-                console.log('Final visibility check - showing:', input.id, 'for language:', lang);
+        if (editIndex !== null) {
+            title.textContent = currentLanguage === 'zh' ? '编辑画廊项目' : 'Edit Gallery Item';
+            const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
+            const item = gallery[editIndex];
+            
+            if (item) {
+                // Check if elements exist before setting values
+                const titleInput = document.getElementById('galleryTitle');
+                const titleZhInput = document.getElementById('galleryTitleZh');
+                const descInput = document.getElementById('galleryDescription');
+                const descZhInput = document.getElementById('galleryDescriptionZh');
+                
+                if (titleInput) titleInput.value = item.title || '';
+                if (titleZhInput) titleZhInput.value = item.titleZh || '';
+                if (descInput) descInput.value = item.description || '';
+                if (descZhInput) descZhInput.value = item.descriptionZh || '';
+                
+                form.dataset.editIndex = editIndex;
+                console.log('Gallery item data loaded for editing:', item);
             } else {
-                input.style.display = 'none';
-                input.required = false;
-                console.log('Final visibility check - hiding:', input.id, 'for language:', lang);
+                console.error('Gallery item not found at index:', editIndex);
+                showNotification('画廊项目数据无效', 'error');
+                return;
             }
-        });
-    }, 100);
+        } else {
+            title.textContent = currentLanguage === 'zh' ? '添加新画廊项目' : 'Add New Gallery Item';
+            form.reset();
+            delete form.dataset.editIndex;
+        }
+        
+        // Ensure all inputs are visible
+        ensureModalInputsVisible('galleryModal');
+        
+        // Update the language-specific visibility
+        updateModalFormVisibility();
+        
+        // Finally, ensure the current language inputs are visible
+        setTimeout(() => {
+            const langInputs = modal.querySelectorAll('.lang-input');
+            langInputs.forEach(input => {
+                const lang = input.dataset.lang;
+                if (lang === currentLanguage) {
+                    input.style.display = 'block';
+                    input.required = true;
+                    console.log('Final visibility check - showing:', input.id, 'for language:', lang);
+                } else {
+                    input.style.display = 'none';
+                    input.required = false;
+                    console.log('Final visibility check - hiding:', input.id, 'for language:', lang);
+                }
+            });
+        }, 50);
+        
+        // Show the modal
+        modal.style.display = 'block';
+        
+    }, 100); // Wait for form recreation to complete
 }
 
 function closeGalleryModal() {
@@ -740,48 +1230,130 @@ function editGalleryItem(index) {
 function deleteGalleryItem(index) {
     const message = currentLanguage === 'zh' ? '你确定要删除这个画廊项目吗？' : 'Are you sure you want to delete this gallery item?';
     if (confirm(message)) {
-        const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
-        gallery.splice(index, 1);
-        localStorage.setItem('gallery', JSON.stringify(gallery));
-        loadGallery();
+        try {
+            const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
+            gallery.splice(index, 1);
+            localStorage.setItem('gallery', JSON.stringify(gallery));
+            
+            // 确保网格容器存在
+            const grid = document.getElementById('galleryGrid');
+            if (!grid) {
+                console.error('Gallery grid not found after deletion, attempting to recreate...');
+                attemptElementRecreation();
+                setTimeout(() => loadGallery(), 200);
+            } else {
+                loadGallery();
+            }
+            
+            console.log('Gallery item deleted successfully, remaining items:', gallery.length);
+        } catch (error) {
+            console.error('Error deleting gallery item:', error);
+            alert(currentLanguage === 'zh' ? '删除失败，请重试' : 'Deletion failed, please try again');
+        }
     }
 }
 
 // Background Images Management
 function loadBackgroundImages() {
     const slideshow = document.getElementById('backgroundSlideshow');
-    const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
     
-    slideshow.innerHTML = '';
+    if (!slideshow) {
+        console.log('Background slideshow element not found');
+        return;
+    }
     
-    backgrounds.forEach((bg, index) => {
-        const item = document.createElement('div');
-        item.className = 'background-item';
-        item.innerHTML = `
-            <img src="${bg.image}" alt="Background ${index + 1}">
-            <div class="item-overlay">
-                <div class="item-controls">
-                    <button class="btn btn-edit" onclick="editBackgroundImage(${index})">${currentLanguage === 'zh' ? '编辑' : 'Edit'}</button>
-                    <button class="btn btn-delete" onclick="editBackgroundImage(${index})">${currentLanguage === 'zh' ? '删除' : 'Delete'}</button>
+    // 添加加载状态
+    slideshow.classList.add('loading');
+    
+    try {
+        const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
+        console.log('Loading background images:', backgrounds.length, 'items');
+        
+        // 使用DocumentFragment来批量添加元素，减少重排
+        const fragment = document.createDocumentFragment();
+        
+        backgrounds.forEach((bg, index) => {
+            // Ensure image source is valid
+            let imageSrc = bg.image || getDefaultBackgroundImage();
+            
+            if (!imageSrc || imageSrc === 'undefined') {
+                console.warn(`Invalid image source for background ${index + 1}, using default`);
+                imageSrc = getDefaultBackgroundImage();
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'background-item';
+            item.innerHTML = `
+                <img src="${imageSrc}" alt="Background ${index + 1}" loading="lazy" onerror="this.src='${getDefaultBackgroundImage()}'">
+                <div class="item-overlay">
+                    <div class="item-controls">
+                        <button class="btn btn-edit" onclick="editBackgroundImage(${index})">${currentLanguage === 'zh' ? '编辑' : 'Edit'}</button>
+                        <button class="btn btn-delete" onclick="deleteBackgroundImage(${index})">${currentLanguage === 'zh' ? '删除' : 'Delete'}</button>
+                    </div>
                 </div>
-            </div>
-        `;
-        slideshow.appendChild(item);
-    });
+            `;
+            fragment.appendChild(item);
+            console.log(`Loaded background ${index + 1}:`, imageSrc);
+        });
+        
+        // 清空幻灯片并添加所有项目
+        slideshow.innerHTML = '';
+        slideshow.appendChild(fragment);
+        
+        console.log('Background images loaded successfully');
+        
+    } catch (error) {
+        console.error('Error loading background images:', error);
+        // 显示错误状态
+        slideshow.innerHTML = '<div class="background-item"><p>Error loading background images</p></div>';
+    } finally {
+        // 恢复幻灯片状态
+        setTimeout(() => {
+            slideshow.classList.remove('loading');
+        }, 100);
+    }
+}
+
+// Function to get default background image
+function getDefaultBackgroundImage() {
+    // Create a simple colored rectangle SVG
+    const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#34495e"/>
+        <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Background</text>
+    </svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
 }
 
 function getDefaultBackgrounds() {
     return [
         {
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhY2tncm91bmQgMSA8L3RleHQ+PC9zdmc+',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#3498db"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Background 1</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             order: 1
         },
         {
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhY2tncm91bmQgMiA8L3RleHQ+PC9zdmc+',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#e67e22"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Background 2</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             order: 2
         },
         {
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhY2tncm91bmQgMyA8L3RleHQ+PC9zdmc+',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#9b59b6"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Background 3</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             order: 3
         }
     ];
@@ -791,15 +1363,25 @@ function openBackgroundModal(editIndex = null) {
     const modal = document.getElementById('backgroundModal');
     const form = document.getElementById('backgroundForm');
     
+    if (!modal || !form) {
+        console.log('Background modal or form not found');
+        return;
+    }
+    
     if (editIndex !== null) {
         const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
         const bg = backgrounds[editIndex];
         
-        document.getElementById('backgroundOrder').value = bg.order;
-        form.dataset.editIndex = editIndex;
+        if (bg) {
+            // Set form data if editing
+            form.dataset.editIndex = editIndex;
+            console.log('Editing background image at index:', editIndex);
+        }
     } else {
+        // Reset form for new background
         form.reset();
         delete form.dataset.editIndex;
+        console.log('Adding new background image');
     }
     
     modal.style.display = 'block';
@@ -816,10 +1398,26 @@ function editBackgroundImage(index) {
 function deleteBackgroundImage(index) {
     const message = currentLanguage === 'zh' ? '你确定要删除这个背景图片吗？' : 'Are you sure you want to delete this background image?';
     if (confirm(message)) {
-        const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
-        backgrounds.splice(index, 1);
-        localStorage.setItem('backgroundImages', JSON.stringify(backgrounds));
-        loadBackgroundImages();
+        try {
+            const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
+            backgrounds.splice(index, 1);
+            localStorage.setItem('backgroundImages', JSON.stringify(backgrounds));
+            
+            // 确保容器存在
+            const slideshow = document.getElementById('backgroundSlideshow');
+            if (!slideshow) {
+                console.error('Background slideshow not found after deletion, attempting to recreate...');
+                attemptElementRecreation();
+                setTimeout(() => loadBackgroundImages(), 200);
+            } else {
+                loadBackgroundImages();
+            }
+            
+            console.log('Background image deleted successfully, remaining items:', backgrounds.length);
+        } catch (error) {
+            console.error('Error deleting background image:', error);
+            alert(currentLanguage === 'zh' ? '删除失败，请重试' : 'Deletion failed, please try again');
+        }
     }
 }
 
@@ -995,157 +1593,138 @@ function recreateAboutUsElements() {
 
 // About Us Management
 function loadAboutContent() {
-    const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
-    
-    // Check if elements exist before setting values
-    const titleInput = document.getElementById('aboutTitle');
-    const titleInputZh = document.getElementById('aboutTitleZh');
-    const descInput = document.getElementById('aboutDescription');
-    const descInputZh = document.getElementById('aboutDescriptionZh');
-    const imagePreview = document.getElementById('aboutImagePreview');
-    
-    if (titleInput && titleInputZh && descInput && descInputZh) {
-        // Always set both English and Chinese values
-        titleInput.value = aboutData.title;
-        titleInputZh.value = aboutData.titleZh;
-        descInput.value = aboutData.description;
-        descInputZh.value = aboutData.descriptionZh;
+    try {
+        console.log('Loading About Us content...');
+        
+        const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
+        
+        // Update title inputs
+        const titleInput = document.getElementById('aboutTitle');
+        const titleInputZh = document.getElementById('aboutTitleZh');
+        if (titleInput) titleInput.value = aboutData.title;
+        if (titleInputZh) titleInputZh.value = aboutData.titleZh;
+        
+        // Update description inputs
+        const descInput = document.getElementById('aboutDescription');
+        const descInputZh = document.getElementById('aboutDescriptionZh');
+        if (descInput) descInput.value = aboutData.description;
+        if (descInputZh) descInputZh.value = aboutData.descriptionZh;
+        
+        // Update image preview
+        const imagePreview = document.getElementById('aboutImagePreview');
+        if (imagePreview) {
+            const aboutImage = localStorage.getItem('aboutImage');
+            if (aboutImage) {
+                imagePreview.src = aboutImage;
+            } else {
+                imagePreview.src = aboutData.image;
+            }
+        }
+        
+        console.log('About Us content loaded successfully');
+        
+    } catch (error) {
+        console.error('Error loading About Us content:', error);
     }
-    
-    if (imagePreview) {
-        imagePreview.src = aboutData.image;
-    }
-    
-    // Update the visible input fields based on current language
-    updateAboutFormDisplay();
 }
 
-// Update About Us form display based on current language
+// Function to update About Us form display based on current language
 function updateAboutFormDisplay() {
+    console.log('Updating About Us form display for language:', currentLanguage);
+    
     const titleInput = document.getElementById('aboutTitle');
     const titleInputZh = document.getElementById('aboutTitleZh');
     const descInput = document.getElementById('aboutDescription');
     const descInputZh = document.getElementById('aboutDescriptionZh');
     const imageFileInput = document.getElementById('aboutImageFile');
     
-    console.log('Looking for About Us elements:');
-    console.log('aboutTitle:', titleInput);
-    console.log('aboutTitleZh:', titleInputZh);
-    console.log('aboutDescription:', descInput);
-    console.log('aboutDescriptionZh:', descInputZh);
-    console.log('aboutImageFile:', imageFileInput);
-    
-    // Check if elements exist before proceeding
-    if (!titleInput || !titleInputZh || !descInput || !descInputZh) {
+    // Check if elements exist
+    if (!titleInput || !titleInputZh || !descInput || !descInputZh || !imageFileInput) {
         console.log('Some About Us form elements not found, completely rebuilding section...');
         rebuildAboutUsSection();
         return;
     }
     
-    // Check if image file input exists
-    if (!imageFileInput) {
-        console.log('aboutImageFile not found, completely rebuilding section...');
-        rebuildAboutUsSection();
-        return;
-    }
-    
-    console.log('All About Us elements found, updating display for language:', currentLanguage);
-    
-    // Force all inputs to be visible first, regardless of previous state
-    titleInput.style.display = 'block';
-    titleInputZh.style.display = 'block';
-    descInput.style.display = 'block';
-    descInputZh.style.display = 'block';
-    
-    // Ensure image file input is always visible
-    imageFileInput.style.display = 'block';
-    imageFileInput.style.visibility = 'visible';
-    imageFileInput.style.opacity = '1';
-    console.log('Force showed aboutImageFile');
-    
+    // Update input visibility based on current language
     if (currentLanguage === 'zh') {
-        // Show Chinese inputs and populate with Chinese content
         titleInput.style.display = 'none';
         titleInputZh.style.display = 'block';
         descInput.style.display = 'none';
         descInputZh.style.display = 'block';
         
-        // Get the data
-        const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
-        titleInputZh.value = aboutData.titleZh || aboutData.title;
-        descInputZh.value = aboutData.descriptionZh || aboutData.description;
-        
-        // Update image upload label to Chinese
-        const imageLabel = document.querySelector('label[for="aboutImageFile"]');
-        if (imageLabel) {
-            imageLabel.textContent = '上传新图片';
-        }
-        
-        // Update static text elements to Chinese
-        const textContentTitle = document.getElementById('textContentTitle');
-        if (textContentTitle) textContentTitle.textContent = '文本内容';
-        
-        const titleLabel = document.getElementById('titleLabel');
-        if (titleLabel) titleLabel.textContent = '标题';
-        
-        const descriptionLabel = document.getElementById('descriptionLabel');
-        if (descriptionLabel) descriptionLabel.textContent = '描述';
-        
-        const saveButton = document.getElementById('saveButton');
-        if (saveButton) saveButton.textContent = '保存文本更改';
-        
-        const rightSideImageTitle = aboutImageEditor.querySelector('h3');
-        if (rightSideImageTitle) rightSideImageTitle.textContent = '右侧图片';
-        
-        const saveImageButton = aboutImageEditor.querySelector('button[onclick="saveAboutImage()"]');
-        if (saveImageButton) saveImageButton.textContent = '保存图片';
-        
-        console.log('Chinese inputs displayed, title:', titleInputZh.value);
+        titleInput.required = false;
+        titleInputZh.required = true;
+        descInput.required = false;
+        descInputZh.required = true;
     } else {
-        // Show English inputs and populate with English content
         titleInput.style.display = 'block';
         titleInputZh.style.display = 'none';
         descInput.style.display = 'block';
         descInputZh.style.display = 'none';
         
-        // Get the data
-        const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
-        titleInput.value = aboutData.title;
-        descInput.value = aboutData.description;
-        
-        // Update image upload label to English
-        const imageLabel = document.querySelector('label[for="aboutImageFile"]');
-        if (imageLabel) {
-            imageLabel.textContent = 'Upload New Image';
+        titleInput.required = true;
+        titleInputZh.required = false;
+        descInput.required = true;
+        descInputZh.required = false;
+    }
+    
+    // Update static text elements to Chinese/English
+    const textContentTitle = document.getElementById('textContentTitle');
+    if (textContentTitle) {
+        textContentTitle.textContent = currentLanguage === 'zh' ? '文本内容' : 'Text Content';
+    }
+    
+    const titleLabel = document.getElementById('titleLabel');
+    if (titleLabel) {
+        titleLabel.textContent = currentLanguage === 'zh' ? '标题' : 'Title';
+    }
+    
+    const descriptionLabel = document.getElementById('descriptionLabel');
+    if (descriptionLabel) {
+        descriptionLabel.textContent = currentLanguage === 'zh' ? '描述' : 'Description';
+    }
+    
+    const saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+        saveButton.textContent = currentLanguage === 'zh' ? '保存文本更改' : 'Save Text Changes';
+    }
+    
+    // Update image editor section text
+    const aboutImageEditor = document.querySelector('.about-image-editor');
+    if (aboutImageEditor) {
+        const imageTitle = aboutImageEditor.querySelector('h3');
+        if (imageTitle) {
+            imageTitle.textContent = currentLanguage === 'zh' ? '右侧图片' : 'Right Side Image';
         }
         
-        // Update static text elements to English
-        const textContentTitle = document.getElementById('textContentTitle');
-        if (textContentTitle) textContentTitle.textContent = 'Text Content';
+        const uploadLabel = aboutImageEditor.querySelector('label[for="aboutImageFile"]');
+        if (uploadLabel) {
+            uploadLabel.textContent = currentLanguage === 'zh' ? '上传新图片' : 'Upload New Image';
+        }
         
-        const titleLabel = document.getElementById('titleLabel');
-        if (titleLabel) titleLabel.textContent = 'Title';
+        const chooseFileBtn = aboutImageEditor.querySelector('.btn-upload');
+        if (chooseFileBtn) {
+            chooseFileBtn.textContent = currentLanguage === 'zh' ? '选择文件' : 'Choose File';
+        }
         
-        const descriptionLabel = document.getElementById('descriptionLabel');
-        if (descriptionLabel) descriptionLabel.textContent = 'Description';
+        const fileNameDisplay = aboutImageEditor.querySelector('#aboutImageFileName');
+        if (fileNameDisplay && !fileNameDisplay.textContent.includes('.')) {
+            fileNameDisplay.textContent = currentLanguage === 'zh' ? '未选择任何文件' : 'No file chosen';
+        }
         
-        const saveButton = document.getElementById('saveButton');
-        if (saveButton) saveButton.textContent = 'Save Text Changes';
-        
-        const rightSideImageTitle = aboutImageEditor.querySelector('h3');
-        if (rightSideImageTitle) rightSideImageTitle.textContent = 'Right Side Image';
-        
-        const saveImageButton = aboutImageEditor.querySelector('button[onclick="saveAboutImage()"]');
-        if (saveImageButton) saveImageButton.textContent = 'Save Image';
-        
-        console.log('English inputs displayed, title:', titleInput.value);
+        const saveImageBtn = aboutImageEditor.querySelector('.btn-save');
+        if (saveImageBtn) {
+            saveImageBtn.textContent = currentLanguage === 'zh' ? '保存图片' : 'Save Image';
+        }
     }
+    
+    console.log('About Us form display updated successfully');
 }
 
 function getDefaultAboutContent() {
     return {
-        title: 'About Elegant Curtains',
-        titleZh: '关于优雅窗帘',
+        title: 'About WHL Elegant Curtains',
+        titleZh: '关于WHL优雅窗帘',
         description: 'We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.',
         descriptionZh: '我们是一家家族企业，拥有超过20年制作精美窗帘的经验。我们对质量和客户满意度的承诺使我们成为整个地区房主的值得信赖的选择。',
         image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFib3V0IFVzPC90ZXh0Pjwvc3ZnPg=='
@@ -1177,7 +1756,8 @@ function saveAboutText() {
     }
 }
 
-function saveAboutImage() {
+// Function to save about us image with compression
+async function saveAboutImage() {
     const fileInput = document.getElementById('aboutImageFile');
     
     if (!fileInput) {
@@ -1190,29 +1770,272 @@ function saveAboutImage() {
     const file = fileInput.files[0];
     
     if (!file) {
-        alert('Please select an image file.');
+        showNotification('请选择图片文件', 'error');
         return;
     }
     
-    console.log('About Us image file found, processing...');
+    // Validate file
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+        showNotification(validation.error, 'error');
+        return;
+    }
     
-    // In a real application, you would upload the file to a server
-    // For now, we'll simulate by creating a local URL
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
-        aboutData.image = e.target.result;
-        
-        localStorage.setItem('aboutContent', JSON.stringify(aboutData));
-        
-        const imagePreview = document.getElementById('aboutImagePreview');
-        if (imagePreview) {
-            imagePreview.src = e.target.result;
-            console.log('About Us image preview updated');
+    try {
+        // Check storage usage before processing
+        const currentUsage = getStorageUsage();
+        if (currentUsage > 5 * 1024 * 1024) { // If over 5MB
+            console.log('Storage usage high, performing aggressive cleanup...');
+            cleanupOldData();
         }
-        alert('About Us image saved successfully!');
-    };
-    reader.readAsDataURL(file);
+        
+        // Compress image
+        const compressedDataUrl = await compressImage(file, 2000, 1400, 0.95);
+        
+        // Check if compressed image is still too large
+        if (compressedDataUrl.length > 5000000) { // If over 5MB
+            showNotification('压缩后图片文件仍过大，请选择更小的图片', 'warning');
+            return;
+        }
+        
+        // Try to save to localStorage
+        try {
+            localStorage.setItem('aboutImage', compressedDataUrl);
+            showNotification('关于我们图片保存成功', 'success');
+            
+            // Update preview
+            const preview = document.getElementById('aboutImagePreview');
+            if (preview) {
+                preview.src = compressedDataUrl;
+            }
+            
+            // Clear file input
+            fileInput.value = '';
+            
+            // Clear file name display
+            const fileNameDisplay = document.getElementById('aboutImageFileName');
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = currentLanguage === 'zh' ? '未选择任何文件' : 'No file chosen';
+            }
+            
+        } catch (storageError) {
+            if (storageError.name === 'QuotaExceededError') {
+                console.log('Storage quota exceeded, cleaning up and retrying...');
+                cleanupOldData();
+                
+                // Try again
+                localStorage.setItem('aboutImage', compressedDataUrl);
+                showNotification('关于我们图片保存成功（已清理旧数据）', 'success');
+                
+                // Update preview
+                const preview = document.getElementById('aboutImagePreview');
+                if (preview) {
+                    preview.src = compressedDataUrl;
+                }
+                
+                // Clear file input
+                fileInput.value = '';
+                
+                // Clear file name display
+                const fileNameDisplay = document.getElementById('aboutImageFileName');
+                if (fileNameDisplay) {
+                    fileNameDisplay.textContent = currentLanguage === 'zh' ? '未选择任何文件' : 'No file chosen';
+                }
+            } else {
+                throw storageError;
+            }
+        }
+        
+    } catch (error) {
+        console.error('保存关于我们图片时出错:', error);
+        showNotification('保存图片时出错，请重试', 'error');
+    }
+}
+
+// Handle product series form submission
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'productSeriesForm') {
+        e.preventDefault();
+        console.log('Product series form submitted!');
+        
+        const name = document.getElementById('productSeriesName');
+        const nameZh = document.getElementById('productSeriesNameZh');
+        const description = document.getElementById('productSeriesDescription');
+        const descriptionZh = document.getElementById('productSeriesDescriptionZh');
+        const category = document.getElementById('productSeriesCategory');
+        const imageFile = document.getElementById('productSeriesImage');
+        
+        console.log('Form elements found:', {
+            name: name ? 'Found' : 'Missing',
+            nameZh: nameZh ? 'Found' : 'Missing',
+            description: description ? 'Found' : 'Missing',
+            descriptionZh: descriptionZh ? 'Found' : 'Missing',
+            category: category ? 'Found' : 'Missing',
+            imageFile: imageFile ? 'Found' : 'Missing'
+        });
+        
+        if (!name || !nameZh || !description || !descriptionZh || !category || !imageFile) {
+            showNotification('表单元素缺失，请刷新页面重试', 'error');
+            return;
+        }
+        
+        const nameValue = name.value.trim();
+        const nameZhValue = nameZh.value.trim();
+        const descriptionValue = description.value.trim();
+        const descriptionZhValue = descriptionZh.value.trim();
+        const categoryValue = category.value;
+        const imageFileValue = imageFile.files[0];
+        
+        console.log('Form values:', {
+            name: nameValue,
+            nameZh: nameZhValue,
+            description: descriptionValue,
+            descriptionZh: descriptionZhValue,
+            category: categoryValue,
+            imageFile: imageFileValue ? imageFileValue.name : 'No file selected'
+        });
+        
+        // Validate all fields
+        if (!nameValue || !nameZhValue || !descriptionValue || !descriptionZhValue || !categoryValue) {
+            showNotification('请填写所有产品系列信息字段', 'error');
+            return;
+        }
+        
+        if (!imageFileValue) {
+            showNotification('请选择产品图片', 'error');
+            return;
+        }
+        
+        // Validate image file
+        const validation = validateImageFile(imageFileValue);
+        if (!validation.valid) {
+            showNotification(validation.error, 'error');
+            return;
+        }
+        
+        console.log('All validation passed, processing product series...');
+        
+        // Process image and save
+        processAndSaveProductSeries(nameValue, nameZhValue, descriptionValue, descriptionZhValue, categoryValue, imageFileValue);
+    }
+});
+
+// Function to process and save product series with image compression
+async function processAndSaveProductSeries(name, nameZh, description, descriptionZh, category, imageFile) {
+    try {
+        // Check storage usage before processing
+        const currentUsage = getStorageUsage();
+        if (currentUsage > 5 * 1024 * 1024) { // If over 5MB, clean up aggressively
+            console.log('Storage usage high, performing aggressive cleanup...');
+            cleanupOldData();
+        }
+        
+        // Compress image
+        const compressedDataUrl = await compressImage(imageFile, 2000, 1400, 0.95);
+        
+        // Check if compressed image is still too large
+        if (compressedDataUrl.length > 5000000) { // If over 5MB
+            showNotification('压缩后图片文件仍过大，请选择更小的图片', 'warning');
+            return;
+        }
+        
+        // Try to save to localStorage
+        try {
+            const existingSeries = JSON.parse(localStorage.getItem('productSeries') || '[]');
+            
+            // Check if we're editing an existing item
+            const editIndex = document.getElementById('productSeriesForm').dataset.editIndex;
+            
+            if (editIndex !== undefined) {
+                // Replace existing item
+                const index = parseInt(editIndex);
+                existingSeries[index] = {
+                    id: existingSeries[index]?.id || Date.now(),
+                    name: name,
+                    nameZh: nameZh,
+                    description: description,
+                    descriptionZh: descriptionZh,
+                    category: category,
+                    image: compressedDataUrl,
+                    timestamp: new Date().toISOString()
+                };
+                showNotification('产品系列更新成功', 'success');
+            } else {
+                // Add new item (but limit total items to prevent storage issues)
+                if (existingSeries.length >= 4) {
+                    // Remove oldest item to make room for new one
+                    existingSeries.shift();
+                }
+                
+                existingSeries.push({
+                    id: Date.now(),
+                    name: name,
+                    nameZh: nameZh,
+                    description: description,
+                    descriptionZh: descriptionZh,
+                    category: category,
+                    image: compressedDataUrl,
+                    timestamp: new Date().toISOString()
+                });
+                showNotification('产品系列保存成功', 'success');
+            }
+            
+            localStorage.setItem('productSeries', JSON.stringify(existingSeries));
+            closeProductSeriesModal();
+            loadContent(); // Refresh the display
+            
+        } catch (storageError) {
+            if (storageError.name === 'QuotaExceededError') {
+                console.log('Storage quota exceeded, cleaning up and retrying...');
+                cleanupOldData();
+                
+                // Try again with reduced data
+                const existingSeries = JSON.parse(localStorage.getItem('productSeries') || '[]');
+                // Keep only the most recent 2 items
+                const reducedSeries = existingSeries.slice(-2);
+                
+                // Add the new item
+                if (editIndex !== undefined) {
+                    const index = parseInt(editIndex);
+                    if (index < reducedSeries.length) {
+                        reducedSeries[index] = {
+                            id: reducedSeries[index]?.id || Date.now(),
+                            name: name,
+                            nameZh: nameZh,
+                            description: description,
+                            descriptionZh: descriptionZh,
+                            category: category,
+                            image: compressedDataUrl,
+                            timestamp: new Date().toISOString()
+                        };
+                    }
+                } else {
+                    reducedSeries.push({
+                        id: Date.now(),
+                        name: name,
+                        nameZh: nameZh,
+                        description: description,
+                        descriptionZh: descriptionZh,
+                        category: category,
+                        image: compressedDataUrl,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                localStorage.setItem('productSeries', JSON.stringify(reducedSeries));
+                
+                showNotification('产品系列保存成功（已清理旧数据）', 'success');
+                closeProductSeriesModal();
+                loadContent();
+            } else {
+                throw storageError;
+            }
+        }
+        
+    } catch (error) {
+        console.error('保存产品系列时出错:', error);
+        showNotification('保存产品系列时出错，请重试', 'error');
+    }
 }
 
 // Form submission handlers
@@ -1266,97 +2089,238 @@ document.getElementById('productSeriesForm').addEventListener('submit', function
     }
 });
 
-document.getElementById('galleryForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
-    
-    // Get image from file input or use default
-    const imageFile = document.getElementById('galleryImage');
-    let imageData = '';
-    
-    if (imageFile.files && imageFile.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imageData = e.target.result;
-            saveGalleryItem();
-        };
-        reader.readAsDataURL(imageFile.files[0]);
-    } else {
-        // Use default image if no file selected
-        imageData = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5ldyBHYWxsZXJ5PC90ZXh0Pjwvc3ZnPg==';
-        saveGalleryItem();
-    }
-    
-    function saveGalleryItem() {
-        const newItem = {
-            title: document.getElementById('galleryTitle').value,
-            titleZh: document.getElementById('galleryTitleZh').value,
-            description: document.getElementById('galleryDescription').value,
-            descriptionZh: document.getElementById('galleryDescriptionZh').value,
-            image: imageData
-        };
+// Handle gallery form submission
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'galleryForm') {
+        e.preventDefault();
+        console.log('Gallery form submitted!');
         
-        if (e.target.dataset.editIndex !== undefined) {
-            // Edit existing
-            const index = parseInt(e.target.dataset.editIndex);
-            gallery[index] = newItem;
-        } else {
-            // Add new
-            gallery.push(newItem);
+        const title = document.getElementById('galleryTitle');
+        const titleZh = document.getElementById('galleryTitleZh');
+        const description = document.getElementById('galleryDescription');
+        const descriptionZh = document.getElementById('galleryDescriptionZh');
+        const imageFile = document.getElementById('galleryImage');
+        
+        console.log('Form elements found:', {
+            title: title ? 'Found' : 'Missing',
+            titleZh: titleZh ? 'Found' : 'Missing',
+            description: description ? 'Found' : 'Missing',
+            descriptionZh: descriptionZh ? 'Found' : 'Missing',
+            imageFile: imageFile ? 'Found' : 'Missing'
+        });
+        
+        if (!title || !titleZh || !description || !descriptionZh || !imageFile) {
+            showNotification('表单元素缺失，请刷新页面重试', 'error');
+            return;
         }
         
-        localStorage.setItem('gallery', JSON.stringify(gallery));
-        loadGallery();
-        closeGalleryModal();
+        const titleValue = title.value.trim();
+        const titleZhValue = titleZh.value.trim();
+        const descriptionValue = description.value.trim();
+        const descriptionZhValue = descriptionZh.value.trim();
+        const imageFileValue = imageFile.files[0];
         
-        alert('Gallery item saved successfully!');
+        console.log('Form values:', {
+            title: titleValue,
+            titleZh: titleZhValue,
+            description: descriptionValue,
+            descriptionZh: descriptionZhValue,
+            imageFile: imageFileValue ? imageFileValue.name : 'No file selected'
+        });
+        
+        // Validate all fields
+        if (!titleValue || !descriptionValue) {
+            showNotification('请填写英文标题和描述字段', 'error');
+            return;
+        }
+        
+        // Chinese fields are optional for new items, but should be filled for better user experience
+        if (!titleZhValue || !descriptionZhValue) {
+            console.log('Chinese fields are empty, using English values as fallback');
+            // Use English values as fallback for Chinese fields
+            const finalTitleZh = titleZhValue || titleValue;
+            const finalDescriptionZh = descriptionZhValue || descriptionValue;
+            
+            // Update the form values
+            titleZh.value = finalTitleZh;
+            descriptionZh.value = finalDescriptionZh;
+            
+            // Use the final values for processing
+            const processedTitleZh = finalTitleZh;
+            const processedDescriptionZh = finalDescriptionZh;
+            
+            // Process with the final values
+            processAndSaveGalleryItem(titleValue, processedTitleZh, descriptionValue, processedDescriptionZh, imageFileValue);
+            return;
+        }
+        
+        if (!imageFileValue) {
+            showNotification('请选择图片文件', 'error');
+            return;
+        }
+        
+        // Validate image file
+        const validation = validateImageFile(imageFileValue);
+        if (!validation.valid) {
+            showNotification(validation.error, 'error');
+            return;
+        }
+        
+        console.log('All validation passed, processing gallery item...');
+        
+        // Process image and save
+        processAndSaveGalleryItem(titleValue, titleZhValue, descriptionValue, descriptionZhValue, imageFileValue);
     }
 });
+
+// Function to process and save gallery item with image compression
+async function processAndSaveGalleryItem(title, titleZh, description, descriptionZh, imageFile) {
+    try {
+        // Check storage usage before processing
+        const currentUsage = getStorageUsage();
+        if (currentUsage > 5 * 1024 * 1024) { // If over 5MB, clean up aggressively
+            console.log('Storage usage high, performing aggressive cleanup...');
+            cleanupOldData();
+        }
+        
+        // Compress image
+        const compressedDataUrl = await compressImage(imageFile, 2000, 1400, 0.95);
+        
+        // Check if compressed image is still too large
+        if (compressedDataUrl.length > 5000000) { // If over 5MB
+            showNotification('压缩后图片文件仍过大，请选择更小的图片', 'warning');
+            return;
+        }
+        
+        // Check if we're editing an existing item - define editIndex at function level
+        const editIndex = document.getElementById('galleryForm').dataset.editIndex;
+        
+        // Try to save to localStorage
+        try {
+            const existingGallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            
+            if (editIndex !== undefined && editIndex !== '') {
+                // Replace existing item
+                const index = parseInt(editIndex);
+                if (index >= 0 && index < existingGallery.length) {
+                    existingGallery[index] = {
+                        id: existingGallery[index]?.id || Date.now(),
+                        title: title,
+                        titleZh: titleZh,
+                        description: description,
+                        descriptionZh: descriptionZh,
+                        image: compressedDataUrl,
+                        timestamp: new Date().toISOString()
+                    };
+                    showNotification('画廊项目更新成功', 'success');
+                } else {
+                    showNotification('编辑索引无效，将作为新项目添加', 'warning');
+                    // Add as new item instead
+                    if (existingGallery.length >= 5) {
+                        existingGallery.shift();
+                    }
+                    existingGallery.push({
+                        id: Date.now(),
+                        title: title,
+                        titleZh: titleZh,
+                        description: description,
+                        descriptionZh: descriptionZh,
+                        image: compressedDataUrl,
+                        timestamp: new Date().toISOString()
+                    });
+                    showNotification('画廊项目保存成功', 'success');
+                }
+            } else {
+                // Add new item (but limit total items to prevent storage issues)
+                if (existingGallery.length >= 5) {
+                    // Remove oldest item to make room for new one
+                    existingGallery.shift();
+                }
+                
+                existingGallery.push({
+                    id: Date.now(),
+                    title: title,
+                    titleZh: titleZh,
+                    description: description,
+                    descriptionZh: descriptionZh,
+                    image: compressedDataUrl,
+                    timestamp: new Date().toISOString()
+                });
+                showNotification('画廊项目保存成功', 'success');
+            }
+            
+            localStorage.setItem('gallery', JSON.stringify(existingGallery));
+            closeGalleryModal();
+            loadContent(); // Refresh the display
+            
+        } catch (storageError) {
+            if (storageError.name === 'QuotaExceededError') {
+                console.log('Storage quota exceeded, cleaning up and retrying...');
+                cleanupOldData();
+                
+                // Try again with reduced data
+                const existingGallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+                // Keep only the most recent 2 items
+                const reducedGallery = existingGallery.slice(-2);
+                
+                // Add the new item - use the same editIndex logic
+                if (editIndex !== undefined && editIndex !== '') {
+                    const index = parseInt(editIndex);
+                    if (index >= 0 && index < reducedGallery.length) {
+                        reducedGallery[index] = {
+                            id: reducedGallery[index]?.id || Date.now(),
+                            title: title,
+                            titleZh: titleZh,
+                            description: description,
+                            descriptionZh: descriptionZh,
+                            image: compressedDataUrl,
+                            timestamp: new Date().toISOString()
+                        };
+                    } else {
+                        // Add as new item if index is invalid
+                        reducedGallery.push({
+                            id: Date.now(),
+                            title: title,
+                            titleZh: titleZh,
+                            description: description,
+                            descriptionZh: descriptionZh,
+                            image: compressedDataUrl,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                } else {
+                    reducedGallery.push({
+                        id: Date.now(),
+                        title: title,
+                        titleZh: titleZh,
+                        description: description,
+                        descriptionZh: descriptionZh,
+                        image: compressedDataUrl,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                localStorage.setItem('gallery', JSON.stringify(reducedGallery));
+                
+                showNotification('画廊项目保存成功（已清理旧数据）', 'success');
+                closeGalleryModal();
+                loadContent();
+            } else {
+                throw storageError;
+            }
+        }
+        
+    } catch (error) {
+        console.error('保存画廊项目时出错:', error);
+        showNotification('保存画廊项目时出错，请重试', 'error');
+    }
+}
 
 document.getElementById('backgroundForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
-    
-    // Get image from file input or use default
-    const imageFile = document.getElementById('backgroundImage');
-    let imageData = '';
-    
-    if (imageFile.files && imageFile.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imageData = e.target.result;
-            saveBackgroundImage();
-        };
-        reader.readAsDataURL(imageFile.files[0]);
-    } else {
-        // Use default image if no file selected
-        imageData = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5ldyBCYWNrZ3JvdW5kPC90ZXh0Pjwvc3ZnPg==';
-        saveBackgroundImage();
-    }
-    
-    function saveBackgroundImage() {
-        const newBackground = {
-            image: imageData,
-            order: parseInt(document.getElementById('backgroundOrder').value)
-        };
-        
-        if (e.target.dataset.editIndex !== undefined) {
-            // Edit existing
-            const index = parseInt(e.target.dataset.editIndex);
-            backgrounds[index] = newBackground;
-        } else {
-            // Add new
-            backgrounds.push(newBackground);
-        }
-        
-        localStorage.setItem('backgroundImages', JSON.stringify(backgrounds));
-        loadBackgroundImages();
-        closeBackgroundModal();
-        
-        alert('Background image saved successfully!');
-    }
+    // Use the new async saveBackgroundImage function
+    saveBackgroundImage();
 });
 
 // Close modals when clicking outside
@@ -1780,4 +2744,619 @@ function rebuildAboutUsSection() {
     }, 10);
     
     console.log('About Us section completely rebuilt');
+}
+
+// Image compression and validation functions
+function compressImage(file, maxWidth = 1600, maxHeight = 1200, quality = 0.9) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Calculate new dimensions while maintaining aspect ratio
+                let { width, height } = img;
+                if (width > maxWidth || height > maxHeight) {
+                    const ratio = Math.min(maxWidth / width, maxHeight / height);
+                    width *= ratio;
+                    height *= ratio;
+                }
+                
+                // Set canvas dimensions
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Enable high-quality rendering
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                
+                // Remove any filters and ensure clean rendering
+                ctx.filter = 'none';
+                ctx.globalCompositeOperation = 'source-over';
+                
+                // Draw image
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Try to compress with different strategies
+                let dataUrl;
+                let fileSize;
+                
+                // Strategy 1: Try PNG first (lossless, but larger)
+                try {
+                    dataUrl = canvas.toDataURL('image/png');
+                    fileSize = Math.ceil(dataUrl.length * 0.75); // Approximate size
+                    
+                    // If PNG is under 2MB, use it
+                    if (fileSize < 2 * 1024 * 1024) {
+                        console.log(`PNG compression successful: ${fileSize} bytes (${width}x${height})`);
+                        resolve(dataUrl);
+                        return;
+                    }
+                } catch (e) {
+                    console.log('PNG compression failed, trying JPEG...');
+                }
+                
+                // Strategy 2: Try JPEG with high quality
+                try {
+                    dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    fileSize = Math.ceil(dataUrl.length * 0.75);
+                    
+                    if (fileSize < 2 * 1024 * 1024) {
+                        console.log(`JPEG compression successful: ${fileSize} bytes (${width}x${height})`);
+                        resolve(dataUrl);
+                        return;
+                    }
+                } catch (e) {
+                    console.log('JPEG compression failed, trying lower quality...');
+                }
+                
+                // Strategy 3: Reduce size and quality progressively
+                let attempts = 0;
+                const maxAttempts = 3;
+                
+                const tryCompression = () => {
+                    attempts++;
+                    const scaleFactor = 1 - (attempts * 0.1); // Reduce size by 10% each attempt
+                    const qualityFactor = quality - (attempts * 0.1); // Reduce quality by 10% each attempt
+                    
+                    const newWidth = Math.floor(width * scaleFactor);
+                    const newHeight = Math.floor(height * scaleFactor);
+                    
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                    
+                    try {
+                        dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.5, qualityFactor));
+                        fileSize = Math.ceil(dataUrl.length * 0.75);
+                        
+                        console.log(`Compression attempt ${attempts}: ${fileSize} bytes (${newWidth}x${newHeight})`);
+                        
+                        if (fileSize < 2 * 1024 * 1024 || attempts >= maxAttempts) {
+                            resolve(dataUrl);
+                            return;
+                        }
+                        
+                        // Try again with smaller size
+                        setTimeout(tryCompression, 100);
+                        
+                    } catch (e) {
+                        console.error('Compression attempt failed:', e);
+                        if (attempts >= maxAttempts) {
+                            reject(new Error('Failed to compress image after multiple attempts'));
+                        } else {
+                            setTimeout(tryCompression, 100);
+                        }
+                    }
+                };
+                
+                tryCompression();
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function validateImageFile(file) {
+    // Check file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+        return { valid: false, error: '图片文件过大，请选择小于10MB的图片' };
+    }
+    
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+        return { valid: false, error: '不支持的图片格式，请选择JPEG、PNG、GIF或WebP格式' };
+    }
+    
+    return { valid: true };
+}
+
+function getStorageUsage() {
+    let total = 0;
+    for (let key in localStorage) {
+        if (localStorage.hasOwnProperty(key)) {
+            total += localStorage[key].length;
+        }
+    }
+    return total;
+}
+
+// Function to clean up old data to save storage space
+function cleanupOldData() {
+    console.log('Cleaning up old data to save storage space...');
+    
+    try {
+        // Get current storage usage
+        const currentUsage = getStorageUsage();
+        console.log('Current storage usage before cleanup:', currentUsage, 'bytes');
+        
+        // If storage is still high after initial cleanup, perform aggressive cleanup
+        if (currentUsage > 3 * 1024 * 1024) { // If over 3MB
+            console.log('Storage still high, performing aggressive cleanup...');
+            
+            // Keep only the most recent 1-2 items from each category
+            const aggressiveCleanup = () => {
+                // Background images - keep only 1
+                const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+                if (backgrounds.length > 1) {
+                    const latestBackground = backgrounds[backgrounds.length - 1];
+                    localStorage.setItem('backgroundImages', JSON.stringify([latestBackground]));
+                    console.log('Kept only 1 background image');
+                }
+                
+                // Gallery - keep only 2
+                const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+                if (gallery.length > 2) {
+                    const latestGallery = gallery.slice(-2);
+                    localStorage.setItem('gallery', JSON.stringify(latestGallery));
+                    console.log('Kept only 2 gallery items');
+                }
+                
+                // Product series - keep only 3
+                const productSeries = JSON.parse(localStorage.getItem('productSeries') || '[]');
+                if (productSeries.length > 3) {
+                    const latestProductSeries = productSeries.slice(-3);
+                    localStorage.setItem('productSeries', JSON.stringify(latestProductSeries));
+                    console.log('Kept only 3 product series');
+                }
+                
+                // About us image - remove if exists
+                if (localStorage.getItem('aboutUsImage')) {
+                    localStorage.removeItem('aboutUsImage');
+                    console.log('Removed about us image to save space');
+                }
+                
+                // About us content - keep only essential text
+                const aboutContent = JSON.parse(localStorage.getItem('aboutUs') || '{}');
+                if (aboutContent.image) {
+                    delete aboutContent.image;
+                    localStorage.setItem('aboutUs', JSON.stringify(aboutContent));
+                    console.log('Removed about us image content to save space');
+                }
+            };
+            
+            aggressiveCleanup();
+            
+            // Check storage again
+            const newUsage = getStorageUsage();
+            console.log('Storage usage after aggressive cleanup:', newUsage, 'bytes');
+            
+            // If still too high, force reset to defaults
+            if (newUsage > 2 * 1024 * 1024) { // If still over 2MB
+                console.log('Storage still too high, forcing reset to defaults...');
+                localStorage.clear();
+                console.log('All localStorage data cleared');
+            }
+        }
+        
+        console.log('Aggressive cleanup completed');
+        
+    } catch (error) {
+        console.error('Error during cleanup:', error);
+        // If cleanup fails, force clear everything
+        try {
+            localStorage.clear();
+            console.log('Forced localStorage clear due to cleanup error');
+        } catch (clearError) {
+            console.error('Failed to clear localStorage:', clearError);
+        }
+    }
+}
+
+// Function to save background image with compression
+async function saveBackgroundImage() {
+    try {
+        console.log('saveBackgroundImage: Starting...');
+        
+        const fileInput = document.getElementById('backgroundImageFile');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            showNotification('请选择图片文件', 'error');
+            return;
+        }
+        
+        console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
+        
+        // Validate file
+        const validation = validateImageFile(file);
+        if (!validation.valid) {
+            showNotification(validation.error, 'error');
+            return;
+        }
+        
+        // Check if we're editing an existing item - declare at function level
+        const editIndex = document.getElementById('backgroundForm')?.dataset.editIndex;
+        console.log('Edit index:', editIndex);
+        
+        try {
+            // Check storage usage before processing
+            const currentUsage = getStorageUsage();
+            console.log('Current storage usage:', currentUsage, 'bytes');
+            if (currentUsage > 5 * 1024 * 1024) { // If over 5MB
+                console.log('Storage usage high, performing aggressive cleanup...');
+                cleanupOldData();
+            }
+            
+            // Compress image
+            console.log('Compressing image...');
+            const compressedDataUrl = await compressImage(file, 2000, 1400, 0.95);
+            console.log('Image compressed, size:', compressedDataUrl.length, 'bytes');
+            
+            // Check if compressed image is still too large
+            if (compressedDataUrl.length > 5000000) { // If over 5MB
+                showNotification('压缩后图片文件仍过大，请选择更小的图片', 'warning');
+                return;
+            }
+            
+            // Try to save to localStorage
+            try {
+                const existingBackgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+                
+                // Check if we're editing an existing item
+                const editIndex = document.getElementById('backgroundForm')?.dataset.editIndex;
+                
+                if (editIndex !== undefined) {
+                    // Replace existing item
+                    const index = parseInt(editIndex);
+                                    existingBackgrounds[index] = {
+                    id: existingBackgrounds[index]?.id || Date.now(),
+                    image: compressedDataUrl,
+                    order: 1,
+                    timestamp: new Date().toISOString()
+                };
+                    showNotification('背景图片更新成功', 'success');
+                } else {
+                    // Add new item
+                    existingBackgrounds.push({
+                        id: Date.now(),
+                        image: compressedDataUrl,
+                        order: 1,
+                        timestamp: new Date().toISOString()
+                    });
+                    showNotification('背景图片添加成功', 'success');
+                }
+                
+                // Try to save with cleanup if needed
+                let saveSuccessful = false;
+                let attempts = 0;
+                const maxAttempts = 3;
+                
+                const trySave = () => {
+                    attempts++;
+                    try {
+                        localStorage.setItem('backgroundImages', JSON.stringify(existingBackgrounds));
+                        saveSuccessful = true;
+                        console.log('Background image saved successfully on attempt', attempts);
+                    } catch (storageError) {
+                        if (storageError.name === 'QuotaExceededError' && attempts < maxAttempts) {
+                            console.log(`Storage quota exceeded on attempt ${attempts}, cleaning up and retrying...`);
+                            cleanupOldData();
+                            
+                            // Wait a bit before retrying
+                            setTimeout(trySave, 100);
+                            return;
+                        } else {
+                            throw storageError;
+                        }
+                    }
+                };
+                
+                trySave();
+                
+                if (saveSuccessful) {
+                    closeBackgroundModal();
+                    loadContent(); // Refresh the display
+                }
+                
+            } catch (storageError) {
+                if (storageError.name === 'QuotaExceededError') {
+                    console.log('Storage quota exceeded, cleaning up and retrying...');
+                    cleanupOldData();
+                    
+                    // Try one more time with aggressive cleanup
+                    try {
+                        // Keep only the current image
+                        const minimalBackgrounds = [{
+                            id: Date.now(),
+                            image: compressedDataUrl,
+                            order: 1,
+                            timestamp: new Date().toISOString()
+                        }];
+                        
+                        localStorage.setItem('backgroundImages', JSON.stringify(minimalBackgrounds));
+                        showNotification('背景图片已保存（已清理旧数据）', 'success');
+                        closeBackgroundModal();
+                        loadContent();
+                        
+                    } catch (finalError) {
+                        console.error('Final save attempt failed:', finalError);
+                        showNotification('存储空间不足，无法保存图片。请删除一些旧图片后重试。', 'error');
+                    }
+                } else {
+                    console.error('Error during image processing:', storageError);
+                    showNotification('保存背景图片时出错: ' + storageError.message, 'error');
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error during image processing:', error);
+            showNotification('图片处理时出错，请重试', 'error');
+        }
+        
+    } catch (error) {
+        console.error('保存背景图片时出错:', error);
+        showNotification('保存图片时出错，请重试', 'error');
+    }
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <span class="notification-message">${message}</span>
+        <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    // Set background color based on type
+    switch(type) {
+        case 'success':
+            notification.style.backgroundColor = '#28a745';
+            break;
+        case 'error':
+            notification.style.backgroundColor = '#dc3545';
+            break;
+        case 'warning':
+            notification.style.backgroundColor = '#ffc107';
+            notification.style.color = '#212529';
+            break;
+        default:
+            notification.style.backgroundColor = '#17a2b8';
+    }
+    
+    // Add close button styles
+    const closeButton = notification.querySelector('.notification-close');
+    closeButton.style.cssText = `
+        background: none;
+        border: none;
+        color: inherit;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        margin-left: auto;
+        opacity: 0.8;
+    `;
+    
+    closeButton.addEventListener('mouseenter', () => {
+        closeButton.style.opacity = '1';
+    });
+    
+    closeButton.addEventListener('mouseleave', () => {
+        closeButton.style.opacity = '0.8';
+    });
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Add CSS animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Function to toggle upload guidelines visibility
+function toggleGuidelines() {
+    const guidelinesContent = document.getElementById('guidelinesContent');
+    if (guidelinesContent) {
+        const isVisible = guidelinesContent.style.display !== 'none';
+        guidelinesContent.style.display = isVisible ? 'none' : 'block';
+        
+        const toggleBtn = document.querySelector('.guidelines-toggle');
+        if (toggleBtn) {
+            toggleBtn.textContent = isVisible ? '显示指南' : '隐藏指南';
+        }
+    }
+}
+
+// Function to update background preview
+function updateBackgroundPreview() {
+    const backgroundSlideshow = document.getElementById('backgroundSlideshow');
+    if (backgroundSlideshow) {
+        debouncedLoadBackgroundImages();
+    }
+}
+
+// Image sharpening function to reduce blurriness
+function sharpenImage(canvas, ctx) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const width = imageData.width;
+    const height = imageData.height;
+    
+    // Sharpening kernel
+    const kernel = [
+        0, -1, 0,
+        -1, 5, -1,
+        0, -1, 0
+    ];
+    
+    const newData = new Uint8ClampedArray(data);
+    
+    for (let y = 1; y < height - 1; y++) {
+        for (let x = 1; x < width - 1; x++) {
+            for (let c = 0; c < 3; c++) { // RGB channels only
+                let sum = 0;
+                let kernelIndex = 0;
+                
+                for (let ky = -1; ky <= 1; ky++) {
+                    for (let kx = -1; kx <= 1; kx++) {
+                        const pixelIndex = ((y + ky) * width + (x + kx)) * 4 + c;
+                        sum += data[pixelIndex] * kernel[kernelIndex];
+                        kernelIndex++;
+                    }
+                }
+                
+                const pixelIndex = (y * width + x) * 4 + c;
+                newData[pixelIndex] = Math.max(0, Math.min(255, sum));
+            }
+        }
+    }
+    
+    const newImageData = new ImageData(newData, width, height);
+    ctx.putImageData(newImageData, 0, 0);
+}
+
+// Function to ensure grids are ready for adding new items
+function ensureGridsReady() {
+    console.log('Ensuring all grids are ready for adding new items...');
+    
+    const grids = [
+        { id: 'productSeriesGrid', name: 'Product Series Grid' },
+        { id: 'galleryGrid', name: 'Gallery Grid' },
+        { id: 'backgroundSlideshow', name: 'Background Slideshow' }
+    ];
+    
+    let gridsReady = true;
+    
+    grids.forEach(grid => {
+        const element = document.getElementById(grid.id);
+        if (!element) {
+            console.error(`${grid.name} not found, attempting to recreate...`);
+            if (attemptElementRecreation()) {
+                console.log(`${grid.name} recreated successfully`);
+            } else {
+                console.error(`Failed to recreate ${grid.name}`);
+                gridsReady = false;
+            }
+        } else {
+            console.log(`${grid.name} is ready`);
+        }
+    });
+    
+    if (gridsReady) {
+        console.log('All grids are ready for adding new items');
+        return true;
+    } else {
+        console.error('Some grids are not ready');
+        return false;
+    }
+}
+
+// Function to refresh all content and ensure grids are ready
+function refreshAllContentAndGrids() {
+    console.log('Refreshing all content and ensuring grids are ready...');
+    
+    // First ensure grids exist
+    if (ensureGridsReady()) {
+        // Then load all content
+        loadContent();
+    } else {
+        console.error('Failed to ensure grids are ready, attempting to load content anyway...');
+        loadContent();
+    }
+}
+
+// 在页面加载完成后确保所有新增按钮都可见
+function ensureAddButtonsVisible() {
+    console.log('确保新增按钮可见...');
+    
+    const addButtons = document.querySelectorAll('.btn-add');
+    addButtons.forEach((btn, index) => {
+        // 强制显示按钮
+        btn.style.display = 'inline-block';
+        btn.style.visibility = 'visible';
+        btn.style.opacity = '1';
+        
+        // 确保按钮有正确的样式
+        if (!btn.style.backgroundColor) {
+            btn.style.backgroundColor = '#28a745';
+        }
+        if (!btn.style.color) {
+            btn.style.color = 'white';
+        }
+        
+        console.log(`按钮 ${index + 1} 已确保可见:`, btn);
+    });
+    
+    // 检查按钮状态
+    addButtons.forEach((btn, index) => {
+        console.log(`按钮 ${index + 1} 状态:`, {
+            display: btn.style.display,
+            visibility: btn.style.visibility,
+            opacity: btn.style.opacity,
+            offsetWidth: btn.offsetWidth,
+            offsetHeight: btn.offsetHeight,
+            backgroundColor: btn.style.backgroundColor,
+            color: btn.style.color
+        });
+    });
 }

@@ -20,110 +20,144 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Prevent Google Translate popup
 function preventGoogleTranslate() {
-    // Remove Google Translate elements if they exist
-    const translateElements = document.querySelectorAll('.goog-te-banner-frame, .goog-te-gadget, .goog-te-combo');
-    translateElements.forEach(element => {
-        if (element && element.parentNode) {
-            element.parentNode.removeChild(element);
+    try {
+        // Remove Google Translate elements if they exist
+        const translateElements = document.querySelectorAll('.goog-te-banner-frame, .goog-te-gadget, .goog-te-combo');
+        translateElements.forEach(element => {
+            if (element && element.parentNode) {
+                element.parentNode.removeChild(element);
+            }
+        });
+        
+        // Reset body position if it was modified by Google Translate
+        if (document.body.style.top !== '') {
+            document.body.style.top = '';
         }
-    });
-    
-    // Reset body position if it was modified by Google Translate
-    if (document.body.style.top !== '') {
-        document.body.style.top = '';
+        
+        // Remove any Google Translate classes
+        document.body.classList.remove('translated-ltr', 'translated-rtl');
+        
+    } catch (error) {
+        console.error('Error preventing Google Translate:', error);
     }
-    
-    // Remove any Google Translate classes
-    document.body.classList.remove('translated-ltr', 'translated-rtl');
 }
 
 // Language switching
 function updatePageLanguage(lang) {
     currentLanguage = lang;
     
-    // Update language buttons
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Find and activate the button for the current language
-    let activeButton = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
-    if (!activeButton) {
-        // Fallback: find button by text content or onclick attribute
-        activeButton = document.querySelector(`.lang-btn[onclick*="'${lang}'"]`);
-    }
-    if (activeButton) {
-        activeButton.classList.add('active');
-    }
-    
-    // Update all text content
-    document.querySelectorAll('[data-en][data-zh]').forEach(element => {
-        if (lang === 'zh') {
-            element.textContent = element.getAttribute('data-zh');
-        } else {
-            element.textContent = element.getAttribute('data-en');
+    try {
+        // Update language buttons
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Find and activate the button for the current language
+        let activeButton = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
+        if (!activeButton) {
+            // Fallback: find button by text content or onclick attribute
+            activeButton = document.querySelector(`.lang-btn[onclick*="'${lang}'"]`);
         }
-    });
-    
-    updateSelectOptionsLanguage();
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+        
+        // Update all text content
+        document.querySelectorAll('[data-en][data-zh]').forEach(element => {
+            if (lang === 'zh') {
+                element.textContent = element.getAttribute('data-zh');
+            } else {
+                element.textContent = element.getAttribute('data-en');
+            }
+        });
+        
+        updateSelectOptionsLanguage();
+        
+    } catch (error) {
+        console.error('Error updating page language:', error);
+    }
 }
 
 // Update select options language
 function updateSelectOptionsLanguage() {
-    // Self quote modal selects
-    const propertyTypeSelect = document.getElementById('selfPropertyType');
-    const budgetSelect = document.getElementById('selfBudget');
-    
-    // Update self quote selects
-    if (propertyTypeSelect) {
-        Array.from(propertyTypeSelect.options).forEach(option => {
-            if (option.getAttribute('data-en') && option.getAttribute('data-zh')) {
-                option.textContent = currentLanguage === 'zh' ? 
-                    option.getAttribute('data-zh') : 
-                    option.getAttribute('data-en');
-            }
-        });
-    }
-    
-    if (budgetSelect) {
-        Array.from(budgetSelect.options).forEach(option => {
-            if (option.getAttribute('data-en') && option.getAttribute('data-zh')) {
-                option.textContent = currentLanguage === 'zh' ? 
-                    option.getAttribute('data-zh') : 
-                    option.getAttribute('data-en');
-            }
-        });
+    try {
+        // Self quote modal selects
+        const propertyTypeSelect = document.getElementById('selfPropertyType');
+        const budgetSelect = document.getElementById('selfBudget');
+        
+        // Update self quote selects
+        if (propertyTypeSelect) {
+            Array.from(propertyTypeSelect.options).forEach(option => {
+                if (option.getAttribute('data-en') && option.getAttribute('data-zh')) {
+                    option.textContent = currentLanguage === 'zh' ? 
+                        option.getAttribute('data-zh') : 
+                        option.getAttribute('data-en');
+                }
+            });
+        }
+        
+        if (budgetSelect) {
+            Array.from(budgetSelect.options).forEach(option => {
+                if (option.getAttribute('data-en') && option.getAttribute('data-zh')) {
+                    option.textContent = currentLanguage === 'zh' ? 
+                        option.getAttribute('data-zh') : 
+                        option.getAttribute('data-en');
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error updating select options language:', error);
     }
 }
 
 // Smooth scrolling setup
 function setupSmoothScrolling() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const href = this.getAttribute('href');
-            if (href && href !== '#') {
-                const target = document.querySelector(href);
+    try {
+        // Add smooth scrolling to all internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     target.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
                     });
                 }
-            }
+            });
         });
-    });
+    } catch (error) {
+        console.error('Error setting up smooth scrolling:', error);
+    }
 }
 
 // Modal management
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    try {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        } else {
+            console.log(`Modal with ID '${modalId}' not found`);
+        }
+    } catch (error) {
+        console.error('Error opening modal:', error);
+    }
 }
 
 function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    document.body.style.overflow = 'auto';
+    try {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        } else {
+            console.log(`Modal with ID '${modalId}' not found`);
+        }
+    } catch (error) {
+        console.error('Error closing modal:', error);
+    }
 }
 
 // Tab switching
@@ -222,72 +256,82 @@ function loadAppointmentCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
     const monthTitle = document.getElementById('calendarMonthTitle');
     
-    if (!calendarGrid || !monthTitle) return;
-    
-    // Update month title
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                       'July', 'August', 'September', 'October', 'November', 'December'];
-    monthTitle.textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
-    
-    // Get first day of month and number of days
-    const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
-    const lastDay = new Date(currentCalendarYear, currentCalendarMonth + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-    
-    let calendarHTML = `
-        <div class="calendar-weekdays">
-            <div class="weekday">Sun</div>
-            <div class="weekday">Mon</div>
-            <div class="weekday">Tue</div>
-            <div class="weekday">Wed</div>
-            <div class="weekday">Thu</div>
-            <div class="weekday">Fri</div>
-            <div class="weekday">Sat</div>
-        </div>
-    `;
-    
-    // Generate calendar days
-    for (let week = 0; week < 6; week++) {
-        calendarHTML += '<div class="calendar-week">';
-        for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-            const currentDate = new Date(startDate);
-            currentDate.setDate(startDate.getDate() + (week * 7) + dayIndex);
-            
-            const isCurrentMonth = currentDate.getMonth() === currentCalendarMonth;
-            const isToday = currentDate.toDateString() === new Date().toDateString();
-            const isPast = currentDate < new Date();
-            const isFuture = currentDate > new Date();
-            const isWithin14Days = (currentDate - new Date()) <= (14 * 24 * 60 * 60 * 1000);
-            
-            // Check if date has available time slots - use local date to avoid timezone issues
-            const year = currentDate.getFullYear();
-            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const dayOfMonth = String(currentDate.getDate()).padStart(2, '0');
-            const dateString = `${year}-${month}-${dayOfMonth}`;
-            const availableSlots = getAvailableTimeSlotsForDate(dateString);
-            const hasAvailableSlots = availableSlots.length > 0;
-            
-            let dayClass = 'calendar-day';
-            if (!isCurrentMonth) dayClass += ' other-month';
-            if (isToday) dayClass += ' today';
-            if (isPast) dayClass += ' past';
-            if (hasAvailableSlots && isWithin14Days) dayClass += ' available';
-            if (!isWithin14Days) dayClass += ' disabled';
-            
-            calendarHTML += `
-                <div class="${dayClass}" 
-                     data-date="${dateString}"
-                     onclick="${hasAvailableSlots && isWithin14Days ? 'selectDate(this)' : ''}">
-                    <div class="day-number">${currentDate.getDate()}</div>
-                    ${hasAvailableSlots && isWithin14Days ? '<div class="available-indicator"></div>' : ''}
-                </div>
-            `;
-        }
-        calendarHTML += '</div>';
+    // Early return if elements don't exist (prevents TypeError)
+    if (!calendarGrid || !monthTitle) {
+        console.log('Calendar elements not found, skipping calendar load');
+        return;
     }
     
-    calendarGrid.innerHTML = calendarHTML;
+    try {
+        // Update month title
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+        monthTitle.textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
+        
+        // Get first day of month and number of days
+        const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
+        const lastDay = new Date(currentCalendarYear, currentCalendarMonth + 1, 0);
+        const startDate = new Date(firstDay);
+        startDate.setDate(startDate.getDate() - firstDay.getDay());
+        
+        let calendarHTML = `
+            <div class="calendar-weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+            </div>
+        `;
+        
+        // Generate calendar days
+        for (let week = 0; week < 6; week++) {
+            calendarHTML += '<div class="calendar-week">';
+            for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + (week * 7) + dayIndex);
+                
+                const isCurrentMonth = currentDate.getMonth() === currentCalendarMonth;
+                const isToday = currentDate.toDateString() === new Date().toDateString();
+                const isPast = currentDate < new Date();
+                const isFuture = currentDate > new Date();
+                const isWithin14Days = (currentDate - new Date()) <= (14 * 24 * 60 * 60 * 1000);
+                
+                // Check if date has available time slots - use local date to avoid timezone issues
+                const year = currentDate.getFullYear();
+                const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+                const dayOfMonth = String(currentDate.getDate()).padStart(2, '0');
+                const dateString = `${year}-${month}-${dayOfMonth}`;
+                const availableSlots = getAvailableTimeSlotsForDate(dateString);
+                const hasAvailableSlots = availableSlots.length > 0;
+                
+                let dayClass = 'calendar-day';
+                if (!isCurrentMonth) dayClass += ' other-month';
+                if (isToday) dayClass += ' today';
+                if (isPast) dayClass += ' past';
+                if (hasAvailableSlots && isWithin14Days) dayClass += ' available';
+                if (!isWithin14Days) dayClass += ' disabled';
+                
+                calendarHTML += `
+                    <div class="${dayClass}" 
+                         data-date="${dateString}"
+                         onclick="${hasAvailableSlots && isWithin14Days ? 'selectDate(this)' : ''}">
+                        <div class="day-number">${currentDate.getDate()}</div>
+                        ${hasAvailableSlots && isWithin14Days ? '<div class="available-indicator"></div>' : ''}
+                    </div>
+                `;
+            }
+            calendarHTML += '</div>';
+        }
+        
+        calendarGrid.innerHTML = calendarHTML;
+        console.log('Calendar loaded successfully');
+        
+    } catch (error) {
+        console.error('Error loading calendar:', error);
+    }
 }
 
 // Get available time slots for a specific date
@@ -330,48 +374,59 @@ function showTimeSlotSelection(date) {
     const selectedSlotInfo = document.getElementById('selectedSlotInfo');
     const selectedSlotDetails = document.getElementById('selectedSlotDetails');
     
+    // Early return if elements don't exist
+    if (!selectedSlotInfo || !selectedSlotDetails) {
+        console.log('Time slot elements not found, skipping time slot selection');
+        return;
+    }
+    
     if (availableSlots.length === 0) {
         selectedSlotInfo.style.display = 'none';
         return;
     }
     
-    let slotsHTML = '<div class="time-slot-options">';
-    availableSlots.forEach(slot => {
-        const isSelected = selectedTimeSlot && selectedTimeSlot.id === slot.id;
-        // Create time range display based on time value
-        const timeRange = slot.time === 'morning' ? 'Morning (9 AM - 12 PM)' : 
-                         slot.time === 'afternoon' ? 'Afternoon (1 PM - 4 PM)' : 
-                         slot.time === 'evening' ? 'Evening (5 PM - 7 PM)' : slot.time;
+    try {
+        let slotsHTML = '<div class="time-slot-options">';
+        availableSlots.forEach(slot => {
+            const isSelected = selectedTimeSlot && selectedTimeSlot.id === slot.id;
+            // Create time range display based on time value
+            const timeRange = slot.time === 'morning' ? 'Morning (9 AM - 12 PM)' : 
+                             slot.time === 'afternoon' ? 'Afternoon (1 PM - 4 PM)' : 
+                             slot.time === 'evening' ? 'Evening (5 PM - 7 PM)' : slot.time;
+            
+            slotsHTML += `
+                <div class="time-slot-option ${isSelected ? 'selected' : ''}" 
+                     onclick="selectTimeSlot('${slot.id}', '${slot.time}', '${timeRange}', event)">
+                    <span class="time-slot-time">${timeRange}</span>
+                    <span class="time-slot-status">Available</span>
+                </div>
+            `;
+        });
+        slotsHTML += '</div>';
         
+        // Add confirm button
         slotsHTML += `
-            <div class="time-slot-option ${isSelected ? 'selected' : ''}" 
-                 onclick="selectTimeSlot('${slot.id}', '${slot.time}', '${timeRange}', event)">
-                <span class="time-slot-time">${timeRange}</span>
-                <span class="time-slot-status">Available</span>
+            <div class="time-slot-confirm" style="margin-top: 1rem; text-align: center;">
+                <button type="button" class="btn btn-primary" onclick="confirmTimeSlotSelection()" 
+                        style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                    <span data-en="Confirm Selection" data-zh="确认选择">Confirm Selection</span>
+                </button>
             </div>
         `;
-    });
-    slotsHTML += '</div>';
-    
-    // Add confirm button
-    slotsHTML += `
-        <div class="time-slot-confirm" style="margin-top: 1rem; text-align: center;">
-            <button type="button" class="btn btn-primary" onclick="confirmTimeSlotSelection()" 
-                    style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
-                <span data-en="Confirm Selection" data-zh="确认选择">Confirm Selection</span>
-            </button>
-        </div>
-    `;
-    
-    // Fix date display issue by using local date parsing
-    const [year, month, day] = date.split('-');
-    const displayDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    selectedSlotDetails.innerHTML = `
-        <strong>Date:</strong> ${formatDateString(date)}<br>
-        ${slotsHTML}
-    `;
-    
-    selectedSlotInfo.style.display = 'block';
+        
+        // Fix date display issue by using local date parsing
+        const [year, month, day] = date.split('-');
+        const displayDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        selectedSlotDetails.innerHTML = `
+            <strong>Date:</strong> ${formatDateString(date)}<br>
+            ${slotsHTML}
+        `;
+        
+        selectedSlotInfo.style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error showing time slot selection:', error);
+    }
 }
 
 // Select a time slot
@@ -1699,172 +1754,134 @@ function updateUserInterface(userInfo) {
     const userStatusDisplay = document.getElementById('userStatusDisplay');
     const loginBtn = document.querySelector('.dropdown-toggle');
     const loginNavItem = document.getElementById('loginNavItem');
+    const userName = document.getElementById('userName');
+    const cartCount = document.getElementById('cartCount');
     
     // If no userInfo provided, get it from getCurrentUser()
     if (!userInfo) {
         userInfo = getCurrentUser();
     }
     
-    if (userInfo && userInfo.userType !== 'admin') {
-        // User is logged in (and not admin)
-        document.getElementById('userName').textContent = userInfo.name;
-        userStatusDisplay.style.display = 'flex';
-        loginNavItem.style.display = 'none';
-        
-        // Update cart count
-        updateCartCount();
-    } else {
-        // User is logged out or is admin
-        userStatusDisplay.style.display = 'none';
-        loginNavItem.style.display = 'block';
-        
-        // Clear cart count
-        document.getElementById('cartCount').textContent = '0';
+    try {
+        if (userInfo && userInfo.userType !== 'admin') {
+            // User is logged in (and not admin)
+            if (userName) userName.textContent = userInfo.name;
+            if (userStatusDisplay) userStatusDisplay.style.display = 'flex';
+            if (loginNavItem) loginNavItem.style.display = 'none';
+            
+            // Update cart count
+            updateCartCount();
+        } else {
+            // User is logged out or is admin
+            if (userStatusDisplay) userStatusDisplay.style.display = 'none';
+            if (loginNavItem) loginNavItem.style.display = 'block';
+            
+            // Clear cart count
+            if (cartCount) cartCount.textContent = '0';
+        }
+    } catch (error) {
+        console.error('Error updating user interface:', error);
     }
 }
 
 // Customer dashboard
 function openCustomerDashboard() {
-    const user = getCurrentUser();
-    if (user) {
-        // Load dashboard content first
-        loadDashboardContent();
-        
-        // Load user data
-        loadUserData();
-        
-        openModal('customerDashboardModal');
+    try {
+        const user = getCurrentUser();
+        if (user) {
+            // Load dashboard content first
+            loadDashboardContent();
+            
+            // Load user data
+            loadUserData();
+            
+            openModal('customerDashboardModal');
+        } else {
+            showNotification('Please log in to access dashboard', 'error');
+        }
+    } catch (error) {
+        console.error('Error opening customer dashboard:', error);
+        showNotification('Error opening dashboard', 'error');
     }
 }
 
 // Dashboard functions
 function loadDashboardContent() {
-    const dashboardContent = document.getElementById('dashboardContent');
-    const user = getCurrentUser();
-    
-    if (dashboardContent && user) {
-        dashboardContent.innerHTML = `
-            <!-- Profile Tab -->
-            <div id="profileTab" class="dashboard-tab-content active">
-                <h3 data-en="Profile Information" data-zh="个人资料信息">Profile Information</h3>
-                <form id="profileForm" onsubmit="updateProfile(event)">
-                    <div class="form-group">
-                        <input type="text" id="profileName" value="${user.name || ''}" required>
-                        <label data-en="Full Name" data-zh="姓名">Full Name</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="profileEmail" value="${user.email || ''}" required>
-                        <label data-en="Email" data-zh="邮箱">Email</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" id="profilePhone" value="${user.phone || ''}" required>
-                        <label data-en="Phone" data-zh="电话">Phone</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="profileAddress" value="${user.address || ''}" required>
-                        <label data-en="Address" data-zh="地址">Address</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="profileCity" value="${user.city || ''}" required>
-                        <label data-en="City" data-zh="城市">City</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="profileState" value="${user.state || ''}" required>
-                        <label data-en="State" data-zh="州/省">State</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="profileZipcode" value="${user.state || ''}" required>
-                        <label data-en="ZIP Code" data-zh="邮编">ZIP Code</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary" data-en="Update Profile" data-zh="更新资料">Update Profile</button>
-                </form>
-            </div>
-            
-            <!-- Orders Tab -->
-            <div id="ordersTab" class="dashboard-tab-content">
-                <h3 data-en="Order History" data-zh="订单历史">Order History</h3>
-                <div id="ordersList">
-                    <p data-en="No orders found." data-zh="未找到订单。">No orders found.</p>
-                </div>
-            </div>
-            
-            <!-- Quotes Tab -->
-            <div id="quotesTab" class="dashboard-tab-content">
-                <h3 data-en="Quote History" data-zh="报价历史">Quote History</h3>
-                <div id="quotesList">
-                    <p data-en="No quotes found." data-zh="未找到报价。">No quotes found.</p>
-                </div>
-            </div>
-            
-            <!-- Appointments Tab -->
-            <div id="appointmentsTab" class="dashboard-tab-content">
-                <h3 data-en="My Appointments" data-zh="我的预约">My Appointments</h3>
-                <div id="appointmentsList">
-                    <p data-en="No appointments found." data-zh="未找到预约。">No appointments found.</p>
-                </div>
-            </div>
-            
-            <!-- On-site Measurement Tab -->
-            <div id="onsiteMeasurementTab" class="dashboard-tab-content">
-                <h3 data-en="On-site Measurement" data-zh="上门测量">On-site Measurement</h3>
-                <div id="onsiteMeasurementContent">
-                    ${user.userType === 'onsite' ? `
-                        <div class="measurement-form">
-                            <h4 data-en="Measurement Information" data-zh="测量信息">Measurement Information</h4>
-                            <form id="onsiteMeasurementForm" onsubmit="submitOnsiteMeasurement(event)">
-                                <div class="form-group">
-                                    <label data-en="Measurer Name" data-zh="测量人姓名">Measurer Name</label>
-                                    <input type="text" id="measurerName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label data-en="Property Type" data-zh="房产类型">Property Type</label>
-                                    <select id="measurementPropertyType" required>
-                                        <option value="" data-en="Select Property Type" data-zh="选择房产类型">Select Property Type</option>
-                                        <option value="single-family" data-en="Single Family Home" data-zh="单户住宅">Single Family Home</option>
-                                        <option value="townhouse" data-en="Townhouse" data-zh="联排别墅">Townhouse</option>
-                                        <option value="apartment" data-en="Apartment" data-zh="公寓">Apartment</option>
-                                        <option value="custom" data-en="Custom" data-zh="自定义">Custom</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label data-en="Number of Rooms" data-zh="房间数量">Number of Rooms</label>
-                                    <input type="number" id="measurementRooms" min="1" max="20" value="1" required>
-                                </div>
-                                <div class="form-group">
-                                    <label data-en="Window Types" data-zh="窗户类型">Window Types</label>
-                                    <div class="checkbox-group">
-                                        <label><input type="checkbox" value="curtains"> <span data-en="Curtains" data-zh="窗帘">Curtains</span></label>
-                                        <label><input type="checkbox" value="blinds"> <span data-en="Blinds" data-zh="百叶窗">Blinds</span></label>
-                                        <label><input type="checkbox" value="shades"> <span data-en="Shades" data-zh="遮阳帘">Shades</span></label>
-                                        <label><input type="checkbox" value="drapes"> <span data-en="Drapes" data-zh="布帘">Drapes</span></label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label data-en="Special Requirements" data-zh="特殊要求">Special Requirements</label>
-                                    <textarea id="measurementNotes" rows="3" data-en="Any special requirements or notes..." data-zh="任何特殊要求或备注..."></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary" data-en="Submit Measurement" data-zh="提交测量">Submit Measurement</button>
-                            </form>
-                        </div>
-                    ` : `
-                        <div class="access-denied">
-                            <p data-en="This feature is only available for on-site measurement users after admin approval." data-zh="此功能仅在上门测量用户获得管理员批准后可用。">This feature is only available for on-site measurement users after admin approval.</p>
-                        </div>
-                    `}
-                </div>
-            </div>
-            
-            <!-- Favorites Tab -->
-            <div id="favoritesTab" class="dashboard-tab-content">
-                <h3 data-en="My Favorites" data-zh="我的收藏">My Favorites</h3>
-                <div id="favoritesList">
-                    <p data-en="No favorites found." data-zh="未找到收藏。">No favorites found.</p>
-                </div>
-            </div>
-        `;
+    try {
+        const dashboardContent = document.getElementById('dashboardContent');
+        const user = getCurrentUser();
         
-        // Update language after content is loaded
-        updatePageLanguage(currentLanguage);
+        // Early return if element doesn't exist
+        if (!dashboardContent) {
+            console.log('Dashboard content element not found, skipping dashboard load');
+            return;
+        }
+        
+        if (user) {
+            dashboardContent.innerHTML = `
+                <!-- Profile Tab -->
+                <div id="profileTab" class="dashboard-tab-content active">
+                    <h3 data-en="Profile Information" data-zh="个人资料信息">Profile Information</h3>
+                    <form id="profileForm" onsubmit="updateProfile(event)">
+                        <div class="form-group">
+                            <input type="text" id="profileName" value="${user.name || ''}" required>
+                            <label data-en="Full Name" data-zh="姓名">Full Name</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="profileEmail" value="${user.email || ''}" required>
+                            <label data-en="Email" data-zh="邮箱">Email</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="profilePhone" value="${user.phone || ''}" required>
+                            <label data-en="Phone" data-zh="电话">Phone</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="profileAddress" value="${user.address || ''}" required>
+                            <label data-en="Address" data-zh="地址">Address</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="profileCity" value="${user.city || ''}" required>
+                            <label data-en="City" data-zh="城市">City</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="profileState" value="${user.state || ''}" required>
+                            <label data-en="State" data-zh="州/省">State</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="profileZipcode" value="${user.state || ''}" required>
+                            <label data-en="ZIP Code" data-zh="邮编">ZIP Code</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" data-en="Update Profile" data-zh="更新资料">Update Profile</button>
+                    </form>
+                </div>
+                
+                <!-- Orders Tab -->
+                <div id="ordersTab" class="dashboard-tab-content">
+                    <h3 data-en="Order History" data-zh="订单历史">Order History</h3>
+                    <div id="ordersList">
+                        <p data-en="No orders found." data-zh="未找到订单。">No orders found.</p>
+                    </div>
+                </div>
+                
+                <!-- Quotes Tab -->
+                <div id="quotesTab" class="dashboard-tab-content">
+                    <h3 data-en="Quote History" data-zh="报价历史">Quote History</h3>
+                    <div id="quotesList">
+                        <p data-en="No quotes found." data-zh="未找到报价。">No quotes found.</p>
+                    </div>
+                </div>
+                
+                <!-- Favorites Tab -->
+                <div id="favoritesTab" class="dashboard-tab-content">
+                    <h3 data-en="Favorites" data-zh="收藏">Favorites</h3>
+                    <div id="favoritesList">
+                        <p data-en="No favorites found." data-zh="未找到收藏。">No favorites found.</p>
+                    </div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading dashboard content:', error);
     }
 }
 
@@ -1960,21 +1977,23 @@ function getCurrentUserId() {
 }
 
 function getCurrentUser() {
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-        try {
-            const user = JSON.parse(currentUser);
-            // Don't return admin users for regular website
-            if (user.userType === 'admin') {
-                return null;
-            }
-            return user;
-        } catch (e) {
-            localStorage.removeItem('currentUser');
-            return null;
+    try {
+        if (currentUser) {
+            return currentUser;
         }
+        
+        const userJson = localStorage.getItem('currentUser');
+        if (userJson) {
+            currentUser = JSON.parse(userJson);
+            return currentUser;
+        }
+        
+        return null;
+        
+    } catch (error) {
+        console.error('Error getting current user:', error);
+        return null;
     }
-    return null;
 }
 
 function loadUserData() {
@@ -1992,79 +2011,116 @@ function loadUserData() {
 }
 
 function loadOrderHistory() {
-    const ordersList = document.getElementById('ordersList');
-    const user = getCurrentUser();
-    
-    if (user && user.userType !== 'admin') {
-        const orders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-        if (orders.length > 0) {
-            ordersList.innerHTML = orders.map(order => `
-                <div class="order-item">
-                    <h4>Order #${order.id}</h4>
-                    <p>Date: ${order.date}</p>
-                    <p>Total: ${order.total}</p>
-                    <p>Status: ${order.status}</p>
-                </div>
-            `).join('');
-        } else {
-            ordersList.innerHTML = `<p data-en="No orders found." data-zh="未找到订单。">No orders found.</p>`;
+    try {
+        const ordersList = document.getElementById('ordersList');
+        const user = getCurrentUser();
+        
+        // Early return if element doesn't exist
+        if (!ordersList) {
+            console.log('Orders list element not found, skipping order history load');
+            return;
         }
+        
+        if (user && user.userType !== 'admin') {
+            const orders = JSON.parse(localStorage.getItem('userOrders') || '[]');
+            if (orders.length > 0) {
+                ordersList.innerHTML = orders.map(order => `
+                    <div class="order-item">
+                        <h4>Order #${order.id}</h4>
+                        <p>Date: ${order.date}</p>
+                        <p>Total: ${order.total}</p>
+                        <p>Status: ${order.status}</p>
+                    </div>
+                `).join('');
+            } else {
+                ordersList.innerHTML = `<p data-en="No orders found." data-zh="未找到订单。">No orders found.</p>`;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading order history:', error);
     }
 }
 
 function loadQuoteHistory() {
-    const quotesList = document.getElementById('quotesList');
-    const user = getCurrentUser();
-    
-    if (user && user.userType !== 'admin') {
-        const quotes = JSON.parse(localStorage.getItem('userQuotes') || '[]');
-        if (quotes.length > 0) {
-            quotesList.innerHTML = quotes.map(quote => `
-                <div class="quote-item">
-                    <h4>Quote #${quote.id}</h4>
-                    <p>Date: ${quote.date}</p>
-                    <p>Total: ${quote.total}</p>
-                    <p>Status: ${quote.status}</p>
-                </div>
-            `).join('');
-        } else {
-            quotesList.innerHTML = `<p data-en="No quotes found." data-zh="未找到报价。">No quotes found.</p>`;
+    try {
+        const quotesList = document.getElementById('quotesList');
+        const user = getCurrentUser();
+        
+        // Early return if element doesn't exist
+        if (!quotesList) {
+            console.log('Quotes list element not found, skipping quote history load');
+            return;
         }
+        
+        if (user && user.userType !== 'admin') {
+            const quotes = JSON.parse(localStorage.getItem('userQuotes') || '[]');
+            if (quotes.length > 0) {
+                quotesList.innerHTML = quotes.map(quote => `
+                    <div class="quote-item">
+                        <h4>Quote #${quote.id}</h4>
+                        <p>Date: ${quote.date}</p>
+                        <p>Total: ${quote.total}</p>
+                        <p>Status: ${quote.status}</p>
+                    </div>
+                `).join('');
+            } else {
+                quotesList.innerHTML = `<p data-en="No quotes found." data-zh="未找到报价。">No quotes found.</p>`;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading quote history:', error);
     }
 }
 
 function loadFavorites() {
-    const favoritesList = document.getElementById('favoritesList');
-    const user = getCurrentUser();
-    
-    if (user && user.userType !== 'admin') {
-        const favorites = JSON.parse(localStorage.getItem('userFavorites') || '[]');
-        if (favorites.length > 0) {
-            favoritesList.innerHTML = favorites.map(favorite => `
-                <div class="favorite-item">
-                    <h4>${favorite.name}</h4>
-                    <p>${favorite.description}</p>
-                </div>
-            `).join('');
-        } else {
-            favoritesList.innerHTML = `<p data-en="No favorites found." data-zh="未找到收藏。">No favorites found.</p>`;
+    try {
+        const favoritesList = document.getElementById('favoritesList');
+        const user = getCurrentUser();
+        
+        // Early return if element doesn't exist
+        if (!favoritesList) {
+            console.log('Favorites list element not found, skipping favorites load');
+            return;
         }
+        
+        if (user && user.userType !== 'admin') {
+            const favorites = JSON.parse(localStorage.getItem('userFavorites') || '[]');
+            if (favorites.length > 0) {
+                favoritesList.innerHTML = favorites.map(favorite => `
+                    <div class="favorite-item">
+                        <h4>${favorite.name}</h4>
+                        <p>${favorite.description}</p>
+                    </div>
+                `).join('');
+            } else {
+                favoritesList.innerHTML = `<p data-en="No favorites found." data-zh="未找到收藏。">No favorites found.</p>`;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading favorites:', error);
     }
 }
 
 // Profile management
-function updateProfile() {
-    const user = getCurrentUser();
-    if (user) {
+function updateProfile(event) {
+    try {
+        event.preventDefault();
+        
+        const user = getCurrentUser();
+        if (!user) {
+            showNotification('User not found', 'error');
+            return;
+        }
+        
         const updatedUser = {
             ...user,
-            name: document.getElementById('profileName').value,
-            email: document.getElementById('profileEmail').value,
-            phone: document.getElementById('profilePhone').value,
-            address: document.getElementById('profileAddress').value,
-            city: document.getElementById('profileCity').value,
-            state: document.getElementById('profileState').value,
-            zipcode: document.getElementById('profileZipcode').value
+            name: document.getElementById('profileName')?.value || user.name,
+            email: document.getElementById('profileEmail')?.value || user.email,
+            phone: document.getElementById('profilePhone')?.value || user.phone,
+            address: document.getElementById('profileAddress')?.value || user.address,
+            city: document.getElementById('profileCity')?.value || user.city,
+            state: document.getElementById('profileState')?.value || user.state,
+            zipcode: document.getElementById('profileZipcode')?.value || user.zipcode
         };
         
         // Update current user
@@ -2079,13 +2135,11 @@ function updateProfile() {
             localStorage.setItem('users', JSON.stringify(users));
         }
         
-        // Update UI
-        updateUserInterface(updatedUser);
+        showNotification('Profile updated successfully', 'success');
         
-        showNotification(
-            currentLanguage === 'zh' ? '个人资料已更新。' : 'Profile updated successfully.',
-            'success'
-        );
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showNotification('Error updating profile', 'error');
     }
 }
 
@@ -2155,9 +2209,16 @@ function changePassword() {
 
 // Cart management
 function updateCartCount() {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const count = cartItems.reduce((total, item) => total + item.quantity, 0);
-    document.getElementById('cartCount').textContent = count;
+    try {
+        const cartCount = document.getElementById('cartCount');
+        if (cartCount) {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems.toString();
+        }
+    } catch (error) {
+        console.error('Error updating cart count:', error);
+    }
 }
 
 // Other functions
@@ -2202,23 +2263,36 @@ function handleContactSubmission(event) {
 
 // Notification system
 function showNotification(message, type = 'info') {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <span>${message}</span>
-        <button onclick="this.parentElement.remove()">&times;</button>
-    `;
-    
-    // Add to page
-    document.body.appendChild(notification);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
+    try {
+        // Remove existing notification
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
         }
-    }, 5000);
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <span class="notification-message">${message}</span>
+            <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
+        `;
+        
+        // Add to page
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 5000);
+        
+    } catch (error) {
+        console.error('Error showing notification:', error);
+        // Fallback to alert if notification fails
+        alert(message);
+    }
 }
 
 function showSuccessMessage(message, title) {
@@ -2229,78 +2303,71 @@ function showSuccessMessage(message, title) {
 
 // Cart management functions
 function loadCartItems() {
-    const cartItemsContainer = document.getElementById('cartItemsList');
-    const cartSummaryContainer = document.getElementById('cartSummary');
-    
-    if (!cartItemsContainer) return;
-    
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    
-    if (cartItems.length === 0) {
-        cartItemsContainer.innerHTML = `
-            <div class="cart-empty">
-                <i class="fas fa-shopping-cart"></i>
-                <p data-en="Your cart is empty" data-zh="您的购物车是空的">Your cart is empty</p>
-                <a href="index.html" class="btn btn-primary">
-                    <span data-en="Continue Shopping" data-zh="继续购物">Continue Shopping</span>
-                </a>
+    try {
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const cartSummaryContainer = document.getElementById('cartSummaryContainer');
+        
+        // Early return if elements don't exist
+        if (!cartItemsContainer || !cartSummaryContainer) {
+            console.log('Cart elements not found, skipping cart load');
+            return;
+        }
+        
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        
+        if (cartItems.length === 0) {
+            cartItemsContainer.innerHTML = `
+                <div class="empty-cart">
+                    <p data-en="Your cart is empty" data-zh="您的购物车是空的">Your cart is empty</p>
+                </div>
+            `;
+            cartSummaryContainer.innerHTML = `
+                <div class="cart-summary">
+                    <h3 data-en="Cart Summary" data-zh="购物车摘要">Cart Summary</h3>
+                    <p data-en="Total: $0.00" data-zh="总计：$0.00">Total: $0.00</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Load cart items
+        cartItemsContainer.innerHTML = cartItems.map((item, index) => `
+            <div class="cart-item">
+                <div class="item-image">
+                    <img src="${item.image}" alt="${item.name}" onerror="this.src='${getDefaultProductImage()}'">
+                </div>
+                <div class="item-details">
+                    <h4>${item.name}</h4>
+                    <p>${item.description}</p>
+                    <p class="item-price">$${item.price}</p>
+                    <div class="item-quantity">
+                        <button onclick="updateQuantity(${index}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQuantity(${index}, 1)">+</button>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="remove-btn">
+                        <span data-en="Remove" data-zh="移除">Remove</span>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        
+        // Update cart summary
+        const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        cartSummaryContainer.innerHTML = `
+            <div class="cart-summary">
+                <h3 data-en="Cart Summary" data-zh="购物车摘要">Cart Summary</h3>
+                <p data-en="Total Items: ${cartItems.length}" data-zh="总件数：${cartItems.length}">Total Items: ${cartItems.length}</p>
+                <p data-en="Total: $${total.toFixed(2)}" data-zh="总计：$${total.toFixed(2)}">Total: $${total.toFixed(2)}</p>
+                <button onclick="checkout()" class="checkout-btn">
+                    <span data-en="Checkout" data-zh="结账">Checkout</span>
+                </button>
             </div>
         `;
         
-        if (cartSummaryContainer) {
-            cartSummaryContainer.innerHTML = `
-                <div class="summary-items">
-                    <div class="summary-item">
-                        <span data-en="Subtotal" data-zh="小计">Subtotal</span>
-                        <span>$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span data-en="Tax" data-zh="税费">Tax</span>
-                        <span>$0.00</span>
-                    </div>
-                    <div class="summary-item total">
-                        <span data-en="Total" data-zh="总计">Total</span>
-                        <span>$0.00</span>
-                    </div>
-                </div>
-            `;
-        }
-        return;
+    } catch (error) {
+        console.error('Error loading cart items:', error);
     }
-    
-    // Display cart items
-    cartItemsContainer.innerHTML = cartItems.map((item, index) => `
-        <div class="cart-item">
-            <div class="cart-item-image">
-                <img src="${item.image || 'images/curtain-default.jpg'}" alt="${item.name}">
-            </div>
-            <div class="cart-item-details">
-                <h4>${item.name}</h4>
-                <p>${item.description || ''}</p>
-                <p class="item-type">${item.roomType || ''} - ${item.windowType || ''}</p>
-                <p class="item-dimensions">${item.width}' × ${item.height}'</p>
-            </div>
-            <div class="cart-item-quantity">
-                <button onclick="updateCartItemQuantity(${index}, -1)" class="btn btn-sm">-</button>
-                <span>${item.quantity}</span>
-                <button onclick="updateCartItemQuantity(${index}, 1)" class="btn btn-sm">+</button>
-            </div>
-            <div class="cart-item-price">
-                $${item.price.toFixed(2)}
-            </div>
-            <div class="cart-item-total">
-                $${(item.price * item.quantity).toFixed(2)}
-            </div>
-            <div class="cart-item-actions">
-                <button onclick="removeFromCart(${index})" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
-    
-    // Update summary
-    updateCartSummary();
 }
 
 function updateCartItemQuantity(index, change) {
@@ -2951,112 +3018,558 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update language
     updatePageLanguage(currentLanguage);
     
-    // Load dynamic content from content management system
-    loadDynamicContent();
+    // Note: loadDynamicContent is already called in the first DOMContentLoaded listener
+    // No need to call it again here
 });
 
 // Load dynamic content from content management system
 function loadDynamicContent() {
-    loadProductSeriesContent();
-    loadGalleryContent();
-    loadBackgroundImages();
-    loadAboutContent();
+    try {
+        console.log('Loading dynamic content...');
+        console.log('Current page elements:');
+        console.log('- Hero section:', document.querySelector('.hero') ? 'Found' : 'Not found');
+        console.log('- About text:', document.querySelector('.about-text') ? 'Found' : 'Not found');
+        console.log('- About image container:', document.querySelector('#aboutImageContainer') ? 'Found' : 'Not found');
+        console.log('- Product series grid:', document.getElementById('productSeriesGrid') ? 'Found' : 'Not found');
+        console.log('- Gallery grid:', document.getElementById('galleryGrid') ? 'Found' : 'Not found');
+        
+        // Check if we have content in localStorage, if not use defaults
+        console.log('Checking localStorage for existing content...');
+        
+        // Load all content
+        console.log('Loading background images...');
+        loadBackgroundImages();
+        
+        console.log('Loading about content...');
+        loadAboutContent();
+        
+        console.log('Loading product series content...');
+        loadProductSeriesContent();
+        
+        console.log('Loading gallery content...');
+        loadGalleryContent();
+        
+        console.log('Dynamic content loading completed');
+        
+    } catch (error) {
+        console.error('Error loading dynamic content:', error);
+    }
+}
+
+// Function to clear old localStorage data
+function clearOldLocalStorageData() {
+    try {
+        console.log('Force clearing all old localStorage data to use defaults');
+        
+        // Clear all old data
+        localStorage.removeItem('productSeries');
+        localStorage.removeItem('backgroundImages');
+        localStorage.removeItem('aboutContent');
+        localStorage.removeItem('aboutImage');
+        
+        console.log('All old data cleared, will use default content');
+        
+    } catch (error) {
+        console.error('Error clearing old localStorage data:', error);
+    }
 }
 
 // Load product series content
 function loadProductSeriesContent() {
-    const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
-    const seriesGrid = document.querySelector('.series-grid');
-    
-    if (!seriesGrid) return;
-    
-    seriesGrid.innerHTML = '';
-    
-    productSeries.forEach((series, index) => {
-        const seriesItem = document.createElement('div');
-        seriesItem.className = 'series-item';
-        seriesItem.innerHTML = `
-            <img src="${series.image}" alt="${series.name}" data-en="${series.name}" data-zh="${series.name}">
-            <div class="series-content">
-                <h3 data-en="${series.name}" data-zh="${series.name}">${series.name}</h3>
-                <p data-en="${series.description}" data-zh="${series.description}">${series.description}</p>
-                <button onclick="openProductSeriesModal('${series.category}')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-            </div>
-        `;
-        seriesGrid.appendChild(seriesItem);
-    });
-    
-    // Update language after loading content
-    updatePageLanguage(currentLanguage);
+    try {
+        console.log('loadProductSeriesContent: Starting...');
+        const seriesGrid = document.getElementById('productSeriesGrid');
+        if (!seriesGrid) {
+            console.log('Product series grid not found, skipping product series load');
+            return;
+        }
+        console.log('Product series grid found, proceeding with load');
+        
+        const productSeries = JSON.parse(localStorage.getItem('productSeries')) || getDefaultProductSeries();
+        console.log('Loading product series:', productSeries.length, 'items');
+        console.log('Product series data:', productSeries);
+        
+        seriesGrid.innerHTML = '';
+        console.log('Cleared series grid, adding items...');
+        
+        productSeries.forEach((series, index) => {
+            try {
+                const seriesItem = document.createElement('div');
+                seriesItem.className = 'series-item';
+                
+                let imageSrc = series.image || getDefaultProductImage();
+                if (!imageSrc || imageSrc === 'undefined') {
+                    console.warn(`Invalid image source for product series ${index + 1}, using default`);
+                    imageSrc = getDefaultProductImage();
+                }
+                
+                seriesItem.innerHTML = `
+                    <div class="series-image">
+                        <img src="${imageSrc}" alt="${series.name}" onerror="this.src='${getDefaultProductImage()}'">
+                    </div>
+                    <div class="series-content">
+                        <h3>${series.name}</h3>
+                        <p>${series.description}</p>
+                        <button class="btn btn-primary" onclick="openProductSeriesModal()">
+                            <span data-en="Learn More" data-zh="了解更多">Learn More</span>
+                        </button>
+                    </div>
+                `;
+                
+                seriesGrid.appendChild(seriesItem);
+                console.log(`Loaded product series ${index + 1}: ${series.name}`);
+                
+            } catch (error) {
+                console.error(`Error loading product series ${index + 1}:`, error);
+            }
+        });
+        
+        console.log('Product series loaded successfully:', productSeries.length, 'items displayed');
+        
+    } catch (error) {
+        console.error('Error loading product series content:', error);
+    }
+}
+
+// Function to get default product image
+function getDefaultProductImage() {
+    // Create a simple colored rectangle SVG
+    const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#f39c12"/>
+        <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Product</text>
+    </svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
 }
 
 // Load gallery content
 function loadGalleryContent() {
-    const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
-    const galleryGrid = document.querySelector('.gallery-grid');
-    
-    if (!galleryGrid) return;
-    
-    // Update language after loading content
-    updatePageLanguage(currentLanguage);
+    try {
+        console.log('loadGalleryContent: Starting...');
+        const galleryGrid = document.getElementById('galleryGrid');
+        if (!galleryGrid) {
+            console.log('Gallery grid not found, skipping gallery load');
+            return;
+        }
+        console.log('Gallery grid found, proceeding with load');
+        
+        const gallery = JSON.parse(localStorage.getItem('gallery')) || getDefaultGallery();
+        console.log('Loading gallery:', gallery.length, 'items');
+        console.log('Gallery data:', gallery);
+        
+        galleryGrid.innerHTML = '';
+        console.log('Cleared gallery grid, adding items...');
+        
+        gallery.forEach((item, index) => {
+            try {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                
+                let imageSrc = item.image || getDefaultGalleryImage();
+                if (!imageSrc || imageSrc === 'undefined') {
+                    console.warn(`Invalid image source for gallery item ${index + 1}, using default`);
+                    imageSrc = getDefaultGalleryImage();
+                }
+                
+                galleryItem.innerHTML = `
+                    <div class="gallery-image">
+                        <img src="${imageSrc}" alt="${item.title}" onerror="this.src='${getDefaultGalleryImage()}'">
+                    </div>
+                    <div class="gallery-content">
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                    </div>
+                `;
+                
+                galleryGrid.appendChild(galleryItem);
+                console.log(`Loaded gallery item ${index + 1}: ${item.title}`);
+                
+            } catch (error) {
+                console.error(`Error loading gallery item ${index + 1}:`, error);
+            }
+        });
+        
+        console.log('Gallery loaded successfully:', gallery.length, 'items displayed');
+        
+    } catch (error) {
+        console.error('Error loading gallery content:', error);
+    }
+}
+
+// Function to get default gallery image
+function getDefaultGalleryImage() {
+    // Create a simple colored rectangle SVG
+    const svg = `<svg width="300" height="250" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#e74c3c"/>
+        <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" dy=".3em">Gallery</text>
+    </svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
 }
 
 // Load background images for homepage
 function loadBackgroundImages() {
-    const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
-    const hero = document.querySelector('.hero');
-    
-    if (!hero || backgrounds.length === 0) return;
-    
-    // Set first background as default
-    hero.style.backgroundImage = `url('${backgrounds[0].image}')`;
-    
-    // If multiple backgrounds, create slideshow effect
-    if (backgrounds.length > 1) {
-        let currentIndex = 0;
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % backgrounds.length;
-            hero.style.backgroundImage = `url('${backgrounds[currentIndex].image}')`;
-        }, 5000); // Change every 5 seconds
+    try {
+        console.log('loadBackgroundImages: Starting...');
+        const hero = document.querySelector('.hero');
+        if (!hero) {
+            console.log('Hero section not found, skipping background images load');
+            return;
+        }
+        console.log('Hero section found, proceeding with background load');
+        
+        const backgrounds = JSON.parse(localStorage.getItem('backgroundImages')) || getDefaultBackgrounds();
+        console.log('Backgrounds data:', backgrounds);
+        
+        if (backgrounds.length > 0) {
+            try {
+                const firstBackground = backgrounds[0];
+                let imageSrc = firstBackground.image || getDefaultBackgroundImage();
+                
+                if (!imageSrc || imageSrc === 'undefined') {
+                    console.warn('Invalid background image source, using default');
+                    imageSrc = getDefaultBackgroundImage();
+                }
+                
+                console.log('Setting background image:', imageSrc);
+                hero.style.backgroundImage = `url('${imageSrc}')`;
+                
+                // Set up slideshow if multiple images
+                if (backgrounds.length > 1) {
+                    console.log('Setting up slideshow with', backgrounds.length, 'images');
+                    let currentIndex = 0;
+                    
+                    // Add slideshow indicators
+                    addSlideshowIndicators(hero, backgrounds.length);
+                    
+                    // Set up automatic slideshow
+                    const slideshowInterval = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % backgrounds.length;
+                        changeBackgroundImage(hero, backgrounds[currentIndex], currentIndex);
+                        updateSlideshowIndicators(currentIndex);
+                    }, 3000); // Change every 3 seconds for better visibility
+                    
+                    // Store interval ID for potential manual control
+                    hero.dataset.slideshowInterval = slideshowInterval;
+                    
+                    // Add manual navigation
+                    addSlideshowNavigation(hero, backgrounds, currentIndex);
+                }
+                
+                console.log('Background image loaded successfully');
+                
+            } catch (error) {
+                console.error('Error setting background image:', error);
+                // Fallback to default
+                const defaultBg = getDefaultBackgroundImage();
+                hero.style.backgroundImage = `url('${defaultBg}')`;
+            }
+        } else {
+            // Use default background
+            const defaultBg = getDefaultBackgroundImage();
+            hero.style.backgroundImage = `url('${defaultBg}')`;
+            console.log('Using default background image');
+        }
+        
+    } catch (error) {
+        console.error('Error loading background images:', error);
+        // Fallback to default
+        try {
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                const defaultBg = getDefaultBackgroundImage();
+                hero.style.backgroundImage = `url('${defaultBg}')`;
+            }
+        } catch (fallbackError) {
+            console.error('Error setting fallback background:', fallbackError);
+        }
     }
+}
+
+// Function to get default background image
+function getDefaultBackgroundImage() {
+    // Create a simple colored rectangle SVG with light background
+    const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#f8f9fa"/>
+        <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#495057" text-anchor="middle" dy=".3em">Background</text>
+    </svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
+}
+
+// Function to change background image with fade effect
+function changeBackgroundImage(hero, background, index) {
+    try {
+        let bgSrc = background.image || getDefaultBackgroundImage();
+        
+        if (!bgSrc || bgSrc === 'undefined') {
+            console.warn('Invalid background image source, using default');
+            bgSrc = getDefaultBackgroundImage();
+        }
+        
+        // Add fade transition
+        hero.style.transition = 'background-image 0.5s ease-in-out';
+        hero.style.backgroundImage = `url('${bgSrc}')`;
+        
+        console.log(`Changed to background image ${index + 1}:`, bgSrc);
+        
+    } catch (error) {
+        console.error('Error changing background image:', error);
+    }
+}
+
+// Function to add slideshow indicators
+function addSlideshowIndicators(hero, totalImages) {
+    // Remove existing indicators
+    const existingIndicators = hero.querySelector('.slideshow-indicators');
+    if (existingIndicators) {
+        existingIndicators.remove();
+    }
+    
+    const indicators = document.createElement('div');
+    indicators.className = 'slideshow-indicators';
+    indicators.style.cssText = `
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+    `;
+    
+    for (let i = 0; i < totalImages; i++) {
+        const indicator = document.createElement('div');
+        indicator.className = 'slideshow-indicator';
+        indicator.dataset.index = i;
+        indicator.style.cssText = `
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: ${i === 0 ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.4)'};
+            cursor: pointer;
+            transition: background 0.3s ease;
+        `;
+        
+        indicator.addEventListener('click', () => {
+            // Manual navigation will be handled by navigation function
+            console.log('Indicator clicked:', i);
+        });
+        
+        indicators.appendChild(indicator);
+    }
+    
+    hero.appendChild(indicators);
+}
+
+// Function to update slideshow indicators
+function updateSlideshowIndicators(activeIndex) {
+    const indicators = document.querySelectorAll('.slideshow-indicator');
+    indicators.forEach((indicator, index) => {
+        indicator.style.background = index === activeIndex 
+            ? 'rgba(255, 255, 255, 0.8)' 
+            : 'rgba(255, 255, 255, 0.4)';
+    });
+}
+
+// Function to add slideshow navigation
+function addSlideshowNavigation(hero, backgrounds, currentIndex) {
+    // Remove existing navigation
+    const existingNav = hero.querySelector('.slideshow-navigation');
+    if (existingNav) {
+        existingNav.remove();
+    }
+    
+    const navigation = document.createElement('div');
+    navigation.className = 'slideshow-navigation';
+    navigation.style.cssText = `
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 10;
+    `;
+    
+    // Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.innerHTML = '‹';
+    prevBtn.className = 'slideshow-nav-btn prev-btn';
+    prevBtn.style.cssText = `
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    prevBtn.addEventListener('mouseenter', () => {
+        prevBtn.style.background = 'rgba(255, 255, 255, 0.4)';
+    });
+    
+    prevBtn.addEventListener('mouseleave', () => {
+        prevBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+    });
+    
+    prevBtn.addEventListener('click', () => {
+        const currentIndex = parseInt(hero.dataset.currentIndex || 0);
+        const newIndex = (currentIndex - 1 + backgrounds.length) % backgrounds.length;
+        changeBackgroundImage(hero, backgrounds[newIndex], newIndex);
+        updateSlideshowIndicators(newIndex);
+        hero.dataset.currentIndex = newIndex;
+        
+        // Reset automatic slideshow
+        resetSlideshow(hero, backgrounds, newIndex);
+    });
+    
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.innerHTML = '›';
+    nextBtn.className = 'slideshow-nav-btn next-btn';
+    nextBtn.style.cssText = `
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    nextBtn.addEventListener('mouseenter', () => {
+        nextBtn.style.background = 'rgba(255, 255, 255, 0.4)';
+    });
+    
+    nextBtn.addEventListener('mouseleave', () => {
+        nextBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        const currentIndex = parseInt(hero.dataset.currentIndex || 0);
+        const newIndex = (currentIndex + 1) % backgrounds.length;
+        changeBackgroundImage(hero, backgrounds[newIndex], newIndex);
+        updateSlideshowIndicators(newIndex);
+        hero.dataset.currentIndex = newIndex;
+        
+        // Reset automatic slideshow
+        resetSlideshow(hero, backgrounds, newIndex);
+    });
+    
+    navigation.appendChild(prevBtn);
+    navigation.appendChild(nextBtn);
+    hero.appendChild(navigation);
+    
+    // Store current index
+    hero.dataset.currentIndex = currentIndex;
+}
+
+// Function to reset slideshow after manual navigation
+function resetSlideshow(hero, backgrounds, currentIndex) {
+    // Clear existing interval
+    if (hero.dataset.slideshowInterval) {
+        clearInterval(parseInt(hero.dataset.slideshowInterval));
+    }
+    
+    // Restart automatic slideshow
+    const slideshowInterval = setInterval(() => {
+        const newIndex = (currentIndex + 1) % backgrounds.length;
+        changeBackgroundImage(hero, backgrounds[newIndex], newIndex);
+        updateSlideshowIndicators(newIndex);
+        hero.dataset.currentIndex = newIndex;
+        currentIndex = newIndex;
+    }, 3000);
+    
+    hero.dataset.slideshowInterval = slideshowInterval;
 }
 
 // Load about us content
 function loadAboutContent() {
-    const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
-    const aboutSection = document.querySelector('#about .about-content');
-    
-    if (!aboutSection) return;
-    
-    // Update text content
-    const aboutText = aboutSection.querySelector('.about-text');
-    if (aboutText) {
-        const title = aboutText.querySelector('h2');
-        const description = aboutText.querySelector('p');
+    try {
+        console.log('loadAboutContent: Starting...');
+        const aboutText = document.querySelector('.about-text');
+        const aboutImageElement = document.querySelector('#aboutImageContainer');
+        const aboutImage = document.querySelector('#aboutImage');
         
-        if (title) {
-            title.textContent = aboutData.title;
-            title.setAttribute('data-en', aboutData.title);
-            title.setAttribute('data-zh', aboutData.title);
+        console.log('About elements found:');
+        console.log('- aboutText:', aboutText ? 'Found' : 'Not found');
+        console.log('- aboutImageElement:', aboutImageElement ? 'Found' : 'Not found');
+        console.log('- aboutImage:', aboutImage ? 'Found' : 'Not found');
+        
+        if (!aboutText || !aboutImageElement) {
+            console.log('About us elements not found, skipping about content load');
+            return;
         }
         
-        if (description) {
-            description.textContent = aboutData.description;
-            description.setAttribute('data-en', aboutData.description);
-            description.setAttribute('data-zh', aboutData.description);
+        const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
+        const aboutImageData = localStorage.getItem('aboutImage');
+        console.log('About data loaded:', aboutData);
+        console.log('About image data:', aboutImageData);
+        
+        // Update text content
+        try {
+            const descriptions = aboutText.querySelectorAll('p');
+            console.log('Found', descriptions.length, 'description paragraphs');
+            if (descriptions.length >= 2) {
+                descriptions[0].textContent = aboutData.title || 'About Elegant Curtains';
+                descriptions[1].textContent = aboutData.description || 'We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.';
+                console.log('Text content updated successfully');
+            }
+        } catch (error) {
+            console.error('Error updating about text:', error);
         }
+        
+        // Update image
+        try {
+            let imageSrc = aboutImageData || aboutData.image || getDefaultAboutImage();
+            if (!imageSrc || imageSrc === 'undefined') {
+                console.warn('Invalid about us image source, using default');
+                imageSrc = getDefaultAboutImage();
+            }
+            
+            // Remove display:none style and set image
+            if (aboutImage) {
+                console.log('Setting about image:', imageSrc);
+                aboutImage.style.display = 'block';
+                aboutImage.src = imageSrc;
+                aboutImage.onerror = function() {
+                    console.log('About image failed to load, using default');
+                    this.src = getDefaultAboutImage();
+                };
+                console.log('About image set successfully');
+            }
+            
+            console.log('About us image loaded successfully');
+            
+        } catch (error) {
+            console.error('Error updating about image:', error);
+        }
+        
+        console.log('About content loaded successfully');
+        
+    } catch (error) {
+        console.error('Error loading about content:', error);
     }
-    
-    // Add right side image if it doesn't exist
-    if (!aboutSection.querySelector('.about-image')) {
-        const aboutImage = document.createElement('div');
-        aboutImage.className = 'about-image';
-        aboutImage.innerHTML = `<img src="${aboutData.image}" alt="About Us">`;
-        aboutSection.appendChild(aboutImage);
-    }
-    
-    // Update language after loading content
-    updatePageLanguage(currentLanguage);
+}
+
+// Function to get default about us image
+function getDefaultAboutImage() {
+    // Create a simple colored rectangle SVG
+    const svg = `<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#4a90e2"/>
+        <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle" dy=".3em">About Us</text>
+    </svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
 }
 
 // Default content functions (same as in content-management.js)
@@ -3064,51 +3577,143 @@ function getDefaultProductSeries() {
     return [
         {
             name: 'Blackout Curtains',
+            nameZh: '遮光窗帘',
             description: 'Professional blackout fabrics with excellent light blocking properties',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJsYWNrb3V0IEN1cnRhaW5zPC90ZXh0Pjwvc3ZnPg==',
+            descriptionZh: '专业的遮光面料，具有出色的遮光性能',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#2c3e50"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Blackout</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'blackout'
         },
         {
             name: 'Roller Blinds',
+            nameZh: '卷帘',
             description: 'High-quality roller blind fabrics for modern window treatments',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJvbGxlciBCbGluZHM8L3RleHQ+PC9zdmc+',
+            descriptionZh: '高品质卷帘面料，适用于现代窗户装饰',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#e74c3c"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Roller</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'roller'
         },
         {
             name: 'Sheer Elegance',
+            nameZh: '优雅薄纱',
             description: 'Elegant sheer fabrics combining beauty and functionality',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlNoZWVyIEVsZWdhbmNlPC90ZXh0Pjwvc3ZnPg==',
+            descriptionZh: '优雅的薄纱面料，结合美观与功能性',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#9b59b6"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Sheer</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'sheer'
         },
         {
             name: 'Roman Shades',
+            nameZh: '罗马帘',
             description: 'Classic roman shade fabrics with elegant pleating',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJvbWFuIFNoYWRlczwvdGV4dD48L3N2Zz4=',
+            descriptionZh: '经典的罗马帘面料，具有优雅的褶皱效果',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#f39c12"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Roman</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'roman'
         },
         {
             name: 'Elegant Drapery',
+            nameZh: '优雅窗帘',
             description: 'Premium drapery fabrics for large windows and formal spaces',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVsZWdhbnQgRHJhcGVyeTwvdGV4dD48L3N2Zz4=',
+            descriptionZh: '优质窗帘面料，适用于大窗户和正式空间',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#1abc9c"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Drapery</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'drapery'
         },
         {
             name: 'Layered Treatments',
+            nameZh: '分层装饰',
             description: 'Multi-layer fabric solutions for sophisticated window treatments',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxheWVyZWQgVHJlYXRtZW50czwvdGV4dD48L3N2Zz4=',
+            descriptionZh: '多层面料解决方案，适用于精致的窗户装饰',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#34495e"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Layered</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'layered'
         },
         {
             name: 'Moisture Resistant',
+            nameZh: '防潮面料',
             description: 'Weather-resistant fabrics for bathrooms and outdoor spaces',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1vaXN0dXJlIFJlc2lzdGFudDwvdGV4dD48L3N2Zz4=',
+            descriptionZh: '防潮面料，适用于浴室和户外空间',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#3498db"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Moisture</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'moisture'
         },
         {
             name: 'Classic Valances',
+            nameZh: '经典帷幔',
             description: 'Timeless valance fabrics for traditional and elegant interiors',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNsYXNzaWMgVmFsYW5jZXM8L3RleHQ+PC9zdmc+',
+            descriptionZh: '永恒的帷幔面料，适用于传统和优雅的室内装饰',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#8e44ad"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Valances</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             category: 'valances'
+        },
+        {
+            name: 'Smart Home Integration',
+            nameZh: '智能家居集成',
+            description: 'Advanced fabrics with smart home technology integration',
+            descriptionZh: '集成智能家居技术的高级面料',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#e67e22"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Smart</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
+            category: 'smart'
+        },
+        {
+            name: 'Eco-Friendly Materials',
+            nameZh: '环保材料',
+            description: 'Sustainable and environmentally friendly curtain materials',
+            descriptionZh: '可持续和环保的窗帘材料',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#27ae60"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Eco</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
+            category: 'eco'
         }
     ];
 }
@@ -3117,23 +3722,55 @@ function getDefaultGallery() {
     return [
         {
             title: 'Elegant Living Room',
+            titleZh: '优雅客厅',
             description: 'Elegant living room curtains',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVsZWdhbnQgTGl2aW5nIFJvb208L3RleHQ+PC9zdmc+'
+            descriptionZh: '优雅的客厅窗帘',
+            image: (() => {
+                const svg = `<svg width="300" height="250" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#e74c3c"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Living Room</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })()
         },
         {
             title: 'Modern Kitchen',
+            titleZh: '现代厨房',
             description: 'Modern kitchen window treatments',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1vZGVybiBLaXRjaGVuPC90ZXh0Pjwvc3ZnPg=='
+            descriptionZh: '现代厨房窗户装饰',
+            image: (() => {
+                const svg = `<svg width="300" height="250" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#f39c12"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Kitchen</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })()
         },
         {
             title: 'Cozy Bedroom',
+            titleZh: '温馨卧室',
             description: 'Cozy bedroom curtains',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNvenkgQmVkcm9vbTwvdGV4dD48L3N2Zz4='
+            descriptionZh: '温馨的卧室窗帘',
+            image: (() => {
+                const svg = `<svg width="300" height="250" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#9b59b6"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Bedroom</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })()
         },
         {
             title: 'Formal Dining Room',
+            titleZh: '正式餐厅',
             description: 'Formal dining room elegance',
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkZvcm1hbCBEaW5pbmcgUm9vbTwvdGV4dD48L3N2Zz4='
+            descriptionZh: '正式餐厅的优雅装饰',
+            image: (() => {
+                const svg = `<svg width="300" height="250" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#34495e"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Dining Room</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })()
         }
     ];
 }
@@ -3141,15 +3778,33 @@ function getDefaultGallery() {
 function getDefaultBackgrounds() {
     return [
         {
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhY2tncm91bmQgMSA8L3RleHQ+PC9zdmc+',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#f8f9fa"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#495057" text-anchor="middle" dy=".3em">Background 1</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             order: 1
         },
         {
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhY2tncm91bmQgMiA8L3RleHQ+PC9zdmc+',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#e9ecef"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#6c757d" text-anchor="middle" dy=".3em">Background 2</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             order: 2
         },
         {
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhY2tncm91bmQgMyA8L3RleHQ+PC9zdmc+',
+            image: (() => {
+                const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#dee2e6"/>
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#495057" text-anchor="middle" dy=".3em">Background 3</text>
+                </svg>`;
+                return 'data:image/svg+xml;base64,' + btoa(svg);
+            })(),
             order: 3
         }
     ];
@@ -3157,8 +3812,115 @@ function getDefaultBackgrounds() {
 
 function getDefaultAboutContent() {
     return {
-        title: 'About Elegant Curtains',
+        title: 'About WHL Elegant Curtains',
+        titleZh: '关于WHL优雅窗帘',
         description: 'We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.',
-        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFib3V0IFVzPC90ZXh0Pjwvc3ZnPg=='
+        descriptionZh: '我们是一家家族企业，在创造美丽窗帘方面拥有超过20年的经验。我们对质量和客户满意度的承诺使我们成为整个地区房主的值得信赖的选择。'
     };
+}
+
+// Function to open product series modal
+function openProductSeriesModal() {
+    try {
+        // This is a placeholder function for the main page
+        // The actual modal functionality is in content-management.html
+        console.log('Product series modal opened (placeholder)');
+        
+        // You can add actual modal functionality here if needed
+        // For now, just show a notification
+        showNotification('Product series details will be available in the content management system', 'info');
+        
+    } catch (error) {
+        console.error('Error opening product series modal:', error);
+    }
+}
+
+function loadAppointments() {
+    try {
+        const appointmentsList = document.getElementById('appointmentsList');
+        
+        // Early return if element doesn't exist
+        if (!appointmentsList) {
+            console.log('Appointments list element not found, skipping appointments load');
+            return;
+        }
+        
+        const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+        if (appointments.length > 0) {
+            const appointmentsHTML = appointments.map(appointment => `
+                <div class="appointment-item">
+                    <h4>Appointment #${appointment.id}</h4>
+                    <p>Customer: ${appointment.customerName}</p>
+                    <p>Date: ${appointment.date}</p>
+                    <p>Time: ${appointment.time}</p>
+                    <p>Status: ${appointment.status}</p>
+                </div>
+            `).join('');
+            appointmentsList.innerHTML = appointmentsHTML;
+        } else {
+            appointmentsList.innerHTML = '<p data-en="No appointments found." data-zh="未找到预约。">No appointments found.</p>';
+        }
+    } catch (error) {
+        console.error('Error loading appointments:', error);
+    }
+}
+
+function switchLanguage(lang) {
+    try {
+        currentLanguage = lang;
+        updatePageLanguage(lang);
+        refreshAllContent();
+        
+        // Show notification
+        const message = lang === 'zh' ? '语言已切换到中文' : 'Language switched to English';
+        showNotification(message, 'success');
+        
+    } catch (error) {
+        console.error('Error switching language:', error);
+    }
+}
+
+function refreshAllContent() {
+    try {
+        // Refresh all dynamic content
+        loadBackgroundImages();
+        loadAboutContent();
+        loadProductSeriesContent();
+        loadGalleryContent();
+        
+        console.log('All content refreshed');
+        
+    } catch (error) {
+        console.error('Error refreshing content:', error);
+    }
+}
+
+function loadQuotes() {
+    try {
+        const quotesList = document.getElementById('quotesList');
+        
+        // Early return if element doesn't exist
+        if (!quotesList) {
+            console.log('Quotes list element not found, skipping quotes load');
+            return;
+        }
+        
+        const quotes = JSON.parse(localStorage.getItem('userQuotes') || '[]');
+        if (quotes.length > 0) {
+            const quotesHTML = quotes.map(quote => `
+                <div class="quote-item">
+                    <h4>Quote #${quote.id}</h4>
+                    <p>Customer: ${quote.customerName}</p>
+                    <p>Date: ${quote.date}</p>
+                    <p>Total: ${quote.total}</p>
+                    <p>Status: ${quote.status}</p>
+                </div>
+            `).join('');
+            quotesList.innerHTML = quotesHTML;
+        } else {
+            quotesList.innerHTML = '<p data-en="No quotes found." data-zh="未找到报价。">No quotes found.</p>';
+        }
+    } catch (error) {
+        console.error('Error loading quotes:', error);
+    }
 }

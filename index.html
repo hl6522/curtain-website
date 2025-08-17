@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
     <meta name="translate" content="no">
-    <title data-en="Elegant Curtains - Custom Window Treatments" data-zh="优雅窗帘 - 定制窗帘">Elegant Curtains - Custom Window Treatments</title>
+    <title data-en="WHL Elegant Curtains - Custom Window Treatments" data-zh="WHL优雅窗帘 - 定制窗帘">WHL Elegant Curtains - Custom Window Treatments</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -14,7 +14,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <h2 data-en="Elegant Curtains" data-zh="优雅窗帘">Elegant Curtains</h2>
+                <h2 data-en="WHL Elegant Curtains" data-zh="WHL优雅窗帘">WHL Elegant Curtains</h2>
             </div>
             <ul class="nav-menu">
                 <li><a href="#home" data-en="Home" data-zh="首页">Home</a></li>
@@ -104,9 +104,12 @@
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
-                    <h2 data-en="About Elegant Curtains" data-zh="关于优雅窗帘">About Elegant Curtains</h2>
+                    <h2 data-en="About WHL Elegant Curtains" data-zh="关于WHL优雅窗帘">About WHL Elegant Curtains</h2>
                     <p data-en="We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region." data-zh="我们是一家家族企业，在创造美丽窗帘方面拥有超过20年的经验。我们对质量和客户满意度的承诺使我们成为整个地区房主的值得信赖的选择。">We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.</p>
                     <p data-en="Our team of skilled craftsmen and designers work together to bring your vision to life, ensuring every detail meets our high standards." data-zh="我们技艺精湛的工匠和设计师团队共同努力，将您的愿景变为现实，确保每个细节都符合我们的高标准。">Our team of skilled craftsmen and designers work together to bring your vision to life, ensuring every detail meets our high standards.</p>
+                </div>
+                <div class="about-image" id="aboutImageContainer">
+                    <img id="aboutImage" src="" alt="About Us" style="display: none;">
                 </div>
             </div>
         </div>
@@ -117,71 +120,8 @@
         <div class="container">
             <h2 data-en="Our Product Series" data-zh="我们的产品系列">Our Product Series</h2>
             <p data-en="Professional curtain fabrics and solutions for every space" data-zh="为每个空间提供专业的窗帘面料和解决方案">Professional curtain fabrics and solutions for every space</p>
-            <div class="series-grid">
-                <div class="series-item">
-                    <img src="images/products/blackout-curtains.jpg" alt="Blackout Curtains" data-en="Blackout Curtains" data-zh="遮光窗帘">
-                    <div class="series-content">
-                        <h3 data-en="Blackout Curtains" data-zh="遮光窗帘">Blackout Curtains</h3>
-                        <p data-en="Professional blackout fabrics with excellent light blocking properties" data-zh="专业的遮光面料，具有优异的光线阻挡性能">Professional blackout fabrics with excellent light blocking properties</p>
-                        <button onclick="openProductSeriesModal('blackout')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
-                <div class="series-item">
-                    <img src="images/products/roller-blinds.jpg" alt="Roller Blinds" data-en="Roller Blinds" data-zh="卷帘">
-                    <div class="series-content">
-                        <h3 data-en="Roller Blinds" data-zh="卷帘">Roller Blinds</h3>
-                        <p data-en="High-quality roller blind fabrics for modern window treatments" data-zh="现代窗帘处理的高品质卷帘面料">High-quality roller blind fabrics for modern window treatments</p>
-                        <button onclick="openProductSeriesModal('roller')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
-                <div class="series-item">
-                    <img src="images/products/sheer-elegance.jpg" alt="Sheer Elegance" data-en="Sheer Elegance" data-zh="优雅薄纱">
-                    <div class="series-content">
-                        <h3 data-en="Sheer Elegance" data-zh="优雅薄纱">Sheer Elegance</h3>
-                        <p data-en="Elegant sheer fabrics combining beauty and functionality" data-zh="优雅的薄纱面料，结合美观与功能性">Elegant sheer fabrics combining beauty and functionality</p>
-                        <button onclick="openProductSeriesModal('sheer')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
-                <div class="series-item">
-                    <img src="images/products/roman-shades.jpg" alt="Roman Shades" data-en="Roman Shades" data-zh="罗马帘">
-                    <div class="series-content">
-                        <h3 data-en="Roman Shades" data-zh="罗马帘">Roman Shades</h3>
-                        <p data-en="Classic roman shade fabrics with elegant pleating" data-zh="经典的罗马帘面料，具有优雅的褶皱">Classic roman shade fabrics with elegant pleating</p>
-                        <button onclick="openProductSeriesModal('roman')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
-                <div class="series-item">
-                    <img src="images/products/elegant-drapery.jpg" alt="Elegant Drapery" data-en="Elegant Drapery" data-zh="优雅窗帘">
-                    <div class="series-content">
-                        <h3 data-en="Elegant Drapery" data-zh="优雅窗帘">Elegant Drapery</h3>
-                        <p data-en="Premium drapery fabrics for large windows and formal spaces" data-zh="适用于大窗户和正式空间的优质窗帘面料">Premium drapery fabrics for large windows and formal spaces</p>
-                        <button onclick="openProductSeriesModal('drapery')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
-                <div class="series-item">
-                    <img src="images/products/layered-treatments.jpg" alt="Layered Treatments" data-en="Layered Treatments" data-zh="分层处理">
-                    <div class="series-content">
-                        <h3 data-en="Layered Treatments" data-zh="分层处理">Layered Treatments</h3>
-                        <p data-en="Multi-layer fabric solutions for sophisticated window treatments" data-zh="用于精致窗帘处理的多层面料解决方案">Multi-layer fabric solutions for sophisticated window treatments</p>
-                        <button onclick="openProductSeriesModal('layered')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
-                <div class="series-item">
-                    <img src="images/products/moisture-resistant.jpg" alt="Moisture Resistant" data-en="Moisture Resistant" data-zh="防潮面料">
-                    <div class="series-content">
-                        <h3 data-en="Moisture Resistant" data-zh="防潮面料">Moisture Resistant</h3>
-                        <p data-en="Weather-resistant fabrics for bathrooms and outdoor spaces" data-zh="适用于浴室和户外空间的耐候面料">Weather-resistant fabrics for bathrooms and outdoor spaces</p>
-                        <button onclick="openProductSeriesModal('moisture')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
-                <div class="series-item">
-                    <img src="images/products/classic-valances.jpg" alt="Classic Valances" data-en="Classic Valances" data-zh="经典帷幔">
-                    <div class="series-content">
-                        <h3 data-en="Classic Valances" data-zh="经典帷幔">Classic Valances</h3>
-                        <p data-en="Timeless valance fabrics for traditional and elegant interiors" data-zh="适用于传统和优雅内饰的永恒帷幔面料">Timeless valance fabrics for traditional and elegant interiors</p>
-                        <button onclick="openProductSeriesModal('valances')" class="btn btn-outline" data-en="Learn More" data-zh="了解更多">Learn More</button>
-                    </div>
-                </div>
+            <div class="series-grid" id="productSeriesGrid">
+                <!-- Product series will be loaded dynamically by JavaScript -->
             </div>
         </div>
     </section>
@@ -190,35 +130,8 @@
     <section id="gallery" class="gallery">
         <div class="container">
             <h2 data-en="Our Work Gallery" data-zh="我们的作品展示">Our Work Gallery</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item" onclick="openGalleryModal('living-room')">
-                    <img src="images/gallery/elegant-living-room.jpg" alt="Elegant Living Room" data-en="Elegant Living Room" data-zh="优雅客厅">
-                    <div class="gallery-overlay">
-                        <h3 data-en="Elegant Living Room" data-zh="优雅客厅">Elegant Living Room</h3>
-                        <p data-en="Elegant living room curtains" data-zh="优雅的客厅窗帘">Elegant living room curtains</p>
-                    </div>
-                </div>
-                <div class="gallery-item" onclick="openGalleryModal('bedroom')">
-                    <img src="images/gallery/master-bedroom.jpg" alt="Master Bedroom" data-en="Master Bedroom" data-zh="主卧室">
-                    <div class="gallery-overlay">
-                        <h3 data-en="Master Bedroom" data-zh="主卧室">Master Bedroom</h3>
-                        <p data-en="Comfortable bedroom treatments" data-zh="舒适的卧室窗帘">Comfortable bedroom treatments</p>
-                    </div>
-                </div>
-                <div class="gallery-item" onclick="openGalleryModal('kitchen')">
-                    <img src="images/gallery/kitchen-window.jpg" alt="Kitchen Window" data-en="Kitchen Window" data-zh="厨房窗户">
-                    <div class="gallery-overlay">
-                        <h3 data-en="Kitchen Window" data-zh="厨房窗户">Kitchen Window</h3>
-                        <p data-en="Functional kitchen solutions" data-zh="功能性厨房解决方案">Functional kitchen solutions</p>
-                    </div>
-                </div>
-                <div class="gallery-item" onclick="openGalleryModal('bathroom')">
-                    <img src="images/gallery/bathroom-curtains.jpg" alt="Bathroom Curtains" data-en="Bathroom Curtains" data-zh="浴室窗帘">
-                    <div class="gallery-overlay">
-                        <h3 data-en="Bathroom Curtains" data-zh="浴室窗帘">Bathroom Curtains</h3>
-                        <p data-en="Moisture-resistant bathroom solutions" data-zh="防潮浴室解决方案">Moisture-resistant bathroom solutions</p>
-                    </div>
-                </div>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be loaded dynamically by JavaScript -->
             </div>
         </div>
     </section>
@@ -340,7 +253,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3 data-en="Elegant Curtains" data-zh="优雅窗帘">Elegant Curtains</h3>
+                    <h3 data-en="WHL Elegant Curtains" data-zh="WHL优雅窗帘">WHL Elegant Curtains</h3>
                     <p data-en="Creating beautiful spaces with custom window treatments" data-zh="用定制窗帘创造美丽空间">Creating beautiful spaces with custom window treatments</p>
                 </div>
                 <div class="footer-section">
@@ -364,7 +277,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p data-en="© 2024 Elegant Curtains. All rights reserved." data-zh="© 2024 优雅窗帘。保留所有权利。">© 2024 Elegant Curtains. All rights reserved.</p>
+                <p data-en="© 2024 WHL Elegant Curtains. All rights reserved." data-zh="© 2024 WHL优雅窗帘。保留所有权利。">© 2024 WHL Elegant Curtains. All rights reserved.</p>
                 <p><a href="admin-login.html" style="color: #666; text-decoration: none; font-size: 0.9rem;" data-en="Admin Access" data-zh="管理员入口">Admin Access</a></p>
             </div>
         </div>
