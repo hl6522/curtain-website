@@ -200,12 +200,6 @@
     </div>
 
     <script>
-        // Admin login credentials (in a real app, this would be server-side)
-        const ADMIN_CREDENTIALS = {
-            username: 'admin',
-            password: 'admin123'
-        };
-        
         // Handle admin login
         function handleAdminLogin(event) {
             event.preventDefault();
@@ -216,15 +210,27 @@
             // Hide previous messages
             hideMessages();
             
-            // Validate credentials
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Find user
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user && user.userType === 'admin') {
                 // Create admin user session
                 const adminUser = {
-                    name: 'Administrator',
-                    email: 'admin@elegantcurtains.com',
+                    name: user.username,
+                    email: user.email,
                     userType: 'admin',
                     loginTime: new Date().toISOString()
                 };
+                
+                // Update last login time
+                const userIndex = users.findIndex(u => u.username === username);
+                if (userIndex !== -1) {
+                    users[userIndex].lastLogin = new Date().toISOString();
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
                 
                 // Save to localStorage
                 localStorage.setItem('currentUser', JSON.stringify(adminUser));

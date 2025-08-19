@@ -192,12 +192,6 @@
     </div>
 
     <script>
-        // Content management login credentials
-        const CONTENT_CREDENTIALS = {
-            username: 'content',
-            password: 'content123'
-        };
-        
         // Handle content login
         function handleContentLogin(event) {
             event.preventDefault();
@@ -208,15 +202,27 @@
             // Hide previous messages
             hideMessages();
             
-            // Validate credentials
-            if (username === CONTENT_CREDENTIALS.username && password === CONTENT_CREDENTIALS.password) {
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Find user
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user && user.userType === 'content') {
                 // Create content user session
                 const contentUser = {
-                    name: 'Content Manager',
-                    email: 'content@elegantcurtains.com',
+                    name: user.username,
+                    email: user.email,
                     userType: 'content',
                     loginTime: new Date().toISOString()
                 };
+                
+                // Update last login time
+                const userIndex = users.findIndex(u => u.username === username);
+                if (userIndex !== -1) {
+                    users[userIndex].lastLogin = new Date().toISOString();
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
                 
                 // Save to localStorage
                 localStorage.setItem('currentUser', JSON.stringify(contentUser));
