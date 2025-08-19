@@ -200,6 +200,38 @@
     </div>
 
     <script>
+        // 自动创建默认用户
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDefaultUsers();
+        });
+
+        function initializeDefaultUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            if (users.length === 0) {
+                const defaultUsers = [
+                    {
+                        username: 'admin',
+                        password: 'admin123!',
+                        email: 'admin@elegantcurtains.com',
+                        userType: 'admin',
+                        lastLogin: new Date().toISOString(),
+                        status: 'active'
+                    },
+                    {
+                        username: 'content',
+                        password: 'content123!',
+                        email: 'content@elegantcurtains.com',
+                        userType: 'content',
+                        lastLogin: new Date().toISOString(),
+                        status: 'active'
+                    }
+                ];
+                localStorage.setItem('users', JSON.stringify(defaultUsers));
+                console.log('Default users created automatically in admin-login');
+            }
+        }
+
         // Handle admin login
         function handleAdminLogin(event) {
             event.preventDefault();
