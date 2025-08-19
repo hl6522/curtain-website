@@ -209,7 +209,7 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: white;
+    color: #2c3e50;
     position: relative;
     margin-top: 80px;
 }
@@ -224,12 +224,14 @@ body {
     font-size: 3.5rem;
     margin-bottom: 1rem;
     font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
 }
 
 .hero p {
     font-size: 1.3rem;
     margin-bottom: 2rem;
     opacity: 0.9;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
 }
 
 .hero-buttons {
@@ -303,13 +305,13 @@ body {
 
 .btn-secondary {
     background: transparent;
-    color: white;
-    border: 2px solid white;
+    color: #2c3e50;
+    border: 2px solid #2c3e50;
 }
 
 .btn-secondary:hover {
-    background: white;
-    color: #3498db;
+    background: #2c3e50;
+    color: white;
 }
 
 .btn-danger {

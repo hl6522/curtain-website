@@ -7,13 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSmoothScrolling();
     loadUserData();
     updateUserInterface(getCurrentUser());
-    updatePageLanguage(currentLanguage);
     
     // Prevent Google Translate popup
     preventGoogleTranslate();
     
-    // Load dynamic content from content management system
-    loadDynamicContent();
+    // 先更新语言，然后加载动态内容
+    updatePageLanguage(currentLanguage);
+    
+    // 延迟加载动态内容，确保语言更新完成后再加载
+    setTimeout(() => {
+        loadDynamicContent();
+        
+        // 调试：检查数据加载情况
+        setTimeout(() => {
+            debugAboutUsData();
+        }, 200);
+    }, 150);
     
     // Don't initialize date selectors here as the modal might not be open yet
 });
@@ -62,16 +71,73 @@ function updatePageLanguage(lang) {
             activeButton.classList.add('active');
         }
         
-        // Update all text content
+        // Update all text content, but preserve content management data
         document.querySelectorAll('[data-en][data-zh]').forEach(element => {
-            if (lang === 'zh') {
-                element.textContent = element.getAttribute('data-zh');
-            } else {
-                element.textContent = element.getAttribute('data-en');
+            // 检查这个元素是否应该被内容管理页面的数据覆盖
+            const shouldPreserve = element.closest('.about-text') && 
+                                 (element.tagName === 'H2' || element.tagName === 'P');
+            
+            if (!shouldPreserve) {
+                // 对于非关于我们部分的元素，正常更新语言
+                if (lang === 'zh') {
+                    element.textContent = element.getAttribute('data-zh');
+                } else {
+                    element.textContent = element.getAttribute('data-en');
+                }
             }
         });
         
+        // 特别处理一些可能遗漏的元素
+        try {
+            // 更新按钮文本
+            document.querySelectorAll('button[data-en][data-zh]').forEach(btn => {
+                if (lang === 'zh') {
+                    btn.textContent = btn.getAttribute('data-zh');
+                } else {
+                    btn.textContent = btn.getAttribute('data-en');
+                }
+            });
+            
+            // 更新链接文本
+            document.querySelectorAll('a[data-en][data-zh]').forEach(link => {
+                if (lang === 'zh') {
+                    link.textContent = link.getAttribute('data-zh');
+                } else {
+                    link.textContent = link.getAttribute('data-en');
+                }
+            });
+            
+            // 更新输入框占位符
+            document.querySelectorAll('input[data-en][data-zh]').forEach(input => {
+                if (lang === 'zh') {
+                    input.placeholder = input.getAttribute('data-zh');
+                } else {
+                    input.placeholder = input.getAttribute('data-en');
+                }
+            });
+            
+            // 更新标签文本
+            document.querySelectorAll('label[data-en][data-zh]').forEach(label => {
+                if (lang === 'zh') {
+                    label.textContent = label.getAttribute('data-zh');
+                } else {
+                    label.textContent = label.getAttribute('data-en');
+                }
+            });
+        } catch (error) {
+            console.error('Error updating additional language elements:', error);
+        }
+        
         updateSelectOptionsLanguage();
+        
+        // 重新加载关于我们内容，确保语言正确且不被覆盖
+        setTimeout(() => {
+            try {
+                loadAboutContent();
+            } catch (error) {
+                console.error('Error reloading about content after language switch:', error);
+            }
+        }, 100);
         
     } catch (error) {
         console.error('Error updating page language:', error);
@@ -3138,7 +3204,7 @@ function getDefaultProductImage() {
         <rect width="100%" height="100%" fill="#f39c12"/>
         <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Product</text>
     </svg>`;
-    return 'data:image/svg+xml;base64,' + btoa(svg);
+    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 }
 
 // Load gallery content
@@ -3202,7 +3268,7 @@ function getDefaultGalleryImage() {
         <rect width="100%" height="100%" fill="#e74c3c"/>
         <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle" dy=".3em">Gallery</text>
     </svg>`;
-    return 'data:image/svg+xml;base64,' + btoa(svg);
+    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 }
 
 // Load background images for homepage
@@ -3291,7 +3357,7 @@ function getDefaultBackgroundImage() {
         <rect width="100%" height="100%" fill="#f8f9fa"/>
         <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#495057" text-anchor="middle" dy=".3em">Background</text>
     </svg>`;
-    return 'data:image/svg+xml;base64,' + btoa(svg);
+    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 }
 
 // Function to change background image with fade effect
@@ -3511,27 +3577,62 @@ function loadAboutContent() {
             return;
         }
         
+        // 首先尝试从内容管理页面读取数据
+        const aboutUsData = JSON.parse(localStorage.getItem('aboutUs') || '{}');
         const aboutData = JSON.parse(localStorage.getItem('aboutContent')) || getDefaultAboutContent();
         const aboutImageData = localStorage.getItem('aboutImage');
+        
+        console.log('About us data from content management:', aboutUsData);
         console.log('About data loaded:', aboutData);
         console.log('About image data:', aboutImageData);
         
-        // Update text content
+        // Update text content - 优先使用内容管理页面的数据
+        let titleElement = null;
+        let descriptions = [];
+        
         try {
-            const descriptions = aboutText.querySelectorAll('p');
+            titleElement = aboutText.querySelector('h2');
+            descriptions = aboutText.querySelectorAll('p');
+            console.log('Found title element:', titleElement ? 'Yes' : 'No');
             console.log('Found', descriptions.length, 'description paragraphs');
-            if (descriptions.length >= 2) {
-                descriptions[0].textContent = aboutData.title || 'About Elegant Curtains';
-                descriptions[1].textContent = aboutData.description || 'We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.';
-                console.log('Text content updated successfully');
+            
+            // 更新标题
+            if (titleElement) {
+                // 优先使用内容管理页面的数据
+                if (aboutUsData.title) {
+                    titleElement.textContent = aboutUsData.title;
+                    console.log('Title updated from content management:', aboutUsData.title);
+                } else {
+                    // 如果没有内容管理数据，使用默认语言文本
+                    const defaultTitle = currentLanguage === 'zh' ? '关于WHL优雅窗帘' : 'About WHL Elegant Curtains';
+                    titleElement.textContent = defaultTitle;
+                    console.log('Title set to default language:', defaultTitle);
+                }
+            }
+            
+            // 更新描述段落
+            if (descriptions && descriptions.length >= 1) {
+                // 优先使用内容管理页面的数据
+                if (aboutUsData.description) {
+                    descriptions[0].textContent = aboutUsData.description;
+                    console.log('Description updated from content management:', aboutUsData.description);
+                } else {
+                    // 如果没有内容管理数据，使用默认语言文本
+                    const defaultDesc = currentLanguage === 'zh' ? 
+                        '我们是一家家族企业，在创造美丽窗帘方面拥有超过20年的经验。我们对质量和客户满意度的承诺使我们成为整个地区房主的值得信赖的选择。' :
+                        'We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.';
+                    descriptions[0].textContent = defaultDesc;
+                    console.log('Description set to default language');
+                }
             }
         } catch (error) {
             console.error('Error updating about text:', error);
         }
         
-        // Update image
+        // Update image - 优先使用内容管理页面的数据
         try {
-            let imageSrc = aboutImageData || aboutData.image || getDefaultAboutImage();
+            // 优先使用内容管理页面的图片，然后是其他来源
+            let imageSrc = aboutUsData.image || aboutImageData || aboutData.image || getDefaultAboutImage();
             if (!imageSrc || imageSrc === 'undefined') {
                 console.warn('Invalid about us image source, using default');
                 imageSrc = getDefaultAboutImage();
@@ -3557,9 +3658,44 @@ function loadAboutContent() {
         
         console.log('About content loaded successfully');
         
+        // 调试信息：显示最终设置的内容
+        if (titleElement) {
+            console.log('Final title set to:', titleElement.textContent);
+        }
+        if (descriptions && descriptions.length >= 1) {
+            console.log('Final description set to:', descriptions[0].textContent);
+        }
+        
     } catch (error) {
         console.error('Error loading about content:', error);
     }
+}
+
+// 调试函数：检查localStorage中的关于我们数据
+function debugAboutUsData() {
+    console.log('=== Debug About Us Data ===');
+    console.log('aboutUs:', localStorage.getItem('aboutUs'));
+    console.log('aboutContent:', localStorage.getItem('aboutContent'));
+    console.log('aboutImage:', localStorage.getItem('aboutImage'));
+    
+    try {
+        const aboutUs = JSON.parse(localStorage.getItem('aboutUs') || '{}');
+        console.log('Parsed aboutUs:', aboutUs);
+        console.log('Title:', aboutUs.title);
+        console.log('Description:', aboutUs.description);
+        console.log('Image:', aboutUs.image ? 'Present' : 'Not present');
+    } catch (e) {
+        console.error('Error parsing aboutUs:', e);
+    }
+    
+    // 检查页面上的实际内容
+    const titleElement = document.querySelector('.about-text h2');
+    const descriptions = document.querySelectorAll('.about-text p');
+    
+    console.log('=== Page Content ===');
+    console.log('Title element:', titleElement ? titleElement.textContent : 'Not found');
+    console.log('Description 1:', descriptions[0] ? descriptions[0].textContent : 'Not found');
+    console.log('Description 2:', descriptions[1] ? descriptions[1].textContent : 'Not found');
 }
 
 // Function to get default about us image
@@ -3569,7 +3705,7 @@ function getDefaultAboutImage() {
         <rect width="100%" height="100%" fill="#4a90e2"/>
         <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle" dy=".3em">About Us</text>
     </svg>`;
-    return 'data:image/svg+xml;base64,' + btoa(svg);
+    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 }
 
 // Default content functions (same as in content-management.js)
@@ -3585,7 +3721,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#2c3e50"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Blackout</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'blackout'
         },
@@ -3599,7 +3735,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#e74c3c"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Roller</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'roller'
         },
@@ -3613,7 +3749,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#9b59b6"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Sheer</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'sheer'
         },
@@ -3627,7 +3763,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#f39c12"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Roman</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'roman'
         },
@@ -3641,7 +3777,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#1abc9c"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Drapery</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'drapery'
         },
@@ -3655,7 +3791,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#34495e"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Layered</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'layered'
         },
@@ -3669,7 +3805,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#3498db"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Moisture</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'moisture'
         },
@@ -3683,7 +3819,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#8e44ad"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Valances</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'valances'
         },
@@ -3695,9 +3831,9 @@ function getDefaultProductSeries() {
             image: (() => {
                 const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="100%" fill="#e67e22"/>
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Smart</text>
+                    <text x="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Smart</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'smart'
         },
@@ -3711,7 +3847,7 @@ function getDefaultProductSeries() {
                     <rect width="100%" height="100%" fill="#27ae60"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle" dy=".3em">Eco</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             category: 'eco'
         }
@@ -3730,7 +3866,7 @@ function getDefaultGallery() {
                     <rect width="100%" height="100%" fill="#e74c3c"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Living Room</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })()
         },
         {
@@ -3743,7 +3879,7 @@ function getDefaultGallery() {
                     <rect width="100%" height="100%" fill="#f39c12"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Kitchen</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })()
         },
         {
@@ -3756,7 +3892,7 @@ function getDefaultGallery() {
                     <rect width="100%" height="100%" fill="#9b59b6"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Bedroom</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })()
         },
         {
@@ -3769,7 +3905,7 @@ function getDefaultGallery() {
                     <rect width="100%" height="100%" fill="#34495e"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" dy=".3em">Dining Room</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })()
         }
     ];
@@ -3783,7 +3919,7 @@ function getDefaultBackgrounds() {
                     <rect width="100%" height="100%" fill="#f8f9fa"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#495057" text-anchor="middle" dy=".3em">Background 1</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             order: 1
         },
@@ -3793,7 +3929,7 @@ function getDefaultBackgrounds() {
                     <rect width="100%" height="100%" fill="#e9ecef"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#6c757d" text-anchor="middle" dy=".3em">Background 2</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             order: 2
         },
@@ -3803,7 +3939,7 @@ function getDefaultBackgrounds() {
                     <rect width="100%" height="100%" fill="#dee2e6"/>
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" fill="#495057" text-anchor="middle" dy=".3em">Background 3</text>
                 </svg>`;
-                return 'data:image/svg+xml;base64,' + btoa(svg);
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             })(),
             order: 3
         }

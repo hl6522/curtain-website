@@ -1,1062 +1,2291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google" content="notranslate">
-    <title>Content Management - WHL Elegant Curtains</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>内容管理 - Elegant Curtains</title>
     <style>
-        .content-management-container {
-            min-height: 100vh;
-            background: #f8f9fa;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .content-header {
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem 0;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-main {
             text-align: center;
+            margin-bottom: 25px;
         }
-        
-        .content-header .brand-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.4em;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        
-        .content-header .brand-logo .logo-icon {
-            font-size: 2.5rem;
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
             color: white;
+            box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
         }
-        
-        .content-header .brand-logo .brand-text {
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .stat-limit {
+            font-size: 0.7em;
+            opacity: 0.8;
+            margin-bottom: 0;
+        }
+
+        .stat-remaining {
+            display: none;
+        }
+
+        .actions-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 22px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 3px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        .action-btn.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .action-btn.info {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .content-sections {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            gap: 25px;
+            margin-bottom: 30px;
         }
-        
-        .content-header .brand-logo .brand-name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            margin: 0;
-            line-height: 1;
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
         }
-        
-        .content-header .brand-logo .brand-subtitle {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.8);
-            margin: 0;
-            font-weight: 400;
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
-        
-        .content-header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            font-weight: 600;
-        }
-        
-        .content-header p {
-            margin: 0.5rem 0 0 0;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .content-nav {
-            background: white;
-            border-bottom: 1px solid #e9ecef;
-            padding: 1rem 0;
-        }
-        
-        .content-nav .container {
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
-        .content-nav .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .content-nav .logout-btn {
-            padding: 0.5rem 1rem;
-            background: #dc3545;
+
+        .add-button {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
             color: white;
             border: none;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 25px;
             cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        
-        .content-nav .admin-login-link {
-            padding: 0.5rem 1rem;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9rem;
-            margin-right: 0.5rem;
-        }
-        
-        .content-nav .admin-login-link:hover {
-            background: #2980b9;
-        }
-        
-        .language-switcher {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .lang-btn {
-            padding: 0.5rem 1rem;
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 14px;
+            font-weight: bold;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
         }
-        
-        .lang-btn:hover {
-            background: #667eea;
-            color: white;
+
+        .add-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
         }
-        
-        .lang-btn.active {
-            background: #667eea;
-            color: white;
+
+        .add-button:active {
+            transform: translateY(0);
         }
-        
-        .form-group input + input,
-        .form-group textarea + textarea {
-            margin-top: 0.5rem;
-        }
-        
-        .form-group input[placeholder*="中文"],
-        .form-group textarea[placeholder*="中文"] {
-            border-left: 3px solid #667eea;
-        }
-        
-        .content-main {
-            padding: 2rem 0;
-        }
-        
-        .content-section {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-        
-        .content-section-header {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .content-section-header h2 {
-            margin: 0;
-            color: #333;
-            font-size: 1.5rem;
-        }
-        
-        .content-section-body {
-            padding: 1.5rem;
-        }
-        
+
         .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            /* 确保网格布局稳定 */
-            grid-auto-rows: minmax(350px, auto);
-            align-items: start;
-            min-height: 200px;
-            contain: layout style paint;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
-        
+
         .content-item {
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 1rem;
             background: #f8f9fa;
-            /* 确保内容项高度一致 */
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
         }
-        
+
         .content-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #3498db;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
         }
-        
+
         .content-item img {
             width: 100%;
-            height: 200px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            /* 确保图片尺寸一致 */
-            flex-shrink: 0;
-            aspect-ratio: 3/2;
-            background: #f0f0f0;
-            transition: opacity 0.3s ease;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
-        
-        .content-item h4 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.1rem;
-            color: #333;
-            /* 确保标题不换行 */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+
+        .content-item h3 {
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 8px;
         }
-        
+
         .content-item p {
-            margin: 0 0 1rem 0;
-            color: #666;
+            color: #7f8c8d;
+            font-size: 0.9em;
             line-height: 1.4;
-            /* 确保描述文本有固定高度 */
-            height: 2.8em;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            margin-bottom: 15px;
         }
-        
-        .content-item .item-controls {
+
+        .item-actions {
             display: flex;
-            gap: 0.5rem;
-            margin-top: auto;
-            /* 确保按钮在底部 */
-            justify-content: flex-end;
+            gap: 10px;
         }
-        
-        .content-item .btn {
-            padding: 0.5rem 1rem;
+
+        .btn-edit, .btn-delete {
+            padding: 8px 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
-        
-        .content-item .btn-edit {
-            background: #007bff;
+
+        .btn-edit {
+            background: #3498db;
             color: white;
         }
-        
-        .content-item .btn-delete {
-            background: #dc3545;
+
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
             color: white;
         }
-        
-        .content-item .btn-add {
-            background: #28a745;
-            color: white;
+
+        .btn-delete:hover {
+            background: #c0392b;
         }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        
-        .form-group textarea {
-            height: 100px;
-            resize: vertical;
-        }
-        
+
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 10000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
         }
-        
+
         .modal-content {
-            background-color: white;
+            background: white;
             margin: 5% auto;
-            padding: 2rem;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 15px;
             width: 90%;
             max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
         }
-        
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
         }
-        
+
         .modal-header h3 {
-            margin: 0;
-            color: #333;
+            color: #2c3e50;
+            font-size: 1.5em;
         }
-        
+
         .close {
             color: #aaa;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            transition: color 0.3s ease;
         }
-        
+
         .close:hover {
-            color: #000;
+            color: #e74c3c;
         }
-        
-        .btn-save {
-            background: #28a745;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 1rem;
+
+        .form-group {
+            margin-bottom: 20px;
         }
-        
-        .btn-cancel {
-            background: #6c757d;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 1rem;
-            margin-right: 1rem;
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
         }
-        
-        .btn-cancel:hover {
-            background: #5a6268;
-        }
-        
-        .custom-file-upload {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .btn-upload {
-            background: #007bff;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
             font-size: 14px;
-            white-space: nowrap;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload {
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #3498db;
+            background-color: #f8f9fa;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-text {
+            color: #7f8c8d;
+            font-size: 1.1em;
         }
         
-        .btn-upload:hover {
-            background: #0056b3;
+        .file-selected {
+            color: #27ae60;
+            font-weight: bold;
         }
         
-        .file-name {
-            color: #666;
-            font-size: 14px;
-            flex: 1;
-        }
-        
-        .upload-requirements {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 15px 0;
-            font-size: 14px;
-        }
-        
-        .upload-requirements h4 {
-            margin: 0 0 10px 0;
-            color: #495057;
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .upload-requirements ul {
-            margin: 0;
-            padding-left: 20px;
+        .file-info {
+            margin-top: 8px;
+            font-size: 0.9em;
             color: #6c757d;
         }
-        
-        .upload-requirements li {
-            margin-bottom: 5px;
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
         }
-        
-        .upload-requirements .warning {
-            color: #dc3545;
-            font-weight: 500;
+
+        .btn-save, .btn-cancel {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
-        
-        .upload-requirements .info {
-            color: #17a2b8;
-            font-weight: 500;
-        }
-        
-        .upload-guidelines {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
+
+        .btn-save {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
             color: white;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
-        
-        .guidelines-header {
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #95a5a6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .language-switcher button {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+
+        .language-switcher button.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .language-switcher button:hover:not(.active) {
+            background: #ecf0f1;
+        }
+
+        /* 登录界面样式 */
+        .login-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn-login {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .login-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .login-info p {
+            margin: 5px 0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* 主界面样式 */
+        .main-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* 顶部导航栏 */
+        .top-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
-        
-        .guidelines-header h3 {
+
+        .nav-brand h2 {
+            color: #2c3e50;
             margin: 0;
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 1.8em;
         }
-        
-        .guidelines-toggle {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
+
+        .nav-brand span {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 2px solid #3498db;
+            padding: 10px 20px;
+            border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: bold;
             transition: all 0.3s ease;
         }
-        
-        .guidelines-toggle:hover {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.5);
-        }
-        
-        .guidelines-content {
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .guidelines-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .guideline-item {
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        .guideline-item h4 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            font-weight: 600;
-            color: #fff;
-        }
-        
-        .guideline-item ul {
-            margin: 0;
-            padding-left: 20px;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .guideline-item li {
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        
-        .guideline-item strong {
-            color: #fff;
-            font-weight: 600;
-        }
-        
-        .background-slideshow {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            /* 确保背景图网格布局稳定 */
-            grid-auto-rows: minmax(200px, auto);
-            align-items: start;
-            min-height: 200px;
-            contain: layout style paint;
-        }
-        
-        .background-item {
-            position: relative;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            overflow: hidden;
-            /* 确保背景图项高度一致 */
-            height: 100%;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .background-item:hover {
+
+        .nav-btn:hover {
+            background: #3498db;
+            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
-        .background-item img {
-            width: 100%;
+
+        /* 关于我们内容样式 */
+        .about-us-content {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .about-us-preview {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .about-us-text {
+            flex: 1;
+        }
+
+        .about-us-text h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .about-us-text p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .about-us-image {
+            flex-shrink: 0;
+        }
+
+        .about-us-image img {
+            width: 200px;
             height: 150px;
             object-fit: cover;
-            /* 确保图片尺寸一致 */
-            flex-shrink: 0;
-            aspect-ratio: 3/2;
-            background: #f0f0f0;
-            transition: opacity 0.3s ease;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
         }
-        
-        .background-item .item-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .background-item:hover .item-overlay {
-            opacity: 1;
-        }
-        
-        .background-item .item-controls {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .background-item .btn {
-            padding: 0.3rem 0.6rem;
-            font-size: 0.8rem;
-        }
-        
-        .about-content-editor {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        
-        .about-text-editor {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .about-image-editor {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .about-image-preview {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
+
+        /* 上传信息样式 */
+        .upload-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e3f2fd;
             border-radius: 5px;
-            margin-bottom: 1rem;
+            border-left: 3px solid #2196f3;
+        }
+
+        .upload-info p {
+            margin: 0 0 5px 0;
+            color: #1976d2;
+            font-size: 12px;
+            line-height: 1.4;
         }
         
-        /* 防止布局偏移和闪烁 */
-        .content-grid,
-        .background-slideshow {
-            min-height: 200px;
-            contain: layout style paint;
+        .upload-info p:last-child {
+            margin-bottom: 0;
         }
-        
-        /* 确保图片加载时不会改变布局 */
-        .content-item img,
-        .background-item img {
-            aspect-ratio: 3/2;
-            background: #f0f0f0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* 加载状态样式 */
-        .content-grid.loading,
-        .background-slideshow.loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-        
-        /* 响应式布局优化 */
+
         @media (max-width: 768px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-                grid-auto-rows: minmax(300px, auto);
+            .container {
+                padding: 10px;
             }
             
-            .background-slideshow {
-                grid-template-columns: 1fr;
-                grid-auto-rows: minmax(180px, auto);
-            }
-        }
-        
-        @media (min-width: 1200px) {
-            .content-grid {
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 20px;
             }
             
-            .background-slideshow {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            .header h1 {
+                font-size: 2em;
             }
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
-            transition: background-color 0.2s ease;
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-        }
-        
-        .btn-add {
-            background: #28a745;
-            color: white;
-            margin-top: 1rem;
-        }
-        
-        .btn-save {
-            background: #007bff;
-            color: white;
-        }
-        
-        .btn-upload {
-            background: #6c757d;
-            color: white;
-        }
-        
-        .custom-file-upload {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .file-name {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .upload-requirements {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        
-        .upload-requirements h4 {
-            margin: 0 0 0.5rem 0;
-            color: #333;
-            font-size: 1rem;
-        }
-        
-        .upload-requirements ul {
-            margin: 0;
-            padding-left: 1.5rem;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .upload-requirements li {
-            margin-bottom: 0.25rem;
-        }
-        
-        .warning {
-            color: #dc3545;
-            font-weight: 600;
-        }
-        
-        .info {
-            color: #007bff;
-            font-weight: 600;
+
+            .storage-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .storage-item {
+                min-width: 120px;
+                padding: 10px 20px;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .about-us-preview {
+                flex-direction: column;
+            }
+
+            .about-us-image img {
+                width: 100%;
+                height: auto;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="content-management-container">
-        <!-- Header -->
-        <div class="content-header">
-            <div class="container">
-                <div class="brand-logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <div class="brand-text">
-                        <h2 class="brand-name">WHL Elegant Curtains</h2>
-                        <p class="brand-subtitle">Content Management</p>
-                    </div>
+    <!-- 登录界面 -->
+    <div id="loginSection" class="login-section">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Elegant Curtains</h1>
+                <p>内容管理员登录</p>
+            </div>
+            <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" required placeholder="请输入用户名">
                 </div>
-                <h1>内容管理系统</h1>
-                <p>Manage website content, images, and media</p>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" required placeholder="请输入密码">
+                </div>
+                <button type="submit" class="btn-login">登录</button>
+            </form>
+            <div class="login-info">
+                <p>默认用户名: admin</p>
+                <p>默认密码: admin123</p>
             </div>
         </div>
-        
-        <div class="upload-guidelines">
-            <div class="guidelines-header">
-                <h3>📸 图片上传指南</h3>
-                <button class="guidelines-toggle" onclick="toggleGuidelines()">显示/隐藏</button>
-            </div>
-            <div class="guidelines-content" id="guidelinesContent">
-                <div class="guidelines-grid">
-                    <div class="guideline-item">
-                        <h4>📏 尺寸要求</h4>
-                        <ul>
-                            <li><strong>背景图片：</strong>推荐 1920x1080 像素或更大</li>
-                            <li><strong>产品图片：</strong>推荐 1200x800 像素或更大</li>
-                            <li><strong>画廊图片：</strong>推荐 1200x800 像素或更大</li>
-                            <li><strong>关于我们：</strong>推荐 1200x800 像素或更大</li>
-                        </ul>
-                    </div>
-                    <div class="guideline-item">
-                        <h4>💾 文件限制</h4>
-                        <ul>
-                            <li><strong>文件大小：</strong>最大 10MB</li>
-                            <li><strong>支持格式：</strong>JPEG、PNG、GIF、WebP</li>
-                            <li><strong>图片质量：</strong>系统自动压缩优化</li>
-                        </ul>
-                    </div>
-                    <div class="guideline-item">
-                        <h4>⚠️ 注意事项</h4>
-                        <ul>
-                            <li>图片会被自动调整到合适尺寸</li>
-                            <li>系统会自动压缩以节省存储空间</li>
-                            <li>建议使用高质量原始图片</li>
-                            <li>避免上传过大的文件</li>
-                        </ul>
-                    </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div id="mainSection" class="main-section" style="display: none;">
+        <!-- 顶部导航栏 -->
+        <nav class="top-nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <h2>Elegant Curtains</h2>
+                    <span>内容管理系统</span>
+                </div>
+                <div class="nav-menu">
+                    <button class="nav-btn" onclick="goToHomepage()">
+                        <span data-en="Homepage" data-zh="首页">首页</span>
+                    </button>
+                    <button class="nav-btn" onclick="goToAdmin()">
+                        <span data-en="Admin Panel" data-zh="管理后台">管理后台</span>
+                    </button>
+                    <button class="nav-btn" onclick="logout()">
+                        <span data-en="Logout" data-zh="退出登录">退出登录</span>
+                    </button>
                 </div>
             </div>
+        </nav>
+
+        <div class="language-switcher">
+            <button class="active" onclick="switchLanguage('en')">EN</button>
+            <button onclick="switchLanguage('zh')">中文</button>
         </div>
-        
+
+        <div class="container">
+            <div class="header">
+                <div class="header-main">
+                    <h1>Elegant Curtains</h1>
+                    <p>内容管理系统</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 data-en="Product Series" data-zh="产品系列">Product Series</h3>
+                        <div class="stat-number" id="productSeriesCount">0</div>
+                        <div class="stat-limit">/ 10</div>
+                        <div class="stat-remaining" id="productSeriesRemaining">剩余: 10</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3 data-en="Gallery Items" data-zh="画廊项目">Gallery Items</h3>
+                        <div class="stat-number" id="galleryCount">0</div>
+                        <div class="stat-limit">/ 15</div>
+                        <div class="stat-remaining" id="galleryRemaining">剩余: 15</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3 data-en="Background Images" data-zh="背景图片">Background Images</h3>
+                        <div class="stat-number" id="backgroundCount">0</div>
+                        <div class="stat-limit">/ 8</div>
+                        <div class="stat-remaining" id="backgroundRemaining">剩余: 8</div>
+                    </div>
+                </div>
+                
+                <div class="actions-row">
+                    <button class="action-btn danger" onclick="clearAllStorage()" data-en="Clear All" data-zh="清空所有">Clear All</button>
+                    <button class="action-btn" onclick="optimizeStorage()" data-en="Optimize" data-zh="优化">Optimize</button>
+                    <button class="action-btn info" onclick="showStorageManagement()" data-en="Storage Info" data-zh="存储信息">Storage Info</button>
+                    <button class="action-btn secondary" onclick="showImageOptimizationTips()" data-en="Help" data-zh="帮助">Help</button>
+                </div>
+            </div>
+
         <div class="content-sections">
-        
-        <!-- Navigation -->
-        <div class="content-nav">
-            <div class="container">
-                <div class="user-info">
-                    <span id="userName">Content Manager</span>
-                    <a href="admin-login.html" class="admin-login-link">Admin Login</a>
-                    <a href="javascript:void(0)" onclick="logout()" class="logout-btn">Logout</a>
-                </div>
-                <div class="language-switcher">
-                    <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">English</button>
-                    <button class="lang-btn" data-lang="zh" onclick="switchLanguage('zh')">中文</button>
+            <!-- 产品系列管理 -->
+            <div class="section">
+                <h2>
+                    <span data-en="Product Series Management" data-zh="产品系列管理">Product Series Management</span>
+                    <button class="add-button" onclick="openProductSeriesModal()">
+                        <span data-en="Add New" data-zh="新增">Add New</span>
+                    </button>
+                </h2>
+                <div id="productSeriesGrid" class="content-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p data-en="Loading..." data-zh="加载中...">Loading...</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Main Content -->
-        <div class="content-main">
-            <div class="container">
-                <!-- Product Series Management -->
-                <div class="content-section">
-                    <div class="content-section-header">
-                        <h2>Product Series Management</h2>
-                    </div>
-                    <div class="content-section-body">
-                        <div class="content-grid" id="productSeriesGrid">
-                            <!-- Product series items will be loaded here -->
-                        </div>
-                        <button class="btn btn-add" onclick="openProductSeriesModal()">
-                            <i class="fas fa-plus"></i> Add New Product Series
-                        </button>
+
+            <!-- 画廊管理 -->
+            <div class="section">
+                <h2>
+                    <span data-en="Gallery Management" data-zh="画廊管理">Gallery Management</span>
+                    <button class="add-button" onclick="openGalleryModal()">
+                        <span data-en="Add New" data-zh="新增">Add New</span>
+                    </button>
+                </h2>
+                <div id="galleryGrid" class="content-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p data-en="Loading..." data-zh="加载中...">Loading...</p>
                     </div>
                 </div>
-                
-                <!-- Gallery Management -->
-                <div class="content-section">
-                    <div class="content-section-header">
-                        <h2>Gallery Management</h2>
-                    </div>
-                    <div class="content-section-body">
-                        <div class="content-grid" id="galleryGrid">
-                            <!-- Gallery items will be loaded here -->
-                        </div>
-                        <button class="btn btn-add" onclick="openGalleryModal()">
-                            <i class="fas fa-plus"></i> Add New Gallery Item
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Homepage Background Management -->
-                <div class="content-section">
-                    <div class="content-section-header">
-                        <h2>Homepage Background Images</h2>
-                    </div>
-                    <div class="content-section-body">
-                        <div class="background-slideshow" id="backgroundSlideshow">
-                            <!-- Background images will be loaded here -->
-                        </div>
-                        <button class="btn btn-add" onclick="openBackgroundModal()">
-                            <i class="fas fa-plus"></i> Add New Background Image
-                        </button>
+            </div>
+
+            <!-- 首页背景图片 -->
+            <div class="section">
+                <h2>
+                    <span data-en="Homepage Background Images" data-zh="首页背景图片">Homepage Background Images</span>
+                    <button class="add-button" onclick="openBackgroundModal()">
+                        <span data-en="Add New" data-zh="新增">Add New</span>
+                    </button>
+                </h2>
+                <div id="backgroundSlideshow" class="content-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p data-en="Loading..." data-zh="加载中...">Loading...</p>
                     </div>
                 </div>
-                
-                <!-- About Us Management -->
-                <div class="content-section">
-                    <div class="content-section-header">
-                        <h2>About Us Page Management</h2>
-                    </div>
-                    <div class="content-section-body">
-                        <div class="about-content-editor">
-                            <div class="about-text-editor">
-                                <h3 id="textContentTitle">Text Content</h3>
-                                <div class="form-group">
-                                    <label id="titleLabel">Title</label>
-                                    <div id="titleInputs">
-                                        <input type="text" id="aboutTitle" value="About WHL Elegant Curtains" placeholder="English title" class="lang-input" data-lang="en">
-                                        <input type="text" id="aboutTitleZh" value="关于WHL优雅窗帘" placeholder="中文标题" class="lang-input" data-lang="zh" style="display: none;">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label id="descriptionLabel">Description</label>
-                                    <div id="descriptionInputs">
-                                        <textarea id="aboutDescription" placeholder="English description" class="lang-input" data-lang="en">We are a family-owned business with over 20 years of experience in creating beautiful window treatments. Our commitment to quality and customer satisfaction has made us the trusted choice for homeowners throughout the region.</textarea>
-                                        <textarea id="aboutDescriptionZh" placeholder="中文描述" class="lang-input" data-lang="zh" style="display: none;">我们是一家家族企业，拥有超过20年制作精美窗帘的经验。我们对质量和客户满意度的承诺使我们成为整个地区房主的值得信赖的选择。</textarea>
-                                    </div>
-                                </div>
-                                <button class="btn btn-save" id="saveButton" onclick="saveAboutText()">Save Text Changes</button>
-                            </div>
-                            <div class="about-image-editor">
-                                <h3>右侧图片</h3>
-                                <img id="aboutImagePreview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIjk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFib3V0IFVzPC90ZXh0Pjwvc3ZnPg==" alt="About Us" class="about-image-preview">
-                                
-                                <div class="upload-requirements">
-                                    <h4>📋 图片上传要求</h4>
-                                    <ul>
-                                        <li><span class="warning">文件大小：</span>最大 10MB</li>
-                                        <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
-                                        <li><span class="info">推荐尺寸：</span>600x400 像素或更大</li>
-                                        <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
-                                        <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="aboutImageFile">上传新图片</label>
-                                    <div class="custom-file-upload">
-                                        <input type="file" id="aboutImageFile" accept="image/*" style="display: none;">
-                                        <button type="button" class="btn btn-upload" onclick="document.getElementById('aboutImageFile').click()">
-                                            选择文件
-                                        </button>
-                                        <span class="file-name" id="aboutImageFileName">
-                                            未选择任何文件
-                                        </span>
-                                    </div>
-                                </div>
-                                <button class="btn btn-save" onclick="saveAboutImage()">保存图片</button>
-                            </div>
-                        </div>
+            </div>
+
+            <!-- 关于我们管理 -->
+            <div class="section">
+                <h2>
+                    <span data-en="About Us Management" data-zh="关于我们管理">About Us Management</span>
+                    <button class="add-button" onclick="openAboutUsModal()">
+                        <span data-en="Edit" data-zh="编辑">Edit</span>
+                    </button>
+                </h2>
+                <div id="aboutUsContent" class="about-us-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p data-en="Loading..." data-zh="加载中...">Loading...</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Product Series Modal -->
+
+    <!-- 产品系列模态框 -->
     <div id="productSeriesModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="productSeriesModalTitle">Add New Product Series</h3>
+                <h3 id="productSeriesModalTitle" data-en="Add New Product Series" data-zh="新增产品系列">Add New Product Series</h3>
                 <span class="close" onclick="closeProductSeriesModal()">&times;</span>
             </div>
-            <form id="productSeriesForm">
+            <form id="productSeriesForm" onsubmit="saveProductSeries(event)">
                 <div class="form-group">
-                    <label id="seriesNameLabel">Series Name</label>
-                    <div id="seriesNameInputs">
-                        <input type="text" id="productSeriesName" placeholder="English name" required class="lang-input" data-lang="en">
-                        <input type="text" id="productSeriesNameZh" placeholder="中文名称" required class="lang-input" data-lang="zh" style="display: none;">
-                    </div>
+                    <label for="seriesName" data-en="Series Name" data-zh="系列名称">Series Name</label>
+                    <input type="text" id="seriesName" required>
                 </div>
                 <div class="form-group">
-                    <label id="seriesDescriptionLabel">Description</label>
-                    <div id="seriesDescriptionInputs">
-                        <textarea id="productSeriesDescription" placeholder="English description" required class="lang-input" data-lang="en"></textarea>
-                        <textarea id="productSeriesDescriptionZh" placeholder="中文描述" required class="lang-input" data-lang="zh" style="display: none;"></textarea>
-                    </div>
+                    <label for="seriesDescription" data-en="Description" data-zh="描述">Description</label>
+                    <textarea id="seriesDescription" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="productSeriesImage">图片</label>
-                    <div class="custom-file-upload">
-                        <input type="file" id="productSeriesImage" accept="image/*" required style="display: none;">
-                        <button type="button" class="btn btn-upload" onclick="document.getElementById('productSeriesImage').click()">
-                            选择文件
-                        </button>
-                        <span class="file-name" id="productSeriesImageName">
-                            未选择任何文件
-                        </span>
+                    <label for="seriesImage" data-en="Series Image" data-zh="系列图片">Series Image</label>
+                    <div class="file-upload" onclick="document.getElementById('seriesImage').click()">
+                        <input type="file" id="seriesImage" accept="image/*" required onchange="updateFileName(this, 'seriesFileInfo')">
+                        <div class="file-upload-text" data-en="Click to select image" data-zh="点击选择图片">Click to select image</div>
                     </div>
-                    
-                    <div class="upload-requirements">
-                        <h4>📋 图片上传要求</h4>
-                        <ul>
-                            <li><span class="warning">文件大小：</span>最大 10MB</li>
-                            <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
-                            <li><span class="info">推荐尺寸：</span>1200x800 像素或更大</li>
-                            <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
-                            <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
-                        </ul>
+                    <div id="seriesFileInfo" class="file-info" style="display: none;"></div>
+                    <div class="upload-info">
+                        <p data-en="Image size limit: Maximum 2MB, Recommended: 400x300 or higher" data-zh="图片大小限制：最大2MB，建议尺寸：400x300或更高">Image size limit: Maximum 2MB, Recommended: 400x300 or higher</p>
+                        <p data-en="Maximum uploads: 10 images" data-zh="最大上传数量：10张图片">Maximum uploads: 10 images</p>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="productSeriesCategory">Category</label>
-                    <select id="productSeriesCategory" required>
-                        <option value="blackout">Blackout Curtains</option>
-                        <option value="roller">Roller Blinds</option>
-                        <option value="sheer">Sheer Elegance</option>
-                        <option value="roman">Roman Shades</option>
-                        <option value="drapery">Elegant Drapery</option>
-                        <option value="layered">Layered Treatments</option>
-                        <option value="moisture">Moisture Resistant</option>
-                        <option value="valances">Classic Valances</option>
-                    </select>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeProductSeriesModal()" data-en="Cancel" data-zh="取消">Cancel</button>
+                    <button type="submit" class="btn-save" data-en="Save" data-zh="保存">Save</button>
                 </div>
-                <button type="submit" class="btn btn-save">Save Product Series</button>
-                <button type="button" class="btn btn-cancel" onclick="closeProductSeriesModal()">Cancel</button>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Gallery Modal -->
-    <div id="galleryModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="galleryModalTitle">Add New Gallery Item</h3>
-                <span class="close" onclick="closeGalleryModal()">&times;</span>
-            </div>
-            <form id="galleryForm">
-                <div class="form-group">
-                    <label id="galleryTitleLabel">Title</label>
-                    <div id="galleryTitleInputs">
-                        <input type="text" id="galleryTitle" placeholder="English title" required class="lang-input" data-lang="en">
-                        <input type="text" id="galleryTitleZh" placeholder="中文标题" required class="lang-input" data-lang="zh" style="display: none;">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label id="galleryDescriptionLabel">Description</label>
-                    <div id="galleryDescriptionInputs">
-                        <textarea id="galleryDescription" placeholder="English description" required class="lang-input" data-lang="en"></textarea>
-                        <textarea id="galleryDescriptionZh" placeholder="中文描述" required class="lang-input" data-lang="zh" style="display: none;"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="galleryImage">图片</label>
-                    <div class="custom-file-upload">
-                        <input type="file" id="galleryImage" accept="image/*" required style="display: none;">
-                        <button type="button" class="btn btn-upload" onclick="document.getElementById('galleryImage').click()">
-                            选择文件
-                        </button>
-                        <span class="file-name" id="galleryImageName">
-                            未选择任何文件
-                        </span>
-                    </div>
-                    
-                    <div class="upload-requirements">
-                        <h4>📋 图片上传要求</h4>
-                        <ul>
-                            <li><span class="warning">文件大小：</span>最大 10MB</li>
-                            <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
-                            <li><span class="info">推荐尺寸：</span>1200x800 像素或更大</li>
-                            <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
-                            <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
-                        </ul>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-save">Save Gallery Item</button>
-                <button type="button" class="btn btn-cancel" onclick="closeGalleryModal()">Cancel</button>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Background Modal -->
-    <div id="backgroundModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Background Image</h3>
-                <span class="close" onclick="closeBackgroundModal()">&times;</span>
-            </div>
-            <form id="backgroundForm">
-                <div class="form-group">
-                    <label for="backgroundImageFile">上传背景图片</label>
-                    <input type="file" id="backgroundImageFile" accept="image/*" required>
-                </div>
-                
-                <div class="upload-requirements">
-                    <h4>📋 图片上传要求</h4>
-                    <ul>
-                        <li><span class="warning">文件大小：</span>最大 10MB</li>
-                        <li><span class="info">支持格式：</span>JPEG、PNG、GIF、WebP</li>
-                        <li><span class="info">推荐尺寸：</span>1920x1080 像素或更大</li>
-                        <li><span class="info">图片质量：</span>系统会自动压缩以节省存储空间</li>
-                        <li><span class="warning">注意事项：</span>图片会被自动调整到合适尺寸</li>
-                    </ul>
-                </div>
-                
-                <button type="submit" class="btn btn-save">保存背景图片</button>
-                <button type="button" class="btn btn-cancel" onclick="closeBackgroundModal()">Cancel</button>
             </form>
         </div>
     </div>
 
-    <script src="content-management.js"></script>
+    <!-- 画廊模态框 -->
+    <div id="galleryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="galleryModalTitle" data-en="Add New Gallery Item" data-zh="新增画廊项目">Add New Gallery Item</h3>
+                <span class="close" onclick="closeGalleryModal()">&times;</span>
+            </div>
+            <form id="galleryForm" onsubmit="saveGalleryItem(event)">
+                <div class="form-group">
+                    <label for="galleryTitle" data-en="Title" data-zh="标题">Title</label>
+                    <input type="text" id="galleryTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="galleryDescription" data-en="Description" data-zh="描述">Description</label>
+                    <textarea id="galleryDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="galleryImage" data-en="Gallery Image" data-zh="画廊图片">Gallery Image</label>
+                    <div class="file-upload" onclick="document.getElementById('galleryImage').click()">
+                        <input type="file" id="galleryImage" accept="image/*" required onchange="updateFileName(this, 'galleryFileInfo')">
+                        <div class="file-upload-text" data-en="Click to select image" data-zh="点击选择图片">Click to select image</div>
+                    </div>
+                    <div id="galleryFileInfo" class="file-info" style="display: none;"></div>
+                    <div class="upload-info">
+                        <p data-en="Image size limit: Maximum 3MB, Recommended: 800x600 or higher" data-zh="图片大小限制：最大3MB，建议尺寸：800x600或更高">Image size limit: Maximum 3MB, Recommended: 800x600 or higher</p>
+                        <p data-en="Maximum uploads: 15 images" data-zh="最大上传数量：15张图片">Maximum uploads: 15 images</p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeGalleryModal()" data-en="Cancel" data-zh="取消">Cancel</button>
+                    <button type="submit" class="btn-save" data-en="Save" data-zh="保存">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 背景图片模态框 -->
+    <div id="backgroundModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="backgroundModalTitle" data-en="Add New Background Image" data-zh="新增背景图片">Add New Background Image</h3>
+                <span class="close" onclick="closeBackgroundModal()">&times;</span>
+            </div>
+            <form id="backgroundForm" onsubmit="saveBackgroundImage(event)">
+                <div class="form-group">
+                    <label for="backgroundImage" data-en="Background Image" data-zh="背景图片">Background Image</label>
+                    <div class="file-upload" onclick="document.getElementById('backgroundImage').click()">
+                        <input type="file" id="backgroundImage" accept="image/*" required onchange="updateFileName(this, 'backgroundFileInfo')">
+                        <div class="file-upload-text" data-en="Click to select image" data-zh="点击选择图片">Click to select image</div>
+                    </div>
+                    <div id="backgroundFileInfo" class="file-info" style="display: none;"></div>
+                    <div class="upload-info">
+                        <p data-en="Image size limit: Maximum 10MB, Recommended: 1920x1080 or higher" data-zh="图片大小限制：最大10MB，建议尺寸：1920x1080或更高">Image size limit: Maximum 10MB, Recommended: 1920x1080 or higher</p>
+                        <p data-en="Maximum uploads: 8 images" data-zh="最大上传数量：8张图片">Maximum uploads: 8 images</p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeBackgroundModal()" data-en="Cancel" data-zh="取消">Cancel</button>
+                    <button type="submit" class="btn-save" data-en="Save" data-zh="保存">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 关于我们模态框 -->
+    <div id="aboutUsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="aboutUsModalTitle" data-en="Edit About Us" data-zh="编辑关于我们">Edit About Us</h3>
+                <span class="close" onclick="closeAboutUsModal()">&times;</span>
+            </div>
+            <form id="aboutUsForm" onsubmit="saveAboutUs(event)">
+                <div class="form-group">
+                    <label for="aboutUsTitle" data-en="Title" data-zh="标题">Title</label>
+                    <input type="text" id="aboutUsTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="aboutUsDescription" data-en="Description" data-zh="描述">Description</label>
+                    <textarea id="aboutUsDescription" required rows="4" placeholder="Enter a concise description about your company..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="aboutUsImage" data-en="About Us Image" data-zh="关于我们图片">About Us Image</label>
+                    <div class="file-upload" onclick="document.getElementById('aboutUsImage').click()">
+                        <input type="file" id="aboutUsImage" accept="image/*" onchange="updateFileName(this, 'aboutUsFileInfo')">
+                        <div class="file-upload-text" data-en="Click to select image (Optional)" data-zh="点击选择图片（可选）">Click to select image (Optional)</div>
+                    </div>
+                    <div id="aboutUsFileInfo" class="file-info" style="display: none;"></div>
+                    <div class="upload-info">
+                        <p data-en="Image size limit: Maximum 3MB, Recommended: 800x600 or higher" data-zh="图片大小限制：最大3MB，建议尺寸：800x600或更高">Image size limit: Maximum 3MB, Recommended: 800x600 or higher</p>
+                        <p data-en="Maximum uploads: 1 image" data-zh="最大上传数量：1张图片">Maximum uploads: 1 image</p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeAboutUsModal()" data-en="Cancel" data-zh="取消">Cancel</button>
+                    <button type="submit" class="btn-save" data-en="Save" data-zh="保存">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentLanguage = 'en';
+        let editIndex = null;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，开始初始化...');
+            checkLoginStatus();
+        });
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('contentManagerLoggedIn') === 'true';
+            if (isLoggedIn) {
+                showMainSection();
+            } else {
+                showLoginSection();
+            }
+        }
+
+        // 显示登录界面
+        function showLoginSection() {
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('mainSection').style.display = 'none';
+        }
+
+        // 显示主界面
+        function showMainSection() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainSection').style.display = 'block';
+            initializePage();
+        }
+
+        // 处理登录
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 简单的登录验证（实际应用中应该使用更安全的方式）
+            if (username === 'admin' && password === 'admin123') {
+                localStorage.setItem('contentManagerLoggedIn', 'true');
+                showMainSection();
+            } else {
+                alert('用户名或密码错误！\n默认用户名: admin\n默认密码: admin123');
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('contentManagerLoggedIn');
+            showLoginSection();
+            // 清空表单
+            document.getElementById('loginForm').reset();
+        }
+
+        // 跳转到首页
+        function goToHomepage() {
+            window.open('index.html', '_blank');
+        }
+
+        // 跳转到管理后台
+        function goToAdmin() {
+            // 检查是否已登录为管理员
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    const userInfo = JSON.parse(currentUser);
+                    if (userInfo.userType === 'admin') {
+                        // 已登录为管理员，直接跳转
+                        window.open('admin.html', '_blank');
+                        return;
+                    }
+                } catch (e) {
+                    // 解析失败，清除无效数据
+                    localStorage.removeItem('currentUser');
+                }
+            }
+            
+            // 未登录或不是管理员，跳转到管理员登录页面
+            window.open('admin-login.html', '_blank');
+        }
+
+        // 初始化页面
+        function initializePage() {
+            console.log('初始化页面...');
+            
+            // 加载默认数据（如果localStorage为空）
+            loadDefaultData();
+            
+            // 加载内容
+            loadAllContent();
+            
+            // 设置语言
+            updateLanguageDisplay();
+            
+            // 检查并清理存储空间
+            checkAndCleanupStorage();
+            
+            console.log('页面初始化完成');
+        }
+
+        // 加载默认数据
+        function loadDefaultData() {
+            console.log('检查并加载默认数据...');
+            
+            // 产品系列
+            if (!localStorage.getItem('productSeries')) {
+                const defaultSeries = [
+                    {
+                        name: 'Classic Elegance',
+                        description: 'Timeless designs for traditional homes',
+                        image: getDefaultProductImage()
+                    },
+                    {
+                        name: 'Modern Minimalist',
+                        description: 'Clean lines for contemporary spaces',
+                        image: getDefaultProductImage()
+                    },
+                    {
+                        name: 'Luxury Collection',
+                        description: 'Premium materials for sophisticated tastes',
+                        image: getDefaultProductImage()
+                    }
+                ];
+                localStorage.setItem('productSeries', JSON.stringify(defaultSeries));
+                console.log('已加载默认产品系列数据');
+            }
+            
+            // 画廊
+            if (!localStorage.getItem('gallery')) {
+                const defaultGallery = [
+                    {
+                        title: 'Elegant Living Room',
+                        description: 'Beautiful curtains enhancing living space',
+                        image: getDefaultGalleryImage()
+                    },
+                    {
+                        title: 'Master Bedroom',
+                        description: 'Serene bedroom with perfect curtains',
+                        image: getDefaultGalleryImage()
+                    }
+                ];
+                localStorage.setItem('gallery', JSON.stringify(defaultGallery));
+                console.log('已加载默认画廊数据');
+            }
+            
+            // 背景图片
+            if (!localStorage.getItem('backgroundImages')) {
+                const defaultBackgrounds = [
+                    {
+                        image: getDefaultBackgroundImage()
+                    },
+                    {
+                        image: getDefaultBackgroundImage()
+                    }
+                ];
+                localStorage.setItem('backgroundImages', JSON.stringify(defaultBackgrounds));
+                console.log('已加载默认背景图片数据');
+            }
+        }
+
+        // 加载所有内容
+        function loadAllContent() {
+            console.log('开始加载所有内容...');
+            
+            // 加载产品系列
+            loadProductSeries();
+            
+            // 加载画廊
+            loadGallery();
+            
+            // 加载背景图片
+            loadBackgroundImages();
+            
+            // 加载关于我们
+            loadAboutUs();
+            
+            // 更新存储计数
+            updateStorageCounts();
+            
+            console.log('所有内容加载完成');
+        }
+
+        // 加载产品系列
+        function loadProductSeries() {
+            console.log('加载产品系列...');
+            const grid = document.getElementById('productSeriesGrid');
+            const series = JSON.parse(localStorage.getItem('productSeries') || '[]');
+            
+            if (series.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i>📦</i>
+                        <h3 data-en="No Product Series" data-zh="暂无产品系列">No Product Series</h3>
+                        <p data-en="Add your first product series to get started" data-zh="添加您的第一个产品系列开始使用">Add your first product series to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = series.map((item, index) => `
+                <div class="content-item">
+                    <img src="${item.image}" alt="${item.name}" onerror="this.src='${getDefaultProductImage()}'">
+                    <h3>${item.name}</h3>
+                    <p>${item.description}</p>
+                    <div class="item-actions">
+                        <button class="btn-edit" onclick="editProductSeries(${index})" data-en="Edit" data-zh="编辑">Edit</button>
+                        <button class="btn-delete" onclick="deleteProductSeries(${index})" data-en="Delete" data-zh="删除">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateLanguageDisplay();
+        }
+
+        // 加载画廊
+        function loadGallery() {
+            console.log('加载画廊...');
+            const grid = document.getElementById('galleryGrid');
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            
+            if (gallery.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i>🖼️</i>
+                        <h3 data-en="No Gallery Items" data-zh="暂无画廊项目">No Gallery Items</h3>
+                        <p data-en="Add your first gallery item to showcase your work" data-zh="添加您的第一个画廊项目展示作品">Add your first gallery item to showcase your work</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = gallery.map((item, index) => `
+                <div class="content-item">
+                    <img src="${item.image}" alt="${item.title}" onerror="this.src='${getDefaultGalleryImage()}'">
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                    <div class="item-actions">
+                        <button class="btn-edit" onclick="editGalleryItem(${index})" data-en="Edit" data-zh="编辑">Edit</button>
+                        <button class="btn-delete" onclick="deleteGalleryItem(${index})" data-en="Delete" data-zh="删除">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateLanguageDisplay();
+        }
+
+        // 加载背景图片
+        function loadBackgroundImages() {
+            console.log('加载背景图片...');
+            const slideshow = document.getElementById('backgroundSlideshow');
+            const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+            
+            if (backgrounds.length === 0) {
+                slideshow.innerHTML = `
+                    <div class="empty-state">
+                        <i>🏠</i>
+                        <h3 data-en="No Background Images" data-zh="暂无背景图片">No Background Images</h3>
+                        <p data-en="Add background images for your homepage" data-zh="为您的首页添加背景图片">Add background images for your homepage</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            slideshow.innerHTML = backgrounds.map((item, index) => `
+                <div class="content-item">
+                    <img src="${item.image}" alt="Background ${index + 1}" onerror="this.src='${getDefaultBackgroundImage()}'">
+                    <h3 data-en="Background Image" data-zh="背景图片">Background Image ${index + 1}</h3>
+                    <p data-en="Homepage background image" data-zh="首页背景图片">Homepage background image</p>
+                    <div class="item-actions">
+                        <button class="btn-delete" onclick="deleteBackgroundImage(${index})" data-en="Delete" data-zh="删除">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateLanguageDisplay();
+        }
+
+        // 加载关于我们内容
+        function loadAboutUs() {
+            console.log('加载关于我们内容...');
+            const container = document.getElementById('aboutUsContent');
+            const aboutUs = JSON.parse(localStorage.getItem('aboutUs') || '{}');
+            
+            if (!aboutUs.title && !aboutUs.description) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i>ℹ️</i>
+                        <h3 data-en="No About Us Content" data-zh="暂无关于我们内容">No About Us Content</h3>
+                        <p data-en="Click Edit to add about us information" data-zh="点击编辑添加关于我们信息">Click Edit to add about us information</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="about-us-preview">
+                    <div class="about-us-text">
+                        <h3>${aboutUs.title || '关于我们'}</h3>
+                        <p>${aboutUs.description || '暂无描述'}</p>
+                    </div>
+                    ${aboutUs.image ? `
+                        <div class="about-us-image">
+                            <img src="${aboutUs.image}" alt="About Us" onerror="this.src='${getDefaultAboutImage()}'">
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            updateLanguageDisplay();
+        }
+
+        // 模态框函数
+        function openProductSeriesModal(index = null) {
+            console.log('打开产品系列模态框', index);
+            editIndex = index;
+            const modal = document.getElementById('productSeriesModal');
+            const title = document.getElementById('productSeriesModalTitle');
+            const form = document.getElementById('productSeriesForm');
+            
+            if (index !== null) {
+                // 编辑模式
+                const series = JSON.parse(localStorage.getItem('productSeries') || '[]');
+                const item = series[index];
+                if (item) {
+                    title.textContent = currentLanguage === 'en' ? 'Edit Product Series' : '编辑产品系列';
+                    document.getElementById('seriesName').value = item.name;
+                    document.getElementById('seriesDescription').value = item.description;
+                }
+            } else {
+                // 新增模式
+                title.textContent = currentLanguage === 'en' ? 'Add New Product Series' : '新增产品系列';
+                form.reset();
+            }
+            
+            // 重置文件信息显示
+            const fileInfo = document.getElementById('seriesFileInfo');
+            if (fileInfo) {
+                fileInfo.style.display = 'none';
+            }
+            
+            // 重置文件上传文本
+            const uploadText = modal.querySelector('.file-upload-text');
+            if (uploadText) {
+                uploadText.textContent = currentLanguage === 'en' ? 'Click to select image' : '点击选择图片';
+                uploadText.classList.remove('file-selected');
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function openGalleryModal(index = null) {
+            console.log('打开画廊模态框', index);
+            editIndex = index;
+            const modal = document.getElementById('galleryModal');
+            const title = document.getElementById('galleryModalTitle');
+            const form = document.getElementById('galleryForm');
+            
+            if (index !== null) {
+                // 编辑模式
+                const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+                const item = gallery[index];
+                if (item) {
+                    title.textContent = currentLanguage === 'en' ? 'Edit Gallery Item' : '编辑画廊项目';
+                    document.getElementById('galleryTitle').value = item.title;
+                    document.getElementById('galleryDescription').value = item.description;
+                }
+            } else {
+                // 新增模式
+                title.textContent = currentLanguage === 'en' ? 'Add New Gallery Item' : '新增画廊项目';
+                form.reset();
+            }
+            
+            // 重置文件信息显示
+            const fileInfo = document.getElementById('galleryFileInfo');
+            if (fileInfo) {
+                fileInfo.style.display = 'none';
+            }
+            
+            // 重置文件上传文本
+            const uploadText = modal.querySelector('.file-upload-text');
+            if (uploadText) {
+                uploadText.textContent = currentLanguage === 'en' ? 'Click to select image' : '点击选择图片';
+                uploadText.classList.remove('file-selected');
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function openBackgroundModal(index = null) {
+            console.log('打开背景图片模态框', index);
+            editIndex = index;
+            const modal = document.getElementById('backgroundModal');
+            const title = document.getElementById('backgroundModalTitle');
+            const form = document.getElementById('backgroundForm');
+            
+            if (index !== null) {
+                // 编辑模式
+                title.textContent = currentLanguage === 'en' ? 'Edit Background Image' : '编辑背景图片';
+            } else {
+                // 新增模式
+                title.textContent = currentLanguage === 'en' ? 'Add New Background Image' : '新增背景图片';
+                form.reset();
+            }
+            
+            // 重置文件信息显示
+            const fileInfo = document.getElementById('backgroundFileInfo');
+            if (fileInfo) {
+                fileInfo.style.display = 'none';
+            }
+            
+            // 重置文件上传文本
+            const uploadText = modal.querySelector('.file-upload-text');
+            if (uploadText) {
+                uploadText.textContent = currentLanguage === 'en' ? 'Click to select image' : '点击选择图片';
+                uploadText.classList.remove('file-selected');
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function openAboutUsModal() {
+            console.log('打开关于我们模态框');
+            const modal = document.getElementById('aboutUsModal');
+            const form = document.getElementById('aboutUsForm');
+            const aboutUs = JSON.parse(localStorage.getItem('aboutUs') || '{}');
+            
+            // 填充现有数据
+            document.getElementById('aboutUsTitle').value = aboutUs.title || '';
+            document.getElementById('aboutUsDescription').value = aboutUs.description || '';
+            
+            // 重置文件信息显示
+            const fileInfo = document.getElementById('aboutUsFileInfo');
+            if (fileInfo) {
+                fileInfo.style.display = 'none';
+            }
+            
+            // 重置文件上传文本
+            const uploadText = document.querySelector('#aboutUsModal .file-upload-text');
+            if (uploadText) {
+                uploadText.textContent = currentLanguage === 'en' ? 'Click to select image (Optional)' : '点击选择图片（可选）';
+                uploadText.classList.remove('file-selected');
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeProductSeriesModal() {
+            document.getElementById('productSeriesModal').style.display = 'none';
+            editIndex = null;
+        }
+
+        function closeGalleryModal() {
+            document.getElementById('galleryModal').style.display = 'none';
+            editIndex = null;
+        }
+
+        function closeBackgroundModal() {
+            document.getElementById('backgroundModal').style.display = 'none';
+            editIndex = null;
+        }
+
+        function closeAboutUsModal() {
+            document.getElementById('aboutUsModal').style.display = 'none';
+        }
+
+        // 保存函数
+        async function saveProductSeries(event) {
+            event.preventDefault();
+            console.log('保存产品系列...');
+            
+            try {
+                const name = document.getElementById('seriesName').value;
+                const description = document.getElementById('seriesDescription').value;
+                const imageFile = document.getElementById('seriesImage').files[0];
+                
+                if (!imageFile) {
+                    alert(currentLanguage === 'en' ? 'Please select an image' : '请选择图片');
+                    return;
+                }
+                
+                // 检查图片数量限制
+                const series = JSON.parse(localStorage.getItem('productSeries') || '[]');
+                if (editIndex === null && series.length >= 10) {
+                    alert(currentLanguage === 'en' ? 'Maximum 10 product series allowed. Please delete some before adding new ones.' : '最多允许10个产品系列。请删除一些后再添加新的。');
+                    return;
+                }
+                
+                const imageData = await processImageFile(imageFile);
+                
+                if (editIndex !== null) {
+                    // 编辑模式
+                    series[editIndex] = { name, description, image: imageData };
+                } else {
+                    // 新增模式
+                    series.push({ name, description, image: imageData });
+                }
+                
+                localStorage.setItem('productSeries', JSON.stringify(series));
+                closeProductSeriesModal();
+                loadProductSeries();
+                updateStorageCounts();
+                
+                console.log('产品系列保存成功');
+            } catch (error) {
+                console.error('保存产品系列失败:', error);
+                if (error.name === 'QuotaExceededError') {
+                    alert(currentLanguage === 'en' ? 'Storage space exceeded. Please delete some items first.' : '存储空间不足。请先删除一些项目。');
+                } else {
+                    alert(currentLanguage === 'en' ? 'Failed to save product series' : '保存产品系列失败');
+                }
+            }
+        }
+
+        async function saveGalleryItem(event) {
+            event.preventDefault();
+            console.log('保存画廊项目...');
+            
+            try {
+                const title = document.getElementById('galleryTitle').value;
+                const description = document.getElementById('galleryDescription').value;
+                const imageFile = document.getElementById('galleryImage').files[0];
+                
+                if (!imageFile) {
+                    alert(currentLanguage === 'en' ? 'Please select an image' : '请选择图片');
+                    return;
+                }
+                
+                // 检查图片数量限制
+                const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+                if (editIndex === null && gallery.length >= 15) {
+                    alert(currentLanguage === 'en' ? 'Maximum 15 gallery items allowed. Please delete some before adding new ones.' : '最多允许15个画廊项目。请删除一些后再添加新的。');
+                    return;
+                }
+                
+                // 检查存储空间
+                if (!checkStorageQuota()) {
+                    if (cleanupStorage()) {
+                        if (!checkStorageQuota()) {
+                            alert(currentLanguage === 'en' ? 'Storage space is full. Please delete some items first.' : '存储空间已满。请先删除一些项目。');
+                            return;
+                        }
+                    } else {
+                        alert(currentLanguage === 'en' ? 'Storage space is full. Please delete some items first.' : '存储空间已满。请先删除一些项目。');
+                        return;
+                    }
+                }
+                
+                const imageData = await processImageFile(imageFile);
+                
+                if (editIndex !== null) {
+                    // 编辑模式
+                    gallery[editIndex] = { title, description, image: imageData };
+                } else {
+                    // 新增模式
+                    gallery.push({ title, description, image: imageData });
+                }
+                
+                try {
+                    localStorage.setItem('gallery', JSON.stringify(gallery));
+                    closeGalleryModal();
+                    loadGallery();
+                    updateStorageCounts();
+                    console.log('画廊项目保存成功');
+                } catch (storageError) {
+                    if (storageError.name === 'QuotaExceededError') {
+                        if (cleanupStorage()) {
+                            try {
+                                localStorage.setItem('gallery', JSON.stringify(gallery));
+                                closeGalleryModal();
+                                loadGallery();
+                                updateStorageCounts();
+                                console.log('画廊项目保存成功（清理后）');
+                            } catch (retryError) {
+                                alert(currentLanguage === 'en' ? 'Storage space still insufficient. Please delete more items.' : '存储空间仍然不足。请删除更多项目。');
+                                throw retryError;
+                            }
+                        } else {
+                            alert(currentLanguage === 'en' ? 'Storage space insufficient. Please delete some items.' : '存储空间不足。请删除一些项目。');
+                            throw storageError;
+                        }
+                    } else {
+                        throw storageError;
+                    }
+                }
+            } catch (error) {
+                console.error('保存画廊项目失败:', error);
+                if (error.name === 'QuotaExceededError') {
+                    alert(currentLanguage === 'en' ? 'Storage space exceeded. Please delete some items first.' : '存储空间不足。请先删除一些项目。');
+                } else if (error.message === 'File too large' || error.message === 'Compressed image too large') {
+                    return; // 错误已在processImageFile中处理
+                } else {
+                    alert(currentLanguage === 'en' ? 'Failed to save gallery item' : '保存画廊项目失败');
+                }
+            }
+        }
+
+        async function saveBackgroundImage(event) {
+            event.preventDefault();
+            console.log('保存背景图片...');
+            
+            try {
+                const imageFile = document.getElementById('backgroundImage').files[0];
+                
+                if (!imageFile) {
+                    alert(currentLanguage === 'en' ? 'Please select an image' : '请选择图片');
+                    return;
+                }
+                
+                // 检查图片数量限制
+                const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+                if (editIndex === null && backgrounds.length >= 8) {
+                    alert(currentLanguage === 'en' ? 'Maximum 8 background images allowed. Please delete some before adding new ones.' : '最多允许8张背景图片。请删除一些后再添加新的。');
+                    return;
+                }
+                
+                // 检查存储空间
+                if (!checkStorageQuota()) {
+                    // 尝试清理存储空间
+                    if (cleanupStorage()) {
+                        if (!checkStorageQuota()) {
+                            alert(currentLanguage === 'en' ? 'Storage space is full. Please delete some items first.' : '存储空间已满。请先删除一些项目。');
+                            return;
+                        }
+                    } else {
+                        alert(currentLanguage === 'en' ? 'Storage space is full. Please delete some items first.' : '存储空间已满。请先删除一些项目。');
+                        return;
+                    }
+                }
+                
+                const imageData = await processImageFile(imageFile);
+                
+                if (editIndex !== null) {
+                    // 编辑模式
+                    backgrounds[editIndex] = { image: imageData };
+                } else {
+                    // 新增模式
+                    backgrounds.push({ image: imageData });
+                }
+                
+                try {
+                    localStorage.setItem('backgroundImages', JSON.stringify(backgrounds));
+                    closeBackgroundModal();
+                    loadBackgroundImages();
+                    updateStorageCounts();
+                    console.log('背景图片保存成功');
+                } catch (storageError) {
+                    if (storageError.name === 'QuotaExceededError') {
+                        // 如果仍然超出配额，尝试清理后重试
+                        if (cleanupStorage()) {
+                            try {
+                                localStorage.setItem('backgroundImages', JSON.stringify(backgrounds));
+                                closeBackgroundModal();
+                                loadBackgroundImages();
+                                updateStorageCounts();
+                                console.log('背景图片保存成功（清理后）');
+                            } catch (retryError) {
+                                alert(currentLanguage === 'en' ? 'Storage space still insufficient. Please delete more items.' : '存储空间仍然不足。请删除更多项目。');
+                                throw retryError;
+                            }
+                        } else {
+                            alert(currentLanguage === 'en' ? 'Storage space insufficient. Please delete some items.' : '存储空间不足。请删除一些项目。');
+                            throw storageError;
+                        }
+                    } else {
+                        throw storageError;
+                    }
+                }
+            } catch (error) {
+                console.error('保存背景图片失败:', error);
+                if (error.name === 'QuotaExceededError') {
+                    alert(currentLanguage === 'en' ? 'Storage space exceeded. Please delete some items first.' : '存储空间不足。请先删除一些项目。');
+                } else if (error.message === 'File too large') {
+                    // 文件过大错误已在processImageFile中处理
+                    return;
+                } else if (error.message === 'Compressed image too large') {
+                    // 压缩后仍然过大错误已在processImageFile中处理
+                    return;
+                } else {
+                    alert(currentLanguage === 'en' ? 'Failed to save background image' : '保存背景图片失败');
+                }
+            }
+        }
+
+        async function saveAboutUs(event) {
+            event.preventDefault();
+            console.log('保存关于我们内容...');
+            
+            try {
+                const title = document.getElementById('aboutUsTitle').value;
+                const description = document.getElementById('aboutUsDescription').value;
+                const imageFile = document.getElementById('aboutUsImage').files[0];
+                
+                let imageData = null;
+                if (imageFile) {
+                    // 检查存储空间
+                    if (!checkStorageQuota()) {
+                        if (cleanupStorage()) {
+                            if (!checkStorageQuota()) {
+                                alert(currentLanguage === 'en' ? 'Storage space is full. Please delete some items first.' : '存储空间已满。请先删除一些项目。');
+                                return;
+                            }
+                        } else {
+                            alert(currentLanguage === 'en' ? 'Storage space is full. Please delete some items first.' : '存储空间已满。请先删除一些项目。');
+                            return;
+                        }
+                    }
+                    
+                    imageData = await processImageFile(imageFile);
+                }
+                
+                const aboutUs = {
+                    title: title,
+                    description: description
+                };
+                
+                if (imageData) {
+                    aboutUs.image = imageData;
+                }
+                
+                try {
+                    localStorage.setItem('aboutUs', JSON.stringify(aboutUs));
+                    closeAboutUsModal();
+                    loadAboutUs();
+                    updateStorageCounts();
+                    console.log('关于我们内容保存成功');
+                } catch (storageError) {
+                    if (storageError.name === 'QuotaExceededError') {
+                        if (cleanupStorage()) {
+                            try {
+                                localStorage.setItem('aboutUs', JSON.stringify(aboutUs));
+                                closeAboutUsModal();
+                                loadAboutUs();
+                                updateStorageCounts();
+                                console.log('关于我们内容保存成功（清理后）');
+                            } catch (retryError) {
+                                alert(currentLanguage === 'en' ? 'Storage space still insufficient. Please delete more items.' : '存储空间仍然不足。请删除更多项目。');
+                                throw retryError;
+                            }
+                        } else {
+                            alert(currentLanguage === 'en' ? 'Storage space insufficient. Please delete some items.' : '存储空间不足。请删除一些项目。');
+                            throw storageError;
+                        }
+                    } else {
+                        throw storageError;
+                    }
+                }
+            } catch (error) {
+                console.error('保存关于我们内容失败:', error);
+                if (error.name === 'QuotaExceededError') {
+                    alert(currentLanguage === 'en' ? 'Storage space exceeded. Please delete some items first.' : '存储空间不足。请先删除一些项目。');
+                } else if (error.message === 'File too large' || error.message === 'Compressed image too large') {
+                    return; // 错误已在processImageFile中处理
+                } else {
+                    alert(currentLanguage === 'en' ? 'Failed to save about us content' : '保存关于我们内容失败');
+                }
+            }
+        }
+
+        // 删除函数
+        function deleteProductSeries(index) {
+            if (confirm(currentLanguage === 'en' ? 'Are you sure you want to delete this product series?' : '确定要删除这个产品系列吗？')) {
+                const series = JSON.parse(localStorage.getItem('productSeries') || '[]');
+                series.splice(index, 1);
+                localStorage.setItem('productSeries', JSON.stringify(series));
+                loadProductSeries();
+                updateStorageCounts();
+                console.log('产品系列删除成功');
+            }
+        }
+
+        function deleteGalleryItem(index) {
+            if (confirm(currentLanguage === 'en' ? 'Are you sure you want to delete this gallery item?' : '确定要删除这个画廊项目吗？')) {
+                const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+                gallery.splice(index, 1);
+                localStorage.setItem('gallery', JSON.stringify(gallery));
+                loadGallery();
+                updateStorageCounts();
+                console.log('画廊项目删除成功');
+            }
+        }
+
+        function deleteBackgroundImage(index) {
+            if (confirm(currentLanguage === 'en' ? 'Are you sure you want to delete this background image?' : '确定要删除这个背景图片吗？')) {
+                const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+                backgrounds.splice(index, 1);
+                localStorage.setItem('backgroundImages', JSON.stringify(backgrounds));
+                loadBackgroundImages();
+                updateStorageCounts();
+                console.log('背景图片删除成功');
+            }
+        }
+
+        // 编辑函数
+        function editProductSeries(index) {
+            openProductSeriesModal(index);
+        }
+
+        function editGalleryItem(index) {
+            openGalleryModal(index);
+        }
+
+        // 图片处理函数 - 增强版，包含压缩功能
+        async function processImageFile(file) {
+            return new Promise((resolve, reject) => {
+                // 检查文件大小
+                if (file.size > 5 * 1024 * 1024) { // 5MB限制
+                    alert(currentLanguage === 'en' ? 'Image file too large. Please select an image smaller than 5MB.' : '图片文件过大。请选择小于5MB的图片。');
+                    reject(new Error('File too large'));
+                    return;
+                }
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    // 计算压缩后的尺寸，保持宽高比
+                    let { width, height } = img;
+                    const maxWidth = 1200;
+                    const maxHeight = 800;
+                    
+                    if (width > maxWidth || height > maxHeight) {
+                        const ratio = Math.min(maxWidth / width, maxHeight / height);
+                        width *= ratio;
+                        height *= ratio;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // 绘制并压缩图片
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // 压缩为JPEG格式，质量0.8
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    // 检查压缩后的大小
+                    const compressedSize = Math.ceil(compressedDataUrl.length * 0.75); // base64大约比实际大小大33%
+                    if (compressedSize > 2 * 1024 * 1024) { // 2MB限制
+                        alert(currentLanguage === 'en' ? 'Image still too large after compression. Please try a smaller image.' : '图片压缩后仍然过大。请尝试更小的图片。');
+                        reject(new Error('Compressed image too large'));
+                        return;
+                    }
+                    
+                    resolve(compressedDataUrl);
+                };
+                
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // 检查存储空间
+        function checkStorageQuota() {
+            try {
+                const testKey = '__storage_test__';
+                const testValue = '1';
+                localStorage.setItem(testKey, testValue);
+                localStorage.removeItem(testKey);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // 获取存储使用情况
+        function getStorageUsage() {
+            let totalSize = 0;
+            try {
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        totalSize += localStorage[key].length;
+                    }
+                }
+                return totalSize;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        // 清理存储空间
+        function cleanupStorage() {
+            try {
+                const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+                const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+                
+                // 如果背景图片超过4张，删除最旧的
+                if (backgrounds.length > 4) {
+                    backgrounds.splice(0, backgrounds.length - 4);
+                    localStorage.setItem('backgroundImages', JSON.stringify(backgrounds));
+                }
+                
+                // 如果画廊项目超过10个，删除最旧的
+                if (gallery.length > 10) {
+                    gallery.splice(0, gallery.length - 10);
+                    localStorage.setItem('gallery', JSON.stringify(gallery));
+                }
+                
+                console.log('存储空间清理完成');
+                return true;
+            } catch (e) {
+                console.error('清理存储空间失败:', e);
+                return false;
+            }
+        }
+
+        // 默认图片函数
+        function getDefaultProductImage() {
+            const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="150" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+                <text x="100" y="75" font-family="Arial" font-size="14" fill="#6c757d" text-anchor="middle">Product Image</text>
+            </svg>`;
+            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+        }
+
+        function getDefaultGalleryImage() {
+            const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="150" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                <text x="100" y="75" font-family="Arial" font-size="14" fill="#1976d2" text-anchor="middle">Gallery Image</text>
+            </svg>`;
+            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+        }
+
+        function getDefaultBackgroundImage() {
+            const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="150" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+                <text x="100" y="75" font-family="Arial" font-size="14" fill="#7b1fa2" text-anchor="middle">Background Image</text>
+            </svg>`;
+            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+        }
+
+        function getDefaultAboutImage() {
+            const svg = `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="150" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+                <text x="100" y="75" font-family="Arial" font-size="14" fill="#f57c00" text-anchor="middle">About Us Image</text>
+            </svg>`;
+            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+        }
+
+        // 语言切换函数
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            updateLanguageDisplay();
+            
+            // 更新按钮状态
+            document.querySelectorAll('.language-switcher button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function updateLanguageDisplay() {
+            const elements = document.querySelectorAll('[data-en][data-zh]');
+            elements.forEach(element => {
+                if (currentLanguage === 'en') {
+                    element.textContent = element.getAttribute('data-en');
+                } else {
+                    element.textContent = element.getAttribute('data-zh');
+                }
+            });
+        }
+
+        // 更新存储计数
+        function updateStorageCounts() {
+            const productSeries = JSON.parse(localStorage.getItem('productSeries') || '[]');
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+            const aboutUs = JSON.parse(localStorage.getItem('aboutUs') || '{}');
+            
+            // 更新产品系列数量显示
+            const productSeriesCount = document.getElementById('productSeriesCount');
+            const productSeriesLimit = 10;
+            const productSeriesRemaining = productSeriesLimit - productSeries.length;
+            productSeriesCount.innerHTML = `
+                <span class="current-count">${productSeries.length}</span>
+                <span class="count-limit">/ ${productSeriesLimit}</span>
+                <div class="remaining-info">${currentLanguage === 'en' ? 'Remaining' : '剩余'}: ${productSeriesRemaining}</div>
+            `;
+            
+            // 更新画廊数量显示
+            const galleryCount = document.getElementById('galleryCount');
+            const galleryLimit = 15;
+            const galleryRemaining = galleryLimit - gallery.length;
+            galleryCount.innerHTML = `
+                <span class="current-count">${gallery.length}</span>
+                <span class="count-limit">/ ${galleryLimit}</span>
+                <div class="remaining-info">${currentLanguage === 'en' ? 'Remaining' : '剩余'}: ${galleryRemaining}</div>
+            `;
+            
+            // 更新背景图片数量显示
+            const backgroundCount = document.getElementById('backgroundCount');
+            const backgroundLimit = 8;
+            const backgroundRemaining = backgroundLimit - backgrounds.length;
+            backgroundCount.innerHTML = `
+                <span class="current-count">${backgrounds.length}</span>
+                <span class="count-limit">/ ${backgroundLimit}</span>
+                <div class="remaining-info">${currentLanguage === 'en' ? 'Remaining' : '剩余'}: ${backgroundRemaining}</div>
+            `;
+            
+            // 显示存储使用情况
+            const storageUsage = getStorageUsage();
+            const storageMB = (storageUsage / (1024 * 1024)).toFixed(2);
+            
+            // 查找或创建存储使用情况显示元素
+            let storageInfoElement = document.getElementById('storageInfo');
+            if (!storageInfoElement) {
+                storageInfoElement = document.createElement('div');
+                storageInfoElement.id = 'storageInfo';
+                storageInfoElement.style.cssText = 'margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #6c757d;';
+                
+                // 插入到存储统计区域
+                const statsContainer = document.querySelector('.stats-container') || document.querySelector('.content-header');
+                if (statsContainer) {
+                    statsContainer.appendChild(storageInfoElement);
+                }
+            }
+            
+            // 计算关于我们图片的存储使用
+            let aboutUsImageSize = 0;
+            if (aboutUs.image) {
+                aboutUsImageSize = aboutUs.image.length;
+            }
+            const aboutUsImageMB = (aboutUsImageSize / (1024 * 1024)).toFixed(2);
+            
+            storageInfoElement.innerHTML = `
+                <strong>${currentLanguage === 'en' ? 'Storage Usage' : '存储使用'}:</strong> ${storageMB} MB
+                ${aboutUs.image ? `<br><small>${currentLanguage === 'en' ? 'About Us Image' : '关于我们图片'}: ${aboutUsImageMB} MB</small>` : ''}
+                <button onclick="cleanupStorage()" style="margin-left: 10px; padding: 2px 8px; font-size: 11px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                    ${currentLanguage === 'en' ? 'Cleanup' : '清理'}
+                </button>
+            `;
+            
+            // 如果存储使用超过4MB，显示警告
+            if (storageUsage > 4 * 1024 * 1024) {
+                storageInfoElement.style.background = '#fff3cd';
+                storageInfoElement.style.color = '#856404';
+                storageInfoElement.style.border = '1px solid #ffeaa7';
+            }
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    if (modal.id !== 'aboutUsModal') {
+                        editIndex = null;
+                    }
+                }
+            });
+        }
+
+        // 显示存储管理信息
+        function showStorageManagement() {
+            const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            const productSeries = JSON.parse(localStorage.getItem('productSeries') || '[]');
+            const aboutUs = JSON.parse(localStorage.getItem('aboutUs') || '{}');
+            
+            const storageUsage = getStorageUsage();
+            const storageMB = (storageUsage / (1024 * 1024)).toFixed(2);
+            
+            let message = `${currentLanguage === 'en' ? 'Storage Management' : '存储管理'}\n\n`;
+            message += `${currentLanguage === 'en' ? 'Current Usage' : '当前使用'}: ${storageMB} MB\n\n`;
+            message += `${currentLanguage === 'en' ? 'Background Images' : '背景图片'}: ${backgrounds.length}/8\n`;
+            message += `${currentLanguage === 'en' ? 'Gallery Items' : '画廊项目'}: ${gallery.length}/15\n`;
+            message += `${currentLanguage === 'en' ? 'Product Series' : '产品系列'}: ${productSeries.length}/10\n`;
+            message += `${currentLanguage === 'en' ? 'About Us Image' : '关于我们图片'}: ${aboutUs.image ? '1/1' : '0/1'}\n\n`;
+            
+            if (storageUsage > 4 * 1024 * 1024) {
+                message += `${currentLanguage === 'en' ? '⚠️ Storage usage is high. Consider deleting some items.' : '⚠️ 存储使用量较高。建议删除一些项目。'}\n\n`;
+            }
+            
+            message += `${currentLanguage === 'en' ? 'Actions:' : '操作：'}\n`;
+            message += `• ${currentLanguage === 'en' ? 'Click "Cleanup" to automatically remove old items' : '点击"清理"自动删除旧项目'}\n`;
+            message += `• ${currentLanguage === 'en' ? 'Delete individual items manually' : '手动删除单个项目'}\n`;
+            message += `• ${currentLanguage === 'en' ? 'Use smaller image files' : '使用较小的图片文件'}`;
+            
+            alert(message);
+        }
+
+        // 获取详细存储分析
+        function getDetailedStorageAnalysis() {
+            const backgrounds = JSON.parse(localStorage.getItem('backgroundImages') || '[]');
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            const productSeries = JSON.parse(localStorage.getItem('productSeries') || '[]');
+            const aboutUs = JSON.parse(localStorage.getItem('aboutUs') || '{}');
+            
+            let analysis = `${currentLanguage === 'en' ? 'Detailed Storage Analysis' : '详细存储分析'}\n\n`;
+            
+            // 分析背景图片
+            if (backgrounds.length > 0) {
+                const bgSize = backgrounds.reduce((total, item) => total + (item.image ? item.image.length : 0), 0);
+                const bgMB = (bgSize / (1024 * 1024)).toFixed(2);
+                analysis += `${currentLanguage === 'en' ? 'Background Images' : '背景图片'}: ${bgMB} MB (${backgrounds.length} items)\n`;
+            }
+            
+            // 分析画廊项目
+            if (gallery.length > 0) {
+                const gallerySize = gallery.reduce((total, item) => total + (item.image ? item.image.length : 0), 0);
+                const galleryMB = (gallerySize / (1024 * 1024)).toFixed(2);
+                analysis += `${currentLanguage === 'en' ? 'Gallery Items' : '画廊项目'}: ${galleryMB} MB (${gallery.length} items)\n`;
+            }
+            
+            // 分析产品系列
+            if (productSeries.length > 0) {
+                const seriesSize = productSeries.reduce((total, item) => total + (item.image ? item.image.length : 0), 0);
+                const seriesMB = (seriesSize / (1024 * 1024)).toFixed(2);
+                analysis += `${currentLanguage === 'en' ? 'Product Series' : '产品系列'}: ${seriesMB} MB (${productSeries.length} items)\n`;
+            }
+            
+            // 分析关于我们图片
+            if (aboutUs.image) {
+                const aboutSize = aboutUs.image.length;
+                const aboutMB = (aboutSize / (1024 * 1024)).toFixed(2);
+                analysis += `${currentLanguage === 'en' ? 'About Us Image' : '关于我们图片'}: ${aboutMB} MB (1 item)\n`;
+            } else {
+                analysis += `${currentLanguage === 'en' ? 'About Us Image' : '关于我们图片'}: 0 MB (0 items)\n`;
+            }
+            
+            const totalUsage = getStorageUsage();
+            const totalMB = (totalUsage / (1024 * 1024)).toFixed(2);
+            analysis += `\n${currentLanguage === 'en' ? 'Total Usage' : '总使用量'}: ${totalMB} MB`;
+            
+            return analysis;
+        }
+
+        // 图片优化建议
+        function showImageOptimizationTips() {
+            const tips = currentLanguage === 'en' ? [
+                '📱 Use images with resolution 1200x800 or smaller',
+                '💾 Convert images to JPEG format for better compression',
+                '🎯 Aim for file sizes under 2MB before upload',
+                '🔄 The system will automatically compress images further',
+                '🗑️ Delete old/unused images to free up space',
+                '📊 Monitor storage usage with the Storage Info button'
+            ] : [
+                '📱 使用1200x800或更小的分辨率图片',
+                '💾 将图片转换为JPEG格式以获得更好的压缩效果',
+                '🎯 上传前图片文件大小控制在2MB以下',
+                '🔄 系统会自动进一步压缩图片',
+                '🗑️ 删除旧/未使用的图片以释放空间',
+                '📊 使用存储信息按钮监控存储使用情况'
+            ];
+            
+            const message = `${currentLanguage === 'en' ? 'Image Optimization Tips' : '图片优化建议'}\n\n${tips.join('\n')}`;
+            alert(message);
+        }
+
+        // 更新文件名显示
+        function updateFileName(input, infoElementId) {
+            const file = input.files[0];
+            const infoElement = document.getElementById(infoElementId);
+            const uploadText = input.parentElement.querySelector('.file-upload-text');
+            
+            if (file) {
+                // 显示文件名和大小
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                const fileName = file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name;
+                
+                infoElement.innerHTML = `
+                    <strong>${currentLanguage === 'en' ? 'Selected file' : '已选择文件'}:</strong> ${fileName}<br>
+                    <strong>${currentLanguage === 'en' ? 'Size' : '大小'}:</strong> ${fileSize} MB
+                `;
+                infoElement.style.display = 'block';
+                
+                // 更新上传文本样式
+                uploadText.textContent = currentLanguage === 'en' ? 'File selected' : '文件已选择';
+                uploadText.classList.add('file-selected');
+            } else {
+                // 隐藏文件信息，恢复默认文本
+                infoElement.style.display = 'none';
+                uploadText.textContent = currentLanguage === 'en' ? 'Click to select image' : '点击选择图片';
+                uploadText.classList.remove('file-selected');
+            }
+        }
+        
+        // 检查并清理存储空间
+        function checkAndCleanupStorage() {
+            const storageUsage = getStorageUsage();
+            const storageMB = (storageUsage / (1024 * 1024)).toFixed(2);
+            
+            // 如果存储使用超过5MB，自动清理
+            if (storageUsage > 5 * 1024 * 1024) {
+                console.log(`存储使用量较高: ${storageMB} MB，开始自动清理...`);
+                
+                if (cleanupStorage()) {
+                    const newUsage = getStorageUsage();
+                    const newMB = (newUsage / (1024 * 1024)).toFixed(2);
+                    console.log(`自动清理完成，当前使用量: ${newMB} MB`);
+                    
+                    // 显示清理结果
+                    setTimeout(() => {
+                        if (currentLanguage === 'en') {
+                            alert(`Storage automatically cleaned up!\nBefore: ${storageMB} MB\nAfter: ${newMB} MB\n\nOld items have been removed to free up space.`);
+                        } else {
+                            alert(`存储已自动清理！\n清理前: ${storageMB} MB\n清理后: ${newMB} MB\n\n旧项目已被删除以释放空间。`);
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
+        // 键盘事件
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (modal.style.display === 'block') {
+                        modal.style.display = 'none';
+                        if (modal.id !== 'aboutUsModal') {
+                            editIndex = null;
+                        }
+                    }
+                });
+            }
+        });
+
+        console.log('内容管理页面脚本已加载');
+    </script>
 </body>
 </html>
